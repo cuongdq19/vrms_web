@@ -13,3 +13,5 @@ export const Gender = {
   Male: true,
   Female: false,
 };
+
+export const pageSize = 12;

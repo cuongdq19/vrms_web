@@ -10,6 +10,8 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as actions from '../store/actions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCar } from '@fortawesome/free-solid-svg-icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -54,6 +56,12 @@ const LayoutWrapper = ({ children }) => {
           onClick: () => history.push('/customers'),
         },
       ],
+    },
+    {
+      icon: <FontAwesomeIcon icon={faCar} />,
+      key: 'parts',
+      title: 'Parts',
+      onClick: () => history.push('/parts'),
     },
   ];
 
