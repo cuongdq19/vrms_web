@@ -10,7 +10,7 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid #ccc;
-  padding: 5px;
+  padding: 10px;
   border-radius: 10px;
 `;
 

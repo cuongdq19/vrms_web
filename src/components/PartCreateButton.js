@@ -130,7 +130,7 @@ const PartCreateButton = ({ children, onSuccess }) => {
               },
             ]}
           >
-            <Input placeholder="Part Description" />
+            <Input.TextArea placeholder="Part Description" />
           </Form.Item>
           <Form.Item
             name="categoryId"

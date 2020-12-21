@@ -60,7 +60,7 @@ const LayoutWrapper = ({ children }) => {
     {
       icon: <FontAwesomeIcon icon={faCar} />,
       key: 'parts',
-      title: 'Parts',
+      title: 'Vehicle Parts',
       onClick: () => history.push('/parts'),
     },
   ];

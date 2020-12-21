@@ -68,7 +68,7 @@ const Parts = () => {
       </Header>
       <Row gutter={[8, 8]}>
         {[...parts].splice((current - 1) * pageSize, pageSize).map((part) => (
-          <Col span={6} key={part.id}>
+          <Col span={8} key={part.id}>
             <PartCard part={part} onSuccess={fetchPartsData} />
           </Col>
         ))}
