@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../components/PrivateRoute';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
+import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
 
@@ -13,10 +14,16 @@ const publicRoutes = [
 
 const providerRoutes = [
   {
-    key: 'home',
+    key: 'dashboard',
     path: '/dashboard',
     exact: true,
     component: Dashboard,
+  },
+  {
+    key: 'services',
+    path: '/services',
+    exact: true,
+    component: Services,
   },
   {
     key: 'staffs',
