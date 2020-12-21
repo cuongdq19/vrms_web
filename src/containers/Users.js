@@ -1,16 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Input, Table, Tag, Form } from 'antd';
+import { Button, Input, Table, Typography } from 'antd';
 import { useSelector } from 'react-redux';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 import http from '../http';
 import LayoutWrapper from '../hoc/LayoutWrapper';
-import { generateUserRoleColor } from '../utils';
-import { Roles } from '../utils/constants';
-import UserUpdateModal from '../components/UserUpdateModal';
-import { useLocation } from 'react-router-dom';
+import UserUpdateButton from '../components/UserUpdateButton';
+import UserCreateButton from '../components/UserCreateButton';
 
 const Container = styled.div`
   padding: 0.5rem;
@@ -22,62 +21,54 @@ const Buttons = styled.div`
   display: flex;
 `;
 
-const getPageRole = (pathname) => {
+const generatePageRole = (pathname) => {
   switch (pathname) {
     case '/staffs':
       return 'STAFF';
     case '/technicians':
       return 'TECHNICIAN';
     default:
-      return true;
+      return null;
   }
 };
 
-const Users = () => {
-  const location = useLocation();
-  const providerId = useSelector((state) => state.auth.userData.providerId);
-  const [form] = Form.useForm();
+const generateTitle = (pathname) => {
+  switch (pathname) {
+    case '/staffs':
+      return 'Staff';
+    case '/technicians':
+      return 'Technician';
+    default:
+      return null;
+  }
+};
 
-  const role = getPageRole(location.pathname);
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+`;
+
+const Users = () => {
+  const { pathname } = useLocation();
+  const pageRole = generatePageRole(pathname);
+  const providerId = useSelector((state) => state.auth.userData.providerId);
+
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState({ searchText: '', searchedColumn: '' });
-  const [updating, setUpdating] = useState({
-    visible: false,
-    user: null,
-  });
-
-  const finishHandler = (values) => {
-    const formData = new FormData();
-    Object.keys(values).forEach((key) => {
-      switch (key) {
-        case 'image':
-          values[key].forEach((obj) => formData.append(key, obj.originFileObj));
-          break;
-        default:
-          formData.append(key, values[key]);
-      }
-    });
-    http
-      .post(`/users/${values.id}/provider`, formData)
-      .then((res) => {
-        setUpdating({ visible: false, user: null });
-        fetchUsersData();
-      })
-      .catch((err) => console.log(err));
-  };
 
   const fetchUsersData = useCallback(() => {
     setLoading(true);
     http.get(`/users/provider/${providerId}`).then((res) => {
       setUsers(
         res.data
-          .filter((user) => user.roleName.toUpperCase() === role.toUpperCase())
+          .filter((user) => user.roleName.toUpperCase() === pageRole)
           .map((user) => ({ key: user.id, ...user }))
       );
       setLoading(false);
     });
-  }, [providerId, role]);
+  }, [providerId, pageRole]);
 
   let searchInput = null;
 
@@ -163,30 +154,12 @@ const Users = () => {
       ...getColumnSearchProps('fullName'),
     },
     {
-      dataIndex: 'roleName',
-      key: 'role',
-      title: 'Role',
-      filters: Object.keys(Roles).map((key) => ({
-        text: key,
-        value: Roles[key],
-      })),
-      onFilter: (value, record) => record.roleName === value,
-      render: (value) => (
-        <Tag color={generateUserRoleColor(value)}>{value}</Tag>
-      ),
-    },
-    {
       key: 'update',
       title: 'Update',
       render: (_, user) => (
-        <Button
-          onClick={() => {
-            setUpdating({ visible: true, user: user });
-            form.setFieldsValue(user);
-          }}
-        >
+        <UserUpdateButton user={user} onSuccess={fetchUsersData}>
           Update
-        </Button>
+        </UserUpdateButton>
       ),
     },
   ];
@@ -197,20 +170,20 @@ const Users = () => {
 
   return (
     <LayoutWrapper>
+      <Header>
+        <Typography.Title level={4}>{pageRole}</Typography.Title>
+        <UserCreateButton
+          onSuccess={fetchUsersData}
+          role={generatePageRole(pathname)}
+        >
+          Create {generateTitle(pathname)}
+        </UserCreateButton>
+      </Header>
       <Table
         style={{ overflowX: 'auto' }}
         loading={loading}
         columns={columns}
         dataSource={users}
-      />
-      <UserUpdateModal
-        form={form}
-        updating={updating}
-        onCancel={() => {
-          setUpdating({ visible: false, user: null });
-          form.resetFields();
-        }}
-        onSubmit={finishHandler}
       />
     </LayoutWrapper>
   );
