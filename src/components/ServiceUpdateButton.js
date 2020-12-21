@@ -16,7 +16,8 @@ import http from '../http';
 
 const { Option } = Select;
 
-const ServiceCreateButton = ({ children, onSuccess }) => {
+const ServiceUpdateButton = ({ service, onSuccess, children }) => {
+  console.log(service);
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
@@ -161,4 +162,4 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
   );
 };
 
-export default ServiceCreateButton;
+export default ServiceUpdateButton;

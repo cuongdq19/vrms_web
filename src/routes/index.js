@@ -7,6 +7,7 @@ import Parts from '../containers/Parts';
 import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
+import _404 from '../containers/_404';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -64,6 +65,7 @@ const routes = [
       component={component}
     />
   )),
+  <Route key="_404" component={_404} />,
 ];
 
 export default routes;
