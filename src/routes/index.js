@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/PrivateRoute';
 import Dashboard from '../containers/Dashboard';
+import Parts from '../containers/Parts';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
 
@@ -34,6 +35,12 @@ const providerRoutes = [
     path: '/customers',
     exact: true,
     component: Users,
+  },
+  {
+    key: 'parts',
+    path: '/parts',
+    exact: true,
+    component: Parts,
   },
 ];
 
