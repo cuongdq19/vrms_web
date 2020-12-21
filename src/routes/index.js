@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../components/PrivateRoute';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
+import Requests from '../containers/Requests';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
 
@@ -41,6 +42,12 @@ const providerRoutes = [
     path: '/parts',
     exact: true,
     component: Parts,
+  },
+  {
+    key: 'requests',
+    path: '/requests',
+    exact: true,
+    component: Requests,
   },
 ];
 

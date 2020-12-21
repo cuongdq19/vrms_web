@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as actions from '../store/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faCar } from '@fortawesome/free-solid-svg-icons';
 
 const { Header, Sider, Content } = Layout;
 
@@ -62,6 +62,12 @@ const LayoutWrapper = ({ children }) => {
       key: 'parts',
       title: 'Vehicle Parts',
       onClick: () => history.push('/parts'),
+    },
+    {
+      icon: <FontAwesomeIcon icon={faCalendar} />,
+      key: 'requests',
+      title: 'Booking Requests',
+      onClick: () => history.push('/requests'),
     },
   ];
 
