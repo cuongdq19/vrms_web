@@ -69,7 +69,7 @@ const Requests = () => {
   ];
 
   const fetchRequestsData = useCallback(() => {
-    http
+    return http
       .get(`/requests/providers/${providerId}`)
       .then(({ data }) => setRequestData(data))
       .catch((err) => console.log(err));

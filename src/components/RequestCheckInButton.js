@@ -59,6 +59,7 @@ const RequestCheckInButton = ({ children, request, onSuccess }) => {
   };
 
   const closedHandler = () => {
+    form.resetFields();
     setVisible(false);
   };
 
@@ -67,8 +68,9 @@ const RequestCheckInButton = ({ children, request, onSuccess }) => {
       .post(`/requests/checkin/${requestId}/technicians/${technicianId}`)
       .then(({ data }) => {
         message.success('Check in request success.');
-        closedHandler();
-        onSuccess();
+        onSuccess().then(() => {
+          closedHandler();
+        });
       })
       .catch((err) => {
         console.log(err);
