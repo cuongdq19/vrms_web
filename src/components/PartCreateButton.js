@@ -11,7 +11,7 @@ import {
   Select,
   Upload,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
 import http from '../http';
@@ -22,7 +22,7 @@ const { Option } = Select;
 const PartCreateButton = ({ children, onSuccess }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [visible, setVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [sections, setSections] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
   const [form] = Form.useForm();
@@ -74,24 +74,30 @@ const PartCreateButton = ({ children, onSuccess }) => {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
+  const fetchSelections = useCallback(() => {
     if (visible) {
-      http.get('/service-type-details/sections').then(({ data }) => {
-        const cateOptions = Object.keys(data).map((key, index) => ({
-          label: key,
-          value: index,
-          children: data[key].map((data) => ({
-            value: data.id,
-            label: data.name,
-          })),
-        }));
-        setCategories(cateOptions);
-      });
-      http.get('/manufacturers').then(({ data }) => {
-        setManufacturers(data);
-      });
+      http
+        .get('/service-type-details/sections')
+        .then(({ data }) => {
+          const sections = data.map(({ sectionName, sectionId }) => ({
+            label: sectionName,
+            value: sectionId,
+            isLeaf: false,
+          }));
+          setSections(sections);
+          return http.get('/manufacturers');
+        })
+        .then(({ data }) => {
+          setManufacturers(data);
+          return http.get('/models');
+        })
+        .then(({ data }) => setModels(data));
     }
   }, [visible]);
+
+  useEffect(() => {
+    fetchSelections();
+  }, [fetchSelections]);
 
   return (
     <>
@@ -142,7 +148,29 @@ const PartCreateButton = ({ children, onSuccess }) => {
               },
             ]}
           >
-            <Cascader options={categories} />
+            <Cascader
+              changeOnSelect
+              options={sections}
+              loadData={(selectedOptions) => {
+                const targetOption =
+                  selectedOptions[selectedOptions.length - 1];
+                targetOption.loading = true;
+
+                http
+                  .get(
+                    `/service-type-details/categories/sections/${targetOption.value}`
+                  )
+                  .then(({ data }) => {
+                    const cate = data.map((cate) => ({
+                      label: cate.name,
+                      value: cate.id,
+                    }));
+                    targetOption.loading = false;
+                    targetOption.children = cate;
+                    setSections([...sections]);
+                  });
+              }}
+            />
           </Form.Item>
           <Row gutter={8}>
             <Col span={8}>

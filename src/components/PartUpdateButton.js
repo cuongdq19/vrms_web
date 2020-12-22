@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import http from '../http';
 import { useSelector } from 'react-redux';
@@ -25,13 +25,13 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
     price,
     warrantyDuration,
     monthsPerMaintenance,
-    categoryId,
+    // categoryId,
     models: partModels,
   } = part;
 
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [visible, setVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [sections, setSections] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
   const [form] = Form.useForm();
@@ -49,7 +49,7 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
     const reqBody = { ...values, categoryId: values.categoryId[1], providerId };
     console.log(reqBody);
     http.post(`/parts/${reqBody.id}`, reqBody).then((res) => {
-      message.success('Create success');
+      message.success('Update part success');
       closedHandler();
       onSuccess();
     });
@@ -61,29 +61,30 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
       .then(({ data }) => setModels(data));
   };
 
-  useEffect(() => {
+  const fetchSelections = useCallback(() => {
     if (visible) {
       http
         .get('/service-type-details/sections')
         .then(({ data }) => {
-          const cateOptions = Object.keys(data).map((key, index) => ({
-            label: key,
-            value: index,
-            children: data[key].map((data) => ({
-              value: data.id,
-              label: data.name,
-            })),
+          const sections = data.map(({ sectionName, sectionId }) => ({
+            label: sectionName,
+            value: sectionId,
+            isLeaf: false,
           }));
-          setCategories(cateOptions);
-          return http.get('/manufacturers').then(({ data }) => {
-            setManufacturers(data);
-          });
+          setSections(sections);
+          return http.get('/manufacturers');
         })
-        .then(() => {
-          http.get('/models').then(({ data }) => setModels(data));
-        });
+        .then(({ data }) => {
+          setManufacturers(data);
+          return http.get('/models');
+        })
+        .then(({ data }) => setModels(data));
     }
   }, [visible]);
+
+  useEffect(() => {
+    fetchSelections();
+  }, [fetchSelections]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -93,18 +94,10 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
       price,
       warrantyDuration,
       monthsPerMaintenance,
-      categoryId: [
-        categories.find(
-          (cate) =>
-            cate.children.findIndex((child) => child.value === categoryId) > -1
-        )?.value,
-        categoryId,
-      ],
+      categoryId: [],
       modelIds: partModels.map((model) => model.id),
     });
   }, [
-    categories,
-    categoryId,
     description,
     form,
     id,
@@ -168,7 +161,29 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
               },
             ]}
           >
-            <Cascader options={categories} />
+            <Cascader
+              changeOnSelect
+              options={sections}
+              loadData={(selectedOptions) => {
+                const targetOption =
+                  selectedOptions[selectedOptions.length - 1];
+                targetOption.loading = true;
+
+                http
+                  .get(
+                    `/service-type-details/categories/sections/${targetOption.value}`
+                  )
+                  .then(({ data }) => {
+                    const cate = data.map((cate) => ({
+                      label: cate.name,
+                      value: cate.id,
+                    }));
+                    targetOption.loading = false;
+                    targetOption.children = cate;
+                    setSections([...sections]);
+                  });
+              }}
+            />
           </Form.Item>
           <Row gutter={8}>
             <Col span={8}>
