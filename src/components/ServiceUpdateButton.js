@@ -78,9 +78,7 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
 
   return (
     <>
-      <Button icon={<PlusOutlined />} onClick={clickedHandler}>
-        {children}
-      </Button>
+      <Button onClick={clickedHandler}>{children}</Button>
       <Modal
         width="70%"
         maskClosable={false}

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import ServiceCreateButton from '../components/ServiceCreateButton';
+import ServiceRemoveButton from '../components/ServiceRemoveButton';
 import ServiceUpdateButton from '../components/ServiceUpdateButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
@@ -31,14 +32,16 @@ const Services = () => {
   }, [providerId]);
 
   const columns = [
-    { title: 'ID', dataIndex: ['typeDetail', 'id'] },
+    { title: 'ID', dataIndex: ['typeDetail', 'id'], align: 'center' },
     {
       title: 'Service Type',
       dataIndex: ['typeDetail', 'typeName'],
+      align: 'center',
     },
     {
       title: 'Section Name',
       dataIndex: ['typeDetail', 'sectionName'],
+      align: 'center',
     },
   ];
 
@@ -61,16 +64,29 @@ const Services = () => {
           expandedRowRender: (record) => {
             const { serviceDetails } = record;
             const columns = [
-              { title: 'ID', dataIndex: 'id' },
-              { title: 'Name', dataIndex: 'name' },
-              { title: 'Price', dataIndex: 'price' },
+              { title: 'ID', dataIndex: 'id', align: 'center', width: '10%' },
+              {
+                title: 'Name',
+                dataIndex: 'name',
+                align: 'center',
+                width: '20%',
+              },
+              {
+                title: 'Price',
+                dataIndex: 'price',
+                align: 'center',
+                width: '20%',
+              },
               {
                 title: 'Models',
+                align: 'center',
+                width: '30%',
                 render: (_, { group: { models } }) => (
-                  <Select style={{ width: '100%' }}>
+                  <Select defaultValue={models[0].id} style={{ width: '100%' }}>
                     {models.map((mod) => (
                       <Option key={mod.id} value={mod.id}>
-                        {mod.name} {mod.fuelType} {mod.gearbox} ({mod.year})
+                        {mod.manufacturerName} {mod.name} {mod.fuelType}{' '}
+                        {mod.gearbox} ({mod.year})
                       </Option>
                     ))}
                   </Select>
@@ -78,8 +94,9 @@ const Services = () => {
               },
               {
                 title: 'Update',
+                width: '10%',
+                align: 'center',
                 render: (_, record) => {
-                  console.log(record);
                   const {
                     id,
                     name,
@@ -94,6 +111,22 @@ const Services = () => {
                     >
                       Update
                     </ServiceUpdateButton>
+                  );
+                },
+              },
+              {
+                title: 'Remove',
+                width: '10%',
+                align: 'center',
+                render: (_, record) => {
+                  const { id } = record;
+                  return (
+                    <ServiceRemoveButton
+                      serviceId={id}
+                      onSuccess={fetchServicesData}
+                    >
+                      Delete
+                    </ServiceRemoveButton>
                   );
                 },
               },
