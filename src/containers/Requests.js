@@ -8,6 +8,8 @@ import RequestCreateButton from '../components/RequestCreateButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 import RequestCheckInButton from '../components/RequestCheckInButton';
+import RequestConfirmButton from '../components/RequestConfirmButton';
+import { calculateTotalPrice } from '../utils';
 
 const Header = styled.div`
   display: flex;
@@ -43,18 +45,7 @@ const Requests = () => {
       align: 'center',
       title: 'Total Price',
       render: (_, record) => {
-        const { parts, services } = record;
-        const partsPrice = parts.reduce((curr, part) => {
-          return curr + part.price;
-        }, 0);
-        const servicesPrice = services.reduce((curr, service) => {
-          const {
-            servicePrice,
-            part: { price: partPrice },
-          } = service;
-          return curr + servicePrice + partPrice;
-        }, 0);
-        return partsPrice + servicesPrice;
+        return calculateTotalPrice(record);
       },
     },
     {
@@ -64,6 +55,18 @@ const Requests = () => {
         <RequestCheckInButton request={record} onSuccess={fetchRequestsData}>
           Check in
         </RequestCheckInButton>
+      ),
+    },
+    {
+      align: 'center',
+      title: 'Confirm',
+      render: (_, record) => (
+        <RequestConfirmButton
+          request={{ ...record, totalPrice: calculateTotalPrice(record) }}
+          onSuccess={fetchRequestsData}
+        >
+          Confirm
+        </RequestConfirmButton>
       ),
     },
   ];
