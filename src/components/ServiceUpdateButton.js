@@ -73,7 +73,7 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
         onOk={() => form.submit()}
         visible={visible}
         onCancel={closedHandler}
-        title="Create Service"
+        title="Update Service"
       >
         <Form
           form={form}

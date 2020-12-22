@@ -3,7 +3,7 @@ import React from 'react';
 
 import http from '../http';
 
-const ServiceRemoveButton = ({ serviceId, onSuccess }) => {
+const ServiceRemoveButton = ({ serviceId, onSuccess, children }) => {
   const text = 'Are you sure to remove this service?';
 
   const submitHandler = () => {
@@ -20,7 +20,7 @@ const ServiceRemoveButton = ({ serviceId, onSuccess }) => {
       placement="left"
       title={text}
     >
-      <Button>Delete</Button>
+      <Button>{children}</Button>
     </Popconfirm>
   );
 };

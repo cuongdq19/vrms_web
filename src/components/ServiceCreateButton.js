@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
   Select,
@@ -59,7 +60,9 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
     http
       .post(`/services/providers/${providerId}`, reqBody)
       .then(({ data }) => {
-        console.log(data);
+        message.success('Create service success.');
+        closedHandler();
+        onSuccess();
       })
       .catch((err) => console.log(err));
   };
