@@ -59,7 +59,8 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
     http
       .post(`/services/providers/${providerId}`, reqBody)
       .then(({ data }) => {
-        console.log(data);
+        closedHandler();
+        onSuccess();
       })
       .catch((err) => console.log(err));
   };
