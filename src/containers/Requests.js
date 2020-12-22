@@ -12,6 +12,7 @@ import RequestConfirmButton from '../components/RequestConfirmButton';
 import { calculateRequestPrice } from '../utils';
 import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../components/RequestCheckoutButton';
+import RequestCanceledButton from '../components/RequestCanceledButton';
 
 const Header = styled.div`
   display: flex;
@@ -90,6 +91,15 @@ const Requests = () => {
         >
           Checkout
         </RequestCheckoutButton>
+      ),
+    },
+    {
+      align: 'center',
+      title: 'Canceled',
+      render: (_, record) => (
+        <RequestCanceledButton id={record.id} onSuccess={fetchRequestsData}>
+          Canceled
+        </RequestCanceledButton>
       ),
     },
   ];

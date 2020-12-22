@@ -15,3 +15,12 @@ export const Gender = {
 };
 
 export const pageSize = 12;
+
+export const STATUS = {
+  Accepted: 'ACCEPTED',
+  Arrived: 'ARRIVED',
+  InProgress: 'IN PROGRESS',
+  WorkCompleted: 'WORK COMPLETED',
+  Finished: 'FINISHED',
+  Canceled: 'CANCELED',
+};
