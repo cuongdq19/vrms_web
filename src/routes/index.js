@@ -5,8 +5,10 @@ import PrivateRoute from '../components/PrivateRoute';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
 import Requests from '../containers/Requests';
+import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
+import _404 from '../containers/_404';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -14,10 +16,16 @@ const publicRoutes = [
 
 const providerRoutes = [
   {
-    key: 'home',
+    key: 'dashboard',
     path: '/dashboard',
     exact: true,
     component: Dashboard,
+  },
+  {
+    key: 'services',
+    path: '/services',
+    exact: true,
+    component: Services,
   },
   {
     key: 'staffs',
@@ -64,6 +72,7 @@ const routes = [
       component={component}
     />
   )),
+  <Route key="_404" component={_404} />,
 ];
 
 export default routes;

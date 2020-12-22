@@ -6,6 +6,7 @@ import { faCar, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { connect } from 'react-redux';
 
 import * as actions from '../store/actions';
+import { Redirect } from 'react-router-dom';
 
 const StyledForm = styled(Form)`
   width: 25rem;
@@ -52,11 +53,16 @@ const StyledFooter = styled(Layout.Footer)`
   background-color: transparent;
 `;
 
-const SignIn = ({ loading, onSignIn }) => {
+const SignIn = ({ loading, onSignIn, userData }) => {
   const submitHandler = (formValues) => {
     const { username, password } = formValues;
     onSignIn(username, password);
   };
+
+  if (userData) {
+    return <Redirect to="/dashboard" />;
+  }
+
   return (
     <StyledContainer>
       <StyledForm onFinish={submitHandler}>
@@ -88,6 +94,7 @@ const SignIn = ({ loading, onSignIn }) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
+    userData: state.auth.userData,
   };
 };
 

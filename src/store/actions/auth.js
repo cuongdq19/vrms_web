@@ -13,3 +13,9 @@ export const signInSuccess = (userData) => {
     userData,
   };
 };
+
+export const signOut = () => {
+  return {
+    type: actionTypes.SIGN_OUT,
+  };
+};
