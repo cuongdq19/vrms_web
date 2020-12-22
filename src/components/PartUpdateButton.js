@@ -25,7 +25,8 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
     price,
     warrantyDuration,
     monthsPerMaintenance,
-    // categoryId,
+    categoryId,
+    sectionId,
     models: partModels,
   } = part;
 
@@ -64,23 +65,34 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
   const fetchSelections = useCallback(() => {
     if (visible) {
       http
-        .get('/service-type-details/sections')
+        .get(`/service-type-details/categories/sections/${sectionId}`)
         .then(({ data }) => {
-          const sections = data.map(({ sectionName, sectionId }) => ({
-            label: sectionName,
-            value: sectionId,
-            isLeaf: false,
+          const cateOptions = data.map((cate) => ({
+            label: cate.name,
+            value: cate.id,
           }));
-          setSections(sections);
-          return http.get('/manufacturers');
+          return http.get('/service-type-details/sections').then(({ data }) => {
+            const sectionOptions = data.map(
+              ({ sectionId: sectId, sectionName: sectName }) => ({
+                label: sectName,
+                value: sectId,
+                isLeaf: false,
+                children: sectId === sectionId && cateOptions,
+              })
+            );
+            setSections(sectionOptions);
+          });
         })
-        .then(({ data }) => {
-          setManufacturers(data);
-          return http.get('/models');
+        .then(() => {
+          return http
+            .get('/manufacturers')
+            .then(({ data }) => setManufacturers(data));
         })
-        .then(({ data }) => setModels(data));
+        .then(() => {
+          return http.get('/models').then(({ data }) => setModels(data));
+        });
     }
-  }, [visible]);
+  }, [visible, sectionId]);
 
   useEffect(() => {
     fetchSelections();
@@ -94,10 +106,12 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
       price,
       warrantyDuration,
       monthsPerMaintenance,
-      categoryId: [],
+      categoryId: [sectionId, categoryId],
       modelIds: partModels.map((model) => model.id),
     });
   }, [
+    categoryId,
+    sectionId,
     description,
     form,
     id,
