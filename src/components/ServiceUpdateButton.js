@@ -1,4 +1,3 @@
-import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -11,19 +10,14 @@ import {
   Select,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import http from '../http';
 
 const { Option } = Select;
 
 const ServiceUpdateButton = ({ service, onSuccess, children }) => {
-  // console.log(service);
-  // const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
-  // const [serviceTypes, setServiceTypes] = useState([]);
-  // const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
 
@@ -35,12 +29,6 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
     form.resetFields();
     setVisible(false);
   };
-
-  // const serviceTypeChangedHandler = (typeId) => {
-  //   http
-  //     .post('/service-type-details', [typeId])
-  //     .then(({ data }) => setServiceTypeDetails(data));
-  // };
 
   const manufacturerChangedHandler = (manuId) => {
     http

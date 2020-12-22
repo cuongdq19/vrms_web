@@ -32,7 +32,11 @@ const Services = () => {
   }, [providerId]);
 
   const columns = [
-    { title: 'ID', dataIndex: ['typeDetail', 'id'], align: 'center' },
+    {
+      title: 'ID',
+      dataIndex: ['typeDetail', 'id'],
+      align: 'center',
+    },
     {
       title: 'Service Type',
       dataIndex: ['typeDetail', 'typeName'],
@@ -125,7 +129,7 @@ const Services = () => {
                       serviceId={id}
                       onSuccess={fetchServicesData}
                     >
-                      Delete
+                      Remove
                     </ServiceRemoveButton>
                   );
                 },
