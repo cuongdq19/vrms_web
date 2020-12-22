@@ -10,6 +10,7 @@ import http from '../http';
 import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
 import { calculateTotalPrice } from '../utils';
+import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 
 const Header = styled.div`
   display: flex;
@@ -67,6 +68,15 @@ const Requests = () => {
         >
           Confirm
         </RequestConfirmButton>
+      ),
+    },
+    {
+      align: 'center',
+      title: 'Completed',
+      render: (_, record) => (
+        <RequestCompleteWorkButton id={record.id} onSuccess={fetchRequestsData}>
+          Completed
+        </RequestCompleteWorkButton>
       ),
     },
   ];
