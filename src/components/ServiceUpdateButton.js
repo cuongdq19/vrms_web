@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
   Select,
@@ -17,12 +18,12 @@ import http from '../http';
 const { Option } = Select;
 
 const ServiceUpdateButton = ({ service, onSuccess, children }) => {
-  console.log(service);
-  const providerId = useSelector((state) => state.auth.userData.providerId);
+  // console.log(service);
+  // const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
-  const [serviceTypes, setServiceTypes] = useState([]);
-  const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
+  // const [serviceTypes, setServiceTypes] = useState([]);
+  // const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
 
@@ -35,11 +36,11 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
     setVisible(false);
   };
 
-  const serviceTypeChangedHandler = (typeId) => {
-    http
-      .post('/service-type-details', [typeId])
-      .then(({ data }) => setServiceTypeDetails(data));
-  };
+  // const serviceTypeChangedHandler = (typeId) => {
+  //   http
+  //     .post('/service-type-details', [typeId])
+  //     .then(({ data }) => setServiceTypeDetails(data));
+  // };
 
   const manufacturerChangedHandler = (manuId) => {
     http
@@ -48,31 +49,21 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
   };
 
   const submitHandler = (values) => {
-    const { typeDetailId, modelIds, name, price } = values;
-    const reqBody = {
-      typeDetailId,
-      groupPriceRequest: {
-        modelIds,
-        name,
-        price,
-      },
-    };
+    const { id, modelIds, name, price } = values;
     http
-      .post(`/services/providers/${providerId}`, reqBody)
+      .post(`/services/${id}`, { modelIds, name, price })
       .then(({ data }) => {
-        console.log(data);
+        message.success('Update service success');
+        closedHandler();
+        onSuccess();
       })
       .catch((err) => console.log(err));
   };
 
   const fetchSelections = useCallback(() => {
     if (visible) {
-      http
-        .get('/service-types')
-        .then(({ data }) => {
-          setServiceTypes(data);
-          return http.get('/manufacturers');
-        })
+      return http
+        .get('/manufacturers')
         .then(({ data }) => {
           setManufacturers(data);
           return http.get('/models');
@@ -98,31 +89,15 @@ const ServiceUpdateButton = ({ service, onSuccess, children }) => {
         onCancel={closedHandler}
         title="Create Service"
       >
-        <Form form={form} layout="vertical" onFinish={submitHandler}>
-          <Row gutter={8}>
-            <Col span={10}>
-              <Form.Item label="Service Type">
-                <Select onChange={serviceTypeChangedHandler}>
-                  {serviceTypes.map((st) => (
-                    <Option key={st.id} value={st.id}>
-                      {st.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={14}>
-              <Form.Item name="typeDetailId" label="Section Name">
-                <Select disabled={serviceTypeDetails.length === 0}>
-                  {serviceTypeDetails.map((std) => (
-                    <Option key={std.id} value={std.id}>
-                      {std.sectionName}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={submitHandler}
+          initialValues={service}
+        >
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
           <Form.Item name="name" label="Service Name">
             <Input placeholder="Enter service name" />
           </Form.Item>

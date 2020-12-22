@@ -20,6 +20,7 @@ const { Option } = Select;
 const Services = () => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [services, setServices] = useState([]);
+
   const fetchServicesData = useCallback(() => {
     http
       .get(`/services/providers/${providerId}`)
@@ -58,7 +59,7 @@ const Services = () => {
         columns={columns}
         expandable={{
           expandedRowRender: (record) => {
-            const { serviceDetails, typeDetail } = record;
+            const { serviceDetails } = record;
             const columns = [
               { title: 'ID', dataIndex: 'id' },
               { title: 'Name', dataIndex: 'name' },
@@ -77,14 +78,24 @@ const Services = () => {
               },
               {
                 title: 'Update',
-                render: (_, record) => (
-                  <ServiceUpdateButton
-                    service={{ serviceDetail: record, typeDetail }}
-                    onSuccess={fetchServicesData}
-                  >
-                    Update
-                  </ServiceUpdateButton>
-                ),
+                render: (_, record) => {
+                  console.log(record);
+                  const {
+                    id,
+                    name,
+                    price,
+                    group: { models },
+                  } = record;
+                  const modelIds = models.map((mod) => mod.id);
+                  return (
+                    <ServiceUpdateButton
+                      service={{ id, name, price, modelIds }}
+                      onSuccess={fetchServicesData}
+                    >
+                      Update
+                    </ServiceUpdateButton>
+                  );
+                },
               },
             ];
             return (
