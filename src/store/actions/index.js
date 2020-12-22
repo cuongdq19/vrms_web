@@ -1,3 +1,3 @@
-export { signIn, signInSuccess } from './auth';
+export { signIn, signInSuccess, signOut } from './auth';
 
 export { setOpenKeys } from './common';
