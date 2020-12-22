@@ -9,7 +9,7 @@ import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
-import { calculateTotalPrice } from '../utils';
+import { calculateRequestPrice } from '../utils';
 import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 
 const Header = styled.div`
@@ -46,7 +46,7 @@ const Requests = () => {
       align: 'center',
       title: 'Total Price',
       render: (_, record) => {
-        return calculateTotalPrice(record);
+        return calculateRequestPrice(record).total;
       },
     },
     {
@@ -63,7 +63,7 @@ const Requests = () => {
       title: 'Confirm',
       render: (_, record) => (
         <RequestConfirmButton
-          request={{ ...record, totalPrice: calculateTotalPrice(record) }}
+          request={{ ...record, price: calculateRequestPrice(record) }}
           onSuccess={fetchRequestsData}
         >
           Confirm

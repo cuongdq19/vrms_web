@@ -20,7 +20,7 @@ const generateRowContent = (title, value) => {
 };
 
 const RequestConfirmButton = ({ children, request, onSuccess }) => {
-  const { user, bookingTime, totalPrice, services, id } = request;
+  const { user, bookingTime, price, services, id } = request;
   const title = 'Confirm Request';
   const [visible, setVisible] = useState(false);
 
@@ -62,12 +62,11 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
             'Booking Time',
             moment.unix(bookingTime).format('DD/MM/YYYY HH:mm')
           )}
-          {generateRowContent('Total Price', totalPrice)}
           <Col span={24}>
             <Typography.Title level={4}>Request Detail</Typography.Title>
           </Col>
           <Col span={24}>
-            <Table dataSource={services}>
+            <Table rowKey="id" dataSource={services}>
               <ColumnGroup
                 align="center"
                 title={<Typography.Title level={4}>Services</Typography.Title>}
@@ -115,6 +114,28 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                 />
               </ColumnGroup>
             </Table>
+          </Col>
+          <Col span={8} offset={16}>
+            <Row align="middle" justify="end" style={{ textAlign: 'right' }}>
+              <Col span={8}>
+                <Typography.Text>Services:</Typography.Text>
+              </Col>
+              <Col span={16}>
+                <Typography.Title level={5}>{price.services}</Typography.Title>
+              </Col>
+              <Col span={8}>
+                <Typography.Text>Parts:</Typography.Text>
+              </Col>
+              <Col span={16}>
+                <Typography.Title level={5}>{price.parts}</Typography.Title>
+              </Col>
+              <Col span={8}>
+                <Typography.Text>Total:</Typography.Text>
+              </Col>
+              <Col span={16}>
+                <Typography.Title level={5}>{price.total}</Typography.Title>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Modal>

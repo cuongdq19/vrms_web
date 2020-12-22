@@ -15,7 +15,7 @@ export const generateUserRoleColor = (roleName) => {
   }
 };
 
-export const calculateTotalPrice = (request) => {
+export const calculateRequestPrice = (request) => {
   const { parts, services } = request;
   const partsPrice = parts.reduce((curr, part) => {
     return curr + part.price;
@@ -27,5 +27,9 @@ export const calculateTotalPrice = (request) => {
     } = service;
     return curr + servicePrice + partPrice;
   }, 0);
-  return partsPrice + servicesPrice;
+  return {
+    parts: partsPrice,
+    services: servicesPrice,
+    total: partsPrice + servicesPrice,
+  };
 };
