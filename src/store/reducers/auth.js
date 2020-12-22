@@ -16,12 +16,21 @@ const signInSuccess = (state, action) => {
   return updateObject(state, { loading: false, userData: action.userData });
 };
 
+const signOut = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    userData: null,
+  });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
       return signIn(state, action);
     case actionTypes.SIGN_IN_SUCCESS:
       return signInSuccess(state, action);
+    case actionTypes.SIGN_OUT:
+      return signOut(state, action);
     default:
       return state;
   }

@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import { Dropdown, Layout, Menu } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
   BarChartOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-import * as actions from '../store/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCar, faTools } from '@fortawesome/free-solid-svg-icons';
+
+import * as actions from '../store/actions';
+import styled from 'styled-components';
+
+const Profile = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutWrapper = ({ children }) => {
+  const userFullName = useSelector((state) => state.auth.userData.fullName);
   const dispatch = useDispatch();
   const history = useHistory();
   const openKeys = useSelector((state) => state.common.openKeys);
@@ -118,7 +127,15 @@ const LayoutWrapper = ({ children }) => {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
+        <Header
+          className="site-layout-background"
+          style={{
+            padding: 0,
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingRight: '0.75rem',
+          }}
+        >
           {React.createElement(
             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
             {
@@ -126,6 +143,28 @@ const LayoutWrapper = ({ children }) => {
               onClick: toggle,
             }
           )}
+          <div style={{ flex: 1 }} />
+          <div>{userFullName}</div>
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item onClick={() => history.push('/profile')}>
+                  Profile
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Item onClick={() => dispatch(actions.signOut())}>
+                  Sign out
+                </Menu.Item>
+              </Menu>
+            }
+            placement="bottomRight"
+          >
+            <Profile>
+              <DownOutlined
+                style={{ marginLeft: '0.5rem', fontSize: '0.6rem' }}
+              />
+            </Profile>
+          </Dropdown>
         </Header>
         <Content
           className="site-layout-background"
