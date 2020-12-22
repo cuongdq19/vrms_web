@@ -21,11 +21,9 @@ export const calculateRequestPrice = (request) => {
     return curr + part.price;
   }, 0);
   const servicesPrice = services.reduce((curr, service) => {
-    const {
-      servicePrice,
-      part: { price: partPrice },
-    } = service;
-    return curr + servicePrice + partPrice;
+    const { servicePrice, part } = service;
+    const servicePartsPrice = part ? part.price * part.quantity : 0;
+    return curr + servicePrice + servicePartsPrice;
   }, 0);
   return {
     parts: partsPrice,

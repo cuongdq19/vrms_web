@@ -102,7 +102,14 @@ const RequestCheckInButton = ({ children, request, onSuccess }) => {
         title={title}
       >
         <Form form={form} layout="vertical" onFinish={submitHandler}>
-          <Form.Item name="technicianId" label="Technician">
+          <Form.Item
+            name="technicianId"
+            label={
+              <Typography.Title level={4}>
+                Please select the technician for this request:
+              </Typography.Title>
+            }
+          >
             <Radio.Group>
               <Row justify="space-between" gutter={8}>
                 {users.map((user) => (

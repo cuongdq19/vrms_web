@@ -85,7 +85,7 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   title="Name"
                   render={(_, record) => {
                     const { part } = record;
-                    return part.partName;
+                    return part?.partName ?? '';
                   }}
                 />
                 <Column
@@ -93,7 +93,7 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   title="Quantity"
                   render={(_, record) => {
                     const { part } = record;
-                    return part.quantity;
+                    return part?.quantity ?? '';
                   }}
                 />
                 <Column
@@ -101,7 +101,7 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   title="Price"
                   render={(_, record) => {
                     const { part } = record;
-                    return part.price;
+                    return part?.price ?? '';
                   }}
                 />
                 <Column
@@ -109,7 +109,10 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   title="Total Price"
                   render={(_, record) => {
                     const { part } = record;
-                    return part.price * part.quantity;
+                    if (part) {
+                      return part.price * part.quantity;
+                    }
+                    return '';
                   }}
                 />
               </ColumnGroup>
