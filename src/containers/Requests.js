@@ -11,6 +11,7 @@ import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
 import { calculateRequestPrice } from '../utils';
 import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
+import RequestCheckoutButton from '../components/RequestCheckoutButton';
 
 const Header = styled.div`
   display: flex;
@@ -77,6 +78,18 @@ const Requests = () => {
         <RequestCompleteWorkButton id={record.id} onSuccess={fetchRequestsData}>
           Completed
         </RequestCompleteWorkButton>
+      ),
+    },
+    {
+      align: 'center',
+      title: 'Checkout',
+      render: (_, record) => (
+        <RequestCheckoutButton
+          request={{ ...record, price: calculateRequestPrice(record) }}
+          onSuccess={fetchRequestsData}
+        >
+          Checkout
+        </RequestCheckoutButton>
       ),
     },
   ];
