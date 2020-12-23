@@ -1,3 +1,7 @@
+import accounting from 'accounting';
+
+import { moneyFormat, status } from './constants';
+
 export const updateObject = (oldState, newProps) => {
   return { ...oldState, ...newProps };
 };
@@ -30,4 +34,29 @@ export const calculateRequestPrice = (request) => {
     services: servicesPrice,
     total: partsPrice + servicesPrice,
   };
+};
+
+export const formatMoney = (money) => {
+  return accounting.formatMoney(money, moneyFormat);
+};
+
+export const generateRequestStatusColor = (stat) => {
+  switch (stat) {
+    case status.Accepted:
+      return 'default';
+    case status.Arrived:
+      return '#0094FF';
+    case status.Confirmed:
+      return '#FF6A00';
+    case status.Canceled:
+      return '#FF6F6F';
+    case status.InProgress:
+      return '#0026FF';
+    case status.WorkCompleted:
+      return '#00FF90';
+    case status.Finished:
+      return '#00FF21';
+    default:
+      return 'default';
+  }
 };

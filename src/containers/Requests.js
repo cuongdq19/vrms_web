@@ -1,4 +1,4 @@
-import { Table, Typography } from 'antd';
+import { Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -9,7 +9,11 @@ import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
-import { calculateRequestPrice } from '../utils';
+import {
+  calculateRequestPrice,
+  formatMoney,
+  generateRequestStatusColor,
+} from '../utils';
 import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../components/RequestCheckoutButton';
 import RequestCanceledButton from '../components/RequestCanceledButton';
@@ -43,12 +47,21 @@ const Requests = () => {
       dataIndex: 'bookingTime',
       render: (value) => moment.unix(value).format('DD/MM/YYYY HH:mm'),
     },
-    { title: 'Status', dataIndex: 'status', align: 'center' },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      align: 'center',
+      render: (value) => {
+        const color = generateRequestStatusColor(value);
+        return <Tag color={color}>{value}</Tag>;
+      },
+    },
     {
       align: 'center',
       title: 'Total Price',
       render: (_, record) => {
-        return calculateRequestPrice(record).total;
+        const price = calculateRequestPrice(record);
+        return formatMoney(price.total);
       },
     },
     {
@@ -107,7 +120,9 @@ const Requests = () => {
   const fetchRequestsData = useCallback(() => {
     return http
       .get(`/requests/providers/${providerId}`)
-      .then(({ data }) => setRequestData(data))
+      .then(({ data }) => {
+        setRequestData(data);
+      })
       .catch((err) => console.log(err));
   }, [providerId]);
 

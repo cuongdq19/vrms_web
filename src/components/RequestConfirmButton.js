@@ -5,6 +5,7 @@ import ColumnGroup from 'antd/lib/table/ColumnGroup';
 import Column from 'antd/lib/table/Column';
 
 import http from '../http';
+import { formatMoney } from '../utils';
 
 const generateRowContent = (title, value) => {
   return (
@@ -101,7 +102,7 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   title="Price"
                   render={(_, record) => {
                     const { part } = record;
-                    return part?.price ?? '';
+                    return formatMoney(part?.price ?? '');
                   }}
                 />
                 <Column
@@ -110,7 +111,7 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                   render={(_, record) => {
                     const { part } = record;
                     if (part) {
-                      return part.price * part.quantity;
+                      return formatMoney(part.price * part.quantity);
                     }
                     return '';
                   }}
@@ -124,19 +125,25 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
                 <Typography.Text>Services:</Typography.Text>
               </Col>
               <Col span={16}>
-                <Typography.Title level={5}>{price.services}</Typography.Title>
+                <Typography.Title level={5}>
+                  {formatMoney(price.services)}
+                </Typography.Title>
               </Col>
               <Col span={8}>
                 <Typography.Text>Parts:</Typography.Text>
               </Col>
               <Col span={16}>
-                <Typography.Title level={5}>{price.parts}</Typography.Title>
+                <Typography.Title level={5}>
+                  {formatMoney(price.parts)}
+                </Typography.Title>
               </Col>
               <Col span={8}>
                 <Typography.Text>Total:</Typography.Text>
               </Col>
               <Col span={16}>
-                <Typography.Title level={5}>{price.total}</Typography.Title>
+                <Typography.Title level={5}>
+                  {formatMoney(price.total)}
+                </Typography.Title>
               </Col>
             </Row>
           </Col>
