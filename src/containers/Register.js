@@ -29,12 +29,51 @@ const FormContainer = styled.div`
   background-color: lightblue;
 `;
 
+const FormButtons = styled.div`
+  width: 30%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const { Option } = Select;
 
 const Register = () => {
   const [manufacturers, setManufacturers] = useState([]);
   const [form] = Form.useForm();
-  const submitHandler = () => {};
+
+  const submitHandler = (values) => {
+    const formData = new FormData();
+    Object.keys(values).forEach((key) => {
+      switch (key) {
+        case 'workingTime':
+          formData.append('openTime', values[key][0].unix());
+          formData.append('closeTime', values[key][1].unix());
+          break;
+        case 'slotDuration':
+          formData.append(key, values[key].unix());
+          break;
+        case 'images':
+          values[key].forEach((img) =>
+            formData.append('images', img.originFileObj)
+          );
+          break;
+        default:
+          formData.append(key, values[key]);
+          break;
+      }
+    });
+    http
+      .post('/contracts', formData)
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const fetchSelections = useCallback(() => {
     http.get('/manufacturers').then(({ data }) => {
       setManufacturers(data);
@@ -135,6 +174,12 @@ const Register = () => {
               }
             />
           </Form.Item>
+          <FormButtons>
+            <Button type="primary" onClick={() => form.submit()}>
+              Submit
+            </Button>
+            <Button onClick={() => form.resetFields()}>Reset</Button>
+          </FormButtons>
         </Form>
       </FormContainer>
     </Container>
