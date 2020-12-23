@@ -2,6 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/PrivateRoute';
+import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
 import Services from '../containers/Services';
@@ -11,6 +12,15 @@ import _404 from '../containers/_404';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
+];
+
+const adminRoutes = [
+  {
+    key: 'contracts',
+    path: '/contracts',
+    exact: true,
+    component: Contracts,
+  },
 ];
 
 const providerRoutes = [
@@ -55,6 +65,15 @@ const providerRoutes = [
 const routes = [
   ...publicRoutes.map(({ key, path, exact, component }) => (
     <Route key={key} path={path} exact={exact} component={component} />
+  )),
+  ...adminRoutes.map(({ key, path, exact, component }) => (
+    <PrivateRoute
+      roles={['ADMIN']}
+      key={key}
+      exact={exact}
+      path={path}
+      component={component}
+    />
   )),
   ...providerRoutes.map(({ key, path, exact, component }) => (
     <PrivateRoute

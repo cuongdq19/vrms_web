@@ -10,7 +10,11 @@ import {
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faTools } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCar,
+  faFileContract,
+  faTools,
+} from '@fortawesome/free-solid-svg-icons';
 
 import * as actions from '../store/actions';
 import styled from 'styled-components';
@@ -77,6 +81,12 @@ const LayoutWrapper = ({ children }) => {
       key: 'parts',
       title: 'Vehicle Parts',
       onClick: () => history.push('/parts'),
+    },
+    {
+      icon: <FontAwesomeIcon icon={faFileContract} />,
+      key: 'contracts',
+      title: 'Contracts',
+      onClick: () => history.push('/contracts'),
     },
   ];
 
