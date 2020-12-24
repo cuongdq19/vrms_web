@@ -2,8 +2,10 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/PrivateRoute';
+import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
+import Register from '../containers/Register';
 import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
@@ -11,9 +13,26 @@ import _404 from '../containers/_404';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
+  { key: 'sign-up', path: '/sign-up', exact: true, component: Register },
+];
+
+const adminRoutes = [
+  {
+    key: 'contracts',
+    path: '/contracts',
+    exact: true,
+    component: Contracts,
+  },
 ];
 
 const providerRoutes = [
+  {
+    key: 'home',
+    path: '/',
+    exact: true,
+    component: Dashboard,
+  },
+
   {
     key: 'dashboard',
     path: '/dashboard',
@@ -55,6 +74,15 @@ const providerRoutes = [
 const routes = [
   ...publicRoutes.map(({ key, path, exact, component }) => (
     <Route key={key} path={path} exact={exact} component={component} />
+  )),
+  ...adminRoutes.map(({ key, path, exact, component }) => (
+    <PrivateRoute
+      roles={['ADMIN']}
+      key={key}
+      exact={exact}
+      path={path}
+      component={component}
+    />
   )),
   ...providerRoutes.map(({ key, path, exact, component }) => (
     <PrivateRoute
