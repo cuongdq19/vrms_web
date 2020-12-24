@@ -2,6 +2,7 @@ import { Table, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ProviderConfirmButton from '../components/ProviderConfirmButton';
+import ProviderResolveButton from '../components/ProviderResolveButton';
 
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
@@ -39,6 +40,20 @@ const Contracts = () => {
           >
             Confirm
           </ProviderConfirmButton>
+        );
+      },
+    },
+    {
+      title: 'Resolve',
+      align: 'center',
+      render: (_, record) => {
+        return (
+          <ProviderResolveButton
+            contractId={record.id}
+            onSuccess={fetchContractsData}
+          >
+            Resolve
+          </ProviderResolveButton>
         );
       },
     },

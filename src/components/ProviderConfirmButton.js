@@ -61,7 +61,7 @@ const ProviderConfirmButton = ({ children, onSuccess, contract }) => {
           <Form.Item label="Provider Image">
             <Row gutter={[8, 8]}>
               {proofImageUrls.map((imageUrl, index) => (
-                <Col key={index} span={12}>
+                <Col key={index} span={8}>
                   <Image height={200} src={imageUrl} />
                 </Col>
               ))}
