@@ -9,7 +9,7 @@ import CustomMap from '../components/CustomMap';
 import { Redirect } from 'react-router-dom';
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
