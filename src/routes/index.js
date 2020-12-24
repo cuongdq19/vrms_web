@@ -9,6 +9,7 @@ import Register from '../containers/Register';
 import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
+import _403 from '../containers/_403';
 import _404 from '../containers/_404';
 
 const publicRoutes = [
@@ -25,20 +26,22 @@ const adminRoutes = [
   },
 ];
 
-const providerRoutes = [
+const adminManagerRoutes = [
   {
     key: 'home',
     path: '/',
     exact: true,
     component: Dashboard,
   },
-
   {
     key: 'dashboard',
     path: '/dashboard',
     exact: true,
     component: Dashboard,
   },
+];
+
+const providerRoutes = [
   {
     key: 'services',
     path: '/services',
@@ -75,6 +78,15 @@ const routes = [
   ...publicRoutes.map(({ key, path, exact, component }) => (
     <Route key={key} path={path} exact={exact} component={component} />
   )),
+  ...adminManagerRoutes.map(({ key, path, exact, component }) => (
+    <PrivateRoute
+      roles={['ADMIN', 'MANAGER']}
+      key={key}
+      exact={exact}
+      path={path}
+      component={component}
+    />
+  )),
   ...adminRoutes.map(({ key, path, exact, component }) => (
     <PrivateRoute
       roles={['ADMIN']}
@@ -93,6 +105,7 @@ const routes = [
       component={component}
     />
   )),
+  <Route key="_403" component={_403} path="/forbidden" />,
   <Route key="_404" component={_404} />,
 ];
 
