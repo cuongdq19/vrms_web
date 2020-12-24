@@ -22,12 +22,15 @@ export const generateUserRoleColor = (roleName) => {
 export const calculateRequestPrice = (request) => {
   const { parts, services } = request;
   const partsPrice = parts.reduce((curr, part) => {
-    return curr + part.price;
+    return curr + part.price * part.quantity;
   }, 0);
   const servicesPrice = services.reduce((curr, service) => {
-    const { servicePrice, part } = service;
-    const servicePartsPrice = part ? part.price * part.quantity : 0;
-    return curr + servicePrice + servicePartsPrice;
+    const { servicePrice, parts } = service;
+    const partsPrice = parts.reduce((curr, part) => {
+      return curr + part.price * part.quantity;
+    }, 0);
+
+    return curr + servicePrice + partsPrice;
   }, 0);
   return {
     parts: partsPrice,
