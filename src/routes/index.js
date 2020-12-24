@@ -5,6 +5,7 @@ import PrivateRoute from '../components/PrivateRoute';
 import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
+import Register from '../containers/Register';
 import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
@@ -12,6 +13,7 @@ import _404 from '../containers/_404';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
+  { key: 'sign-up', path: '/sign-up', exact: true, component: Register },
 ];
 
 const adminRoutes = [
@@ -24,6 +26,13 @@ const adminRoutes = [
 ];
 
 const providerRoutes = [
+  {
+    key: 'home',
+    path: '/',
+    exact: true,
+    component: Dashboard,
+  },
+
   {
     key: 'dashboard',
     path: '/dashboard',
