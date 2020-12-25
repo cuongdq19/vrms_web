@@ -7,6 +7,7 @@ import createSagaMiddleware from 'redux-saga';
 
 import commonReducer from './reducers/common';
 import authReducer from './reducers/auth';
+import requestsReducer from './reducers/requests';
 import watchAll from './sagas';
 
 const composeEnhancers = composeWithDevTools({});
@@ -25,6 +26,7 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   common: persistReducer(commonPersistConfig, commonReducer),
   auth: persistReducer(authPersistConfig, authReducer),
+  requests: requestsReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,6 +1,6 @@
 import { Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
 
@@ -17,6 +17,8 @@ import {
 import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../components/RequestCheckoutButton';
 import RequestCanceledButton from '../components/RequestCanceledButton';
+import RequestUpdateButton from '../components/RequestUpdateButton';
+import * as actions from '../store/actions';
 
 const Header = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ const Header = styled.div`
 `;
 
 const Requests = () => {
+  const dispatch = useDispatch();
   const [requestData, setRequestData] = useState([]);
   const providerId = useSelector((state) => state.auth.userData.providerId);
 
@@ -63,6 +66,18 @@ const Requests = () => {
         const price = calculateRequestPrice(record);
         return formatMoney(price.total);
       },
+    },
+    {
+      align: 'center',
+      title: 'Update',
+      render: (_, record) => (
+        <RequestUpdateButton
+          onClick={() => dispatch(actions.setUpdatingRequest(record))}
+          onSuccess={fetchRequestsData}
+        >
+          Update
+        </RequestUpdateButton>
+      ),
     },
     {
       align: 'center',
