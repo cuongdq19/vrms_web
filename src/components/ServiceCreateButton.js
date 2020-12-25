@@ -1,15 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  Row,
-  Select,
-} from 'antd';
+import { Button, Col, Form, Input, message, Modal, Row, Select } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -35,6 +25,7 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
 
   const closedHandler = () => {
     form.resetFields();
+    setSelectedParts([]);
     setVisible(false);
   };
 
