@@ -21,7 +21,7 @@ const { Option } = Select;
 const ServiceCreateButton = ({ children, onSuccess }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
   const [categories, setCategories] = useState([]);

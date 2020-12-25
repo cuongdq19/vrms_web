@@ -81,43 +81,43 @@ const Services = () => {
                 align: 'center',
                 width: '20%',
               },
-              {
-                title: 'Models',
-                align: 'center',
-                width: '30%',
-                render: (_, { group: { models } }) => (
-                  <Select defaultValue={models[0].id} style={{ width: '100%' }}>
-                    {models.map((mod) => (
-                      <Option key={mod.id} value={mod.id}>
-                        {mod.manufacturerName} {mod.name} {mod.fuelType}{' '}
-                        {mod.gearbox} ({mod.year})
-                      </Option>
-                    ))}
-                  </Select>
-                ),
-              },
-              {
-                title: 'Update',
-                width: '10%',
-                align: 'center',
-                render: (_, record) => {
-                  const {
-                    id,
-                    name,
-                    price,
-                    group: { models },
-                  } = record;
-                  const modelIds = models.map((mod) => mod.id);
-                  return (
-                    <ServiceUpdateButton
-                      service={{ id, name, price, modelIds }}
-                      onSuccess={fetchServicesData}
-                    >
-                      Update
-                    </ServiceUpdateButton>
-                  );
-                },
-              },
+              // {
+              //   title: 'Models',
+              //   align: 'center',
+              //   width: '30%',
+              //   render: (_, { group: { models } }) => (
+              //     <Select defaultValue={models[0].id} style={{ width: '100%' }}>
+              //       {models.map((mod) => (
+              //         <Option key={mod.id} value={mod.id}>
+              //           {mod.manufacturerName} {mod.name} {mod.fuelType}{' '}
+              //           {mod.gearbox} ({mod.year})
+              //         </Option>
+              //       ))}
+              //     </Select>
+              //   ),
+              // },
+              // {
+              //   title: 'Update',
+              //   width: '10%',
+              //   align: 'center',
+              //   render: (_, record) => {
+              //     const {
+              //       id,
+              //       name,
+              //       price,
+              //       group: { models },
+              //     } = record;
+              //     const modelIds = models.map((mod) => mod.id);
+              //     return (
+              //       <ServiceUpdateButton
+              //         service={{ id, name, price, modelIds }}
+              //         onSuccess={fetchServicesData}
+              //       >
+              //         Update
+              //       </ServiceUpdateButton>
+              //     );
+              //   },
+              // },
               {
                 title: 'Remove',
                 width: '10%',
