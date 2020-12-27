@@ -1,4 +1,3 @@
-import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -9,7 +8,7 @@ import {
   Modal,
   Row,
   Select,
-  Typography,
+  Table,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,18 +17,113 @@ import http from '../http';
 
 const { Option } = Select;
 
-const ServiceCreateButton = ({ children, onSuccess }) => {
+const PartListWithFilters = ({ onSelect, selectedModels }) => {
+  const providerId = useSelector((state) => state.auth.userData.providerId);
+  const [sections, setSections] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [parts, setParts] = useState([]);
+
+  const sectionChangedHandler = (sectionId) => {
+    http
+      .get(`/service-type-details/categories/sections/${sectionId}`)
+      .then(({ data }) => {
+        setCategories(data);
+      });
+  };
+
+  const categoryChangedHandler = (categoryId) => {
+    if (!selectedModels) {
+      http
+        .get(`/parts/categories/${categoryId}/providers/${providerId}`)
+        .then(({ data }) => {
+          setParts(data);
+        });
+    } else {
+      http
+        .post(
+          `/parts/categories/${categoryId}/providers/${providerId}`,
+          selectedModels
+        )
+        .then(({ data }) => {
+          setParts(data);
+        });
+    }
+  };
+
+  const fetchSelections = useCallback(() => {
+    http.get('/service-type-details/sections').then(({ data }) => {
+      setSections(data);
+    });
+  }, []);
+
+  const partSelectedHandler = (part) => {
+    const { models, categoryId } = part;
+    http
+      .post(
+        `/parts/categories/${categoryId}/providers/${providerId}`,
+        models.map((m) => m.id)
+      )
+      .then(({ data }) => {
+        setParts(data);
+        onSelect(part);
+      });
+  };
+
+  useEffect(() => {
+    fetchSelections();
+  }, [fetchSelections]);
+
+  return (
+    <div>
+      <Row gutter={8}>
+        <Col span={12}>
+          <Select onChange={sectionChangedHandler}>
+            {sections.map((sect) => (
+              <Option key={sect.id} value={sect.id}>
+                {sect.sectionName}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+        <Col span={12}>
+          <Select onChange={categoryChangedHandler}>
+            {categories.map((cate) => (
+              <Option key={cate.id} value={cate.id}>
+                {cate.name}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+      </Row>
+      <Table
+        rowKey="id"
+        dataSource={parts}
+        columns={[
+          { title: 'Name', align: 'center', dataIndex: 'name' },
+          { title: 'Price', align: 'center', dataIndex: 'price' },
+          {
+            title: 'Add',
+            align: 'center',
+            render: (_, part) => (
+              <Button onClick={() => partSelectedHandler(part)}>Add</Button>
+            ),
+          },
+        ]}
+      />
+    </div>
+  );
+};
+
+const ServiceCreateWithPartsButton = ({ children, onSuccess }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
-  const [parts, setParts] = useState([]);
   const [selectedParts, setSelectedParts] = useState([]);
-  const [disabledModels, setDisabledModels] = useState(false);
+  const [selectedModels, setSelectedModels] = useState(null);
 
   const clickedHandler = () => {
     setVisible(true);
@@ -37,14 +131,10 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
 
   const closedHandler = () => {
     form.resetFields();
-    setSelectedParts([]);
-    setParts([]);
     setVisible(false);
   };
 
   const serviceTypeChangedHandler = (typeId) => {
-    setDisabledModels(typeId === 3);
-
     http
       .post('/service-type-details', [typeId])
       .then(({ data }) => setServiceTypeDetails(data));
@@ -54,25 +144,6 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
     http
       .get(`/models/manufacturers/${manuId}`)
       .then(({ data }) => setModels(data));
-  };
-
-  const sectionChangedHandler = (sectionId) => {
-    http
-      .get(`/service-type-details/categories/sections/${sectionId}`)
-      .then(({ data }) => {
-        setCategories(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const categoryChangedHandler = (categoryId) => {
-    http
-      .get(`/parts/categories/${categoryId}/providers/${providerId}`)
-      .then(({ data }) => {
-        setParts(data);
-      });
   };
 
   const partSelectedHandler = (part) => {
@@ -89,15 +160,11 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
     }
     setSelectedParts(updatedSelected);
 
-    const selectedModels = form.getFieldValue('modelIds');
     if (!selectedModels) {
-      const { models, categoryId } = part;
-      form.setFieldsValue({ modelIds: models.map((m) => m.id) });
-      http
-        .get(`/parts/provider/${providerId}/vehicle-model/${models[0].id}`)
-        .then(({ data }) => {
-          setParts(data.filter((part) => part.categoryId === categoryId));
-        });
+      const { models } = part;
+      const modelIds = models.map((m) => m.id);
+      form.setFieldsValue({ modelIds });
+      setSelectedModels(modelIds);
     }
   };
 
@@ -114,38 +181,26 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
         updatedSelected.splice(index, 1);
       }
     } else {
-      // Remove
       return;
     }
     setSelectedParts(updatedSelected);
   };
 
   const submitHandler = (values) => {
-    const { typeId, typeDetailId, modelIds, name, price } = values;
-    let url = `/services/providers/${providerId}/replacing`;
-    let reqBody = {
-      typeDetailId,
-    };
-    if (typeId === 3) {
-      // Replace
-      const partQuantity = {};
-      selectedParts.forEach((part) => {
-        partQuantity[part.id] = part.quantity;
-      });
-      reqBody.groupPriceRequest = {
-        partQuantity,
-        name,
-        price,
-      };
-    } else {
-      url = `/services/providers/${providerId}/non-replacing`;
-      reqBody.serviceName = name;
-      reqBody.price = price;
-      reqBody.modelIds = modelIds;
-    }
-
+    const { typeDetailId, name, price } = values;
+    const partQuantity = {};
+    selectedParts.forEach((part) => {
+      partQuantity[part.id] = part.quantity;
+    });
     http
-      .post(url, reqBody)
+      .post(`/services/providers/${providerId}/replacing`, {
+        typeDetailId,
+        groupPriceRequest: {
+          name,
+          partQuantity,
+          price,
+        },
+      })
       .then(({ data }) => {
         message.success('Create service success.');
         closedHandler();
@@ -166,7 +221,9 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
           setManufacturers(data);
           return http.get('/models');
         })
-        .then(({ data }) => setModels(data));
+        .then(({ data }) => {
+          setModels(data);
+        });
     }
   }, [visible]);
 
@@ -176,11 +233,11 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
 
   return (
     <>
-      <Button icon={<PlusOutlined />} onClick={clickedHandler}>
+      <Button type="text" onClick={clickedHandler}>
         {children}
       </Button>
       <Modal
-        width="80%"
+        width="100%"
         centered
         maskClosable={false}
         onOk={() => form.submit()}
@@ -203,14 +260,9 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
             </Col>
             <Col span={12}>
               <Form.Item name="typeDetailId" label="Section Name">
-                <Select
-                  disabled={serviceTypeDetails.length === 0}
-                  onSelect={(_, option) => {
-                    sectionChangedHandler(option.section);
-                  }}
-                >
+                <Select disabled={serviceTypeDetails.length === 0}>
                   {serviceTypeDetails.map((std) => (
-                    <Option section={std.sectionId} key={std.id} value={std.id}>
+                    <Option key={std.id} value={std.id}>
                       {std.sectionName}
                     </Option>
                   ))}
@@ -224,10 +276,7 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
           <Row gutter={8}>
             <Col span={4}>
               <Form.Item label="Manufacturer">
-                <Select
-                  disabled={disabledModels}
-                  onChange={manufacturerChangedHandler}
-                >
+                <Select onChange={manufacturerChangedHandler}>
                   {manufacturers.map((m) => (
                     <Option key={m.id} value={m.id}>
                       {m.name}
@@ -238,7 +287,7 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
             </Col>
             <Col span={16}>
               <Form.Item label="Models" name="modelIds">
-                <Select disabled={disabledModels} mode="multiple">
+                <Select mode="multiple">
                   {models.map((model) => (
                     <Option key={model.id} value={model.id}>
                       {model.manufacturerName} {model.name} {model.fuelType}{' '}
@@ -255,60 +304,55 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
             </Col>
           </Row>
           <Row gutter={8}>
-            <Col span={12}>
-              <Row>
-                <Col span={24}>
-                  <Form.Item name="categoryId" label="Category">
-                    <Select
-                      disabled={categories.length === 0}
-                      onChange={categoryChangedHandler}
-                    >
-                      {categories.map((cate) => (
-                        <Option key={cate.id} value={cate.id}>
-                          {cate.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  {selectedParts.map((part) => (
-                    <Row key={part.id} gutter={[8, 8]}>
-                      <Col span={12}>
-                        <Typography.Text>{part.name}</Typography.Text>
-                      </Col>
-                      <Col span={4}>
-                        <Typography.Text>{part.price}</Typography.Text>
-                      </Col>
-                      <Col span={4}>
-                        <Typography.Text>{part.quantity}</Typography.Text>
-                      </Col>
-                      <Col span={4}>
-                        <Button
-                          danger
-                          onClick={() => partRemovedHandler(part.id)}
-                        >
-                          Remove
-                        </Button>
-                      </Col>
-                    </Row>
-                  ))}
-                </Col>
-              </Row>
+            <Col span={10}>
+              <Form.Item label="Available Parts">
+                <PartListWithFilters
+                  selectedModels={selectedModels}
+                  onSelect={partSelectedHandler}
+                />
+              </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="Parts">
-                {parts.map((part) => (
+            <Col span={14}>
+              <Form.Item label="Selected Parts">
+                {selectedParts.length > 0 && (
+                  <Table
+                    rowKey="id"
+                    size="small"
+                    dataSource={selectedParts}
+                    columns={[
+                      { title: 'Name', align: 'center', dataIndex: 'name' },
+                      { title: 'Price', align: 'center', dataIndex: 'price' },
+                      {
+                        title: 'Quantity',
+                        align: 'center',
+                        dataIndex: 'quantity',
+                      },
+                      {
+                        title: 'Remove',
+                        align: 'center',
+                        dataIndex: 'id',
+                        render: (partId) => (
+                          <Button
+                            onClick={() => {
+                              partRemovedHandler(partId);
+                            }}
+                          >
+                            Remove
+                          </Button>
+                        ),
+                      },
+                    ]}
+                  />
+                )}
+                {/* {selectedParts.map((part) => (
                   <Row key={part.id} gutter={[8, 8]}>
                     <Col span={16}>{part.name}</Col>
                     <Col span={4}>{part.price}</Col>
                     <Col span={4}>
-                      <Button onClick={() => partSelectedHandler(part)}>
-                        Select
-                      </Button>
+                      <Button onClick={() => {}}>Remove</Button>
                     </Col>
                   </Row>
-                ))}
+                ))} */}
               </Form.Item>
             </Col>
           </Row>
@@ -318,4 +362,4 @@ const ServiceCreateButton = ({ children, onSuccess }) => {
   );
 };
 
-export default ServiceCreateButton;
+export default ServiceCreateWithPartsButton;
