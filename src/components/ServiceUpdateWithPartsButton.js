@@ -90,19 +90,16 @@ const ServiceUpdateWithPartsButton = ({
   };
 
   const submitHandler = (values) => {
-    const { typeDetailId, name, price } = values;
+    const { name, price } = values;
     const partQuantity = {};
     selectedParts.forEach((part) => {
       partQuantity[part.id] = part.quantity;
     });
     http
-      .post(`/services/providers/${providerId}/replacing`, {
-        typeDetailId,
-        groupPriceRequest: {
-          name,
-          partQuantity,
-          price,
-        },
+      .post(`/services/${serviceDetail.id}/replacing`, {
+        name,
+        partQuantity,
+        price,
       })
       .then(({ data }) => {
         message.success('Update service success.');
@@ -197,16 +194,16 @@ const ServiceUpdateWithPartsButton = ({
               <Form.Item
                 label="Models"
                 name="modelIds"
-                rules={[
-                  () => ({
-                    validator: (rule, value) => {
-                      if (partsFilters.modelIds.length === 0) {
-                        return Promise.reject("Models can't be blank!");
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
+                // rules={[
+                //   () => ({
+                //     validator: (rule, value) => {
+                //       if (partsFilters.modelIds.length === 0) {
+                //         return Promise.reject("Models can't be blank!");
+                //       }
+                //       return Promise.resolve();
+                //     },
+                //   }),
+                // ]}
               >
                 <Select mode="multiple" value={partsFilters.modelIds}>
                   {modelsData.map((model) => (
