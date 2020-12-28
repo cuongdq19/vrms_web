@@ -2,7 +2,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Radio, Upload } from 'antd';
 import React, { useState } from 'react';
 
-import { Gender } from '../utils/constants';
+import { gender } from '../utils/constants';
 import http from '../http';
 
 const UserUpdateButton = ({ user, onSuccess, children }) => {
@@ -92,8 +92,8 @@ const UserUpdateButton = ({ user, onSuccess, children }) => {
             rules={[{ message: "Gender can't be blank!", required: true }]}
           >
             <Radio.Group>
-              {Object.keys(Gender).map((key) => (
-                <Radio key={key} value={Gender[key]}>
+              {Object.keys(gender).map((key) => (
+                <Radio key={key} value={gender[key]}>
                   {key}
                 </Radio>
               ))}

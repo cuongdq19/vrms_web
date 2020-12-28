@@ -5,3 +5,5 @@ export const SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS';
 export const SIDER_SET_OPEN_KEYS = 'SIDER_SET_OPEN_KEYS';
 
 export const SIGN_OUT = 'SIGN_OUT';
+
+export const INIT_UPDATE_REQUEST = 'INIT_UPDATE_REQUEST';

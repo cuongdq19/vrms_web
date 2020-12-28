@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import http from '../http';
 import CustomMap from '../components/CustomMap';
-import { Gender } from '../utils/constants';
+import { gender } from '../utils/constants';
 
 const { Option } = Select;
 
@@ -112,8 +112,8 @@ const ProviderResolveButton = ({ children, onSuccess, contractId }) => {
           </Form.Item>
           <Form.Item name="gender" label="Gender">
             <Radio.Group>
-              {Object.keys(Gender).map((key) => (
-                <Radio key={key} value={Gender[key]}>
+              {Object.keys(gender).map((key) => (
+                <Radio key={key} value={gender[key]}>
                   {key}
                 </Radio>
               ))}

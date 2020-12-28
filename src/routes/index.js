@@ -6,6 +6,7 @@ import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Parts from '../containers/Parts';
 import Register from '../containers/Register';
+import Requests from '../containers/Requests';
 import Services from '../containers/Services';
 import SignIn from '../containers/SignIn';
 import Users from '../containers/Users';
@@ -71,6 +72,12 @@ const providerRoutes = [
     path: '/parts',
     exact: true,
     component: Parts,
+  },
+  {
+    key: 'requests',
+    path: '/requests',
+    exact: true,
+    component: Requests,
   },
 ];
 

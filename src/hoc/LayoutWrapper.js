@@ -7,6 +7,7 @@ import {
   BarChartOutlined,
   DownOutlined,
 } from '@ant-design/icons';
+import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,10 +15,10 @@ import {
   faCar,
   faFileContract,
   faTools,
+  faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 
 import * as actions from '../store/actions';
-import styled from 'styled-components';
 
 const Profile = styled.div`
   display: flex;
@@ -87,6 +88,12 @@ const LayoutWrapper = ({ children }) => {
       key: 'contracts',
       title: 'Contracts',
       onClick: () => history.push('/contracts'),
+    },
+    {
+      icon: <FontAwesomeIcon icon={faCalendar} />,
+      key: 'requests',
+      title: 'Booking Requests',
+      onClick: () => history.push('/requests'),
     },
   ];
 
