@@ -10,20 +10,27 @@ import {
   Select,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import http from '../http';
+import * as actions from '../store/actions';
 
 const { Option } = Select;
 
-const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
+const ServiceCreateWithoutPartsButton = ({
+  children,
+  onSuccess,
+  manufacturersData,
+  modelsData,
+  serviceTypesData,
+  sectionsData,
+  onInitModifyService,
+  onFetchSections,
+  loading,
+}) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
-  const [serviceTypes, setServiceTypes] = useState([]);
-  const [serviceTypeDetails, setServiceTypeDetails] = useState([]);
-  const [manufacturers, setManufacturers] = useState([]);
-  const [models, setModels] = useState([]);
 
   const clickedHandler = () => {
     setVisible(true);
@@ -35,16 +42,10 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
   };
 
   const serviceTypeChangedHandler = (typeId) => {
-    http
-      .post('/service-type-details', [typeId])
-      .then(({ data }) => setServiceTypeDetails(data));
+    onFetchSections(typeId);
   };
 
-  const manufacturerChangedHandler = (manuId) => {
-    http
-      .get(`/models/manufacturers/${manuId}`)
-      .then(({ data }) => setModels(data));
-  };
+  const manufacturerChangedHandler = (manuId) => {};
 
   const submitHandler = (values) => {
     const { typeDetailId, modelIds, name, price } = values;
@@ -68,21 +69,9 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
 
   const fetchSelections = useCallback(() => {
     if (visible) {
-      http
-        .get('/service-types')
-        .then(({ data }) => {
-          setServiceTypes(data);
-          return http.get('/manufacturers');
-        })
-        .then(({ data }) => {
-          setManufacturers(data);
-          return http.get('/models');
-        })
-        .then(({ data }) => {
-          setModels(data);
-        });
+      onInitModifyService();
     }
-  }, [visible]);
+  }, [visible, onInitModifyService]);
 
   useEffect(() => {
     fetchSelections();
@@ -106,8 +95,8 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
           <Row gutter={8}>
             <Col span={12}>
               <Form.Item name="typeId" label="Service Type">
-                <Select onChange={serviceTypeChangedHandler}>
-                  {serviceTypes.map((st) => (
+                <Select onChange={serviceTypeChangedHandler} loading={loading}>
+                  {serviceTypesData.map((st) => (
                     <Option key={st.id} value={st.id}>
                       {st.name}
                     </Option>
@@ -117,8 +106,8 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
             </Col>
             <Col span={12}>
               <Form.Item name="typeDetailId" label="Section Name">
-                <Select disabled={serviceTypeDetails.length === 0}>
-                  {serviceTypeDetails.map((std) => (
+                <Select loading={loading}>
+                  {sectionsData.map((std) => (
                     <Option key={std.id} value={std.id}>
                       {std.sectionName}
                     </Option>
@@ -133,8 +122,8 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
           <Row gutter={8}>
             <Col span={4}>
               <Form.Item label="Manufacturer">
-                <Select onChange={manufacturerChangedHandler}>
-                  {manufacturers.map((m) => (
+                <Select onChange={manufacturerChangedHandler} loading={loading}>
+                  {manufacturersData.map((m) => (
                     <Option key={m.id} value={m.id}>
                       {m.name}
                     </Option>
@@ -144,8 +133,21 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
             </Col>
             <Col span={16}>
               <Form.Item label="Models" name="modelIds">
-                <Select mode="multiple">
-                  {models.map((model) => (
+                <Select
+                  showSearch
+                  mode="multiple"
+                  loading={loading}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => {
+                    return (
+                      option.children
+                        .join('')
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    );
+                  }}
+                >
+                  {modelsData.map((model) => (
                     <Option key={model.id} value={model.id}>
                       {model.manufacturerName} {model.name} {model.fuelType}{' '}
                       {model.gearbox} ({model.year})
@@ -166,4 +168,24 @@ const ServiceCreateWithoutPartsButton = ({ children, onSuccess }) => {
   );
 };
 
-export default ServiceCreateWithoutPartsButton;
+const mapStateToProps = (state) => {
+  return {
+    manufacturersData: state.vehicles.manufacturers,
+    modelsData: state.vehicles.models,
+    serviceTypesData: state.services.types,
+    sectionsData: state.services.sections,
+    loading: state.services.loading || state.vehicles.loading,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onInitModifyService: () => dispatch(actions.initModifyService()),
+    onFetchSections: (typeId) => dispatch(actions.fetchServiceSections(typeId)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ServiceCreateWithoutPartsButton);

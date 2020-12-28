@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import ServiceCreateWithoutPartsButton from '../components/ServiceCreateWithoutPartsButton';
 import ServiceCreateWithPartsButton from '../components/ServiceCreateWithPartsButton';
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
-// import ServiceUpdateButton from '../components/ServiceUpdateButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 
@@ -113,28 +112,14 @@ const Services = () => {
               //     </Select>
               //   ),
               // },
-              // {
-              //   title: 'Update',
-              //   width: '10%',
-              //   align: 'center',
-              //   render: (_, record) => {
-              //     const {
-              //       id,
-              //       name,
-              //       price,
-              //       group: { models },
-              //     } = record;
-              //     const modelIds = models.map((mod) => mod.id);
-              //     return (
-              //       <ServiceUpdateButton
-              //         service={{ id, name, price, modelIds }}
-              //         onSuccess={fetchServicesData}
-              //       >
-              //         Update
-              //       </ServiceUpdateButton>
-              //     );
-              //   },
-              // },
+              {
+                title: 'Update',
+                width: '10%',
+                align: 'center',
+                render: (_, record) => {
+                  return 'Update';
+                },
+              },
               {
                 title: 'Remove',
                 width: '10%',
