@@ -20,10 +20,17 @@ export const generateUserRoleColor = (roleName) => {
 };
 
 export const calculateRequestPrice = (request) => {
-  const { parts, services } = request;
-  const partsPrice = parts.reduce((curr, part) => {
-    return curr + part.price * part.quantity;
+  const { services, expenses } = request;
+
+  const expensesPrice = expenses.reduce((curr, expense) => {
+    const { price, parts } = expense;
+    const partsPrice = parts.reduce((curr, part) => {
+      return curr + part.price * part.quantity;
+    }, 0);
+
+    return curr + price + partsPrice;
   }, 0);
+
   const servicesPrice = services.reduce((curr, service) => {
     const { servicePrice, parts } = service;
     const partsPrice = parts.reduce((curr, part) => {
@@ -33,9 +40,9 @@ export const calculateRequestPrice = (request) => {
     return curr + servicePrice + partsPrice;
   }, 0);
   return {
-    parts: partsPrice,
+    expenses: expensesPrice,
     services: servicesPrice,
-    total: partsPrice + servicesPrice,
+    total: servicesPrice,
   };
 };
 
