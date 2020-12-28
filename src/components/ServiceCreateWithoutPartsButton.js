@@ -45,8 +45,6 @@ const ServiceCreateWithoutPartsButton = ({
     onFetchSections(typeId);
   };
 
-  const manufacturerChangedHandler = (manuId) => {};
-
   const submitHandler = (values) => {
     const { typeDetailId, modelIds, name, price } = values;
     let url = `/services/providers/${providerId}/non-replacing`;
@@ -94,7 +92,13 @@ const ServiceCreateWithoutPartsButton = ({
         <Form form={form} layout="vertical" onFinish={submitHandler}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Item name="typeId" label="Service Type">
+              <Form.Item
+                name="typeId"
+                label="Service Type"
+                rules={[
+                  { required: true, message: "Service Type can't be blank!" },
+                ]}
+              >
                 <Select onChange={serviceTypeChangedHandler} loading={loading}>
                   {serviceTypesData.map((st) => (
                     <Option key={st.id} value={st.id}>
@@ -105,7 +109,13 @@ const ServiceCreateWithoutPartsButton = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="typeDetailId" label="Section Name">
+              <Form.Item
+                name="typeDetailId"
+                label="Section Name"
+                rules={[
+                  { required: true, message: "Section Name can't be blank!" },
+                ]}
+              >
                 <Select loading={loading}>
                   {sectionsData.map((std) => (
                     <Option key={std.id} value={std.id}>
@@ -116,23 +126,22 @@ const ServiceCreateWithoutPartsButton = ({
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item name="name" label="Service Name">
+          <Form.Item
+            name="name"
+            label="Service Name"
+            rules={[
+              { required: true, message: "Service Name can't be blank!" },
+            ]}
+          >
             <Input placeholder="Enter service name" />
           </Form.Item>
           <Row gutter={8}>
-            <Col span={4}>
-              <Form.Item label="Manufacturer">
-                <Select onChange={manufacturerChangedHandler} loading={loading}>
-                  {manufacturersData.map((m) => (
-                    <Option key={m.id} value={m.id}>
-                      {m.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={16}>
-              <Form.Item label="Models" name="modelIds">
+            <Col span={20}>
+              <Form.Item
+                label="Models"
+                name="modelIds"
+                rules={[{ required: true, message: "Models can't be blank!" }]}
+              >
                 <Select
                   showSearch
                   mode="multiple"
@@ -157,7 +166,11 @@ const ServiceCreateWithoutPartsButton = ({
               </Form.Item>
             </Col>
             <Col span={4}>
-              <Form.Item name="price" label="Price">
+              <Form.Item
+                name="price"
+                label="Price"
+                rules={[{ required: true, message: "Price can't be blank!" }]}
+              >
                 <InputNumber style={{ width: '100%' }} type="number" min={0} />
               </Form.Item>
             </Col>

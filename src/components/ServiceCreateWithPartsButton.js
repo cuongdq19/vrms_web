@@ -137,7 +137,13 @@ const ServiceCreateWithPartsButton = ({
         <Form form={form} layout="vertical" onFinish={submitHandler}>
           <Row gutter={8}>
             <Col span={12}>
-              <Form.Item name="typeId" label="Service Type">
+              <Form.Item
+                name="typeId"
+                label="Service Type"
+                rules={[
+                  { required: true, message: "Service Type can't be blank!" },
+                ]}
+              >
                 <Select onChange={serviceTypeChangedHandler}>
                   {servicesData.serviceTypesData.map((st) => (
                     <Option key={st.id} value={st.id}>
@@ -148,7 +154,13 @@ const ServiceCreateWithPartsButton = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="typeDetailId" label="Section Name">
+              <Form.Item
+                name="typeDetailId"
+                label="Section Name"
+                rules={[
+                  { required: true, message: "Section Name can't be blank!" },
+                ]}
+              >
                 <Select disabled={servicesData.sectionsData.length === 0}>
                   {servicesData.sectionsData.map((std) => (
                     <Option key={std.id} value={std.id}>
@@ -159,12 +171,31 @@ const ServiceCreateWithPartsButton = ({
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item name="name" label="Service Name">
+          <Form.Item
+            name="name"
+            label="Service Name"
+            rules={[
+              { required: true, message: "Service Name can't be blank!" },
+            ]}
+          >
             <Input placeholder="Enter service name" />
           </Form.Item>
           <Row gutter={8}>
             <Col span={20}>
-              <Form.Item label="Models">
+              <Form.Item
+                label="Models"
+                name="modelIds"
+                rules={[
+                  () => ({
+                    validator: (rule, value) => {
+                      if (partsFilters.modelIds.length === 0) {
+                        return Promise.reject("Models can't be blank!");
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
                 <Select mode="multiple" value={partsFilters.modelIds}>
                   {modelsData.map((model) => (
                     <Option key={model.id} value={model.id}>
@@ -176,7 +207,11 @@ const ServiceCreateWithPartsButton = ({
               </Form.Item>
             </Col>
             <Col span={4}>
-              <Form.Item name="price" label="Price">
+              <Form.Item
+                name="price"
+                label="Price"
+                rules={[{ required: true, message: "Price can't be blank!" }]}
+              >
                 <InputNumber style={{ width: '100%' }} type="number" min={0} />
               </Form.Item>
             </Col>
@@ -250,7 +285,21 @@ const ServiceCreateWithPartsButton = ({
               </Form.Item>
             </Col>
             <Col span={14}>
-              <Form.Item label="Selected Parts">
+              <Form.Item
+                label="Selected Parts"
+                name="partIds"
+                rules={[
+                  () => ({
+                    validator: (rule, value) => {
+                      if (selectedParts.length === 0) {
+                        return Promise.reject("Parts can't be blank!");
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <Input hidden />
                 {selectedParts.length > 0 && (
                   <Table
                     rowKey="id"
