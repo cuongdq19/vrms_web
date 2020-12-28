@@ -1,11 +1,14 @@
-import { Select, Table, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu, Table, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import ServiceCreateButton from '../components/ServiceCreateButton';
+import ServiceCreateWithoutPartsButton from '../components/ServiceCreateWithoutPartsButton';
+import ServiceCreateWithPartsButton from '../components/ServiceCreateWithPartsButton';
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
-import ServiceUpdateButton from '../components/ServiceUpdateButton';
+import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutPartsButton';
+import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 
@@ -16,7 +19,7 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const { Option } = Select;
+// const { Option } = Select;
 
 const Services = () => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
@@ -56,9 +59,24 @@ const Services = () => {
     <LayoutWrapper>
       <Header>
         <Typography.Title level={4}>Services</Typography.Title>
-        <ServiceCreateButton onSuccess={fetchServicesData}>
-          New Service
-        </ServiceCreateButton>
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item>
+                <ServiceCreateWithPartsButton onSuccess={fetchServicesData}>
+                  With Parts
+                </ServiceCreateWithPartsButton>
+              </Menu.Item>
+              <Menu.Item>
+                <ServiceCreateWithoutPartsButton onSuccess={fetchServicesData}>
+                  Without Parts
+                </ServiceCreateWithoutPartsButton>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button icon={<PlusOutlined />}>New Service</Button>
+        </Dropdown>
       </Header>
       <Table
         rowKey={(record) => record.typeDetail.id}
@@ -66,7 +84,7 @@ const Services = () => {
         columns={columns}
         expandable={{
           expandedRowRender: (record) => {
-            const { serviceDetails } = record;
+            const { serviceDetails, typeDetail } = record;
             const columns = [
               { title: 'ID', dataIndex: 'id', align: 'center', width: '10%' },
               {
@@ -82,39 +100,31 @@ const Services = () => {
                 width: '20%',
               },
               {
-                title: 'Models',
-                align: 'center',
-                width: '30%',
-                render: (_, { group: { models } }) => (
-                  <Select defaultValue={models[0].id} style={{ width: '100%' }}>
-                    {models.map((mod) => (
-                      <Option key={mod.id} value={mod.id}>
-                        {mod.manufacturerName} {mod.name} {mod.fuelType}{' '}
-                        {mod.gearbox} ({mod.year})
-                      </Option>
-                    ))}
-                  </Select>
-                ),
-              },
-              {
                 title: 'Update',
                 width: '10%',
                 align: 'center',
                 render: (_, record) => {
-                  const {
-                    id,
-                    name,
-                    price,
-                    group: { models },
-                  } = record;
-                  const modelIds = models.map((mod) => mod.id);
+                  const { parts } = record;
+
+                  if (parts.length === 0) {
+                    return (
+                      <ServiceUpdateWithoutPartsButton
+                        onSuccess={fetchServicesData}
+                        serviceDetail={record}
+                        typeDetail={typeDetail}
+                      >
+                        Update
+                      </ServiceUpdateWithoutPartsButton>
+                    );
+                  }
                   return (
-                    <ServiceUpdateButton
-                      service={{ id, name, price, modelIds }}
+                    <ServiceUpdateWithPartsButton
                       onSuccess={fetchServicesData}
+                      serviceDetail={record}
+                      typeDetail={typeDetail}
                     >
                       Update
-                    </ServiceUpdateButton>
+                    </ServiceUpdateWithPartsButton>
                   );
                 },
               },
