@@ -16,6 +16,8 @@ export {
   initModifyServiceWithParts,
   fetchServiceSections,
   fetchServiceSectionsSuccess,
+  initUpdateService,
+  initUpdateServiceWithParts,
 } from './services';
 
 export {

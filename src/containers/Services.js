@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import ServiceCreateWithoutPartsButton from '../components/ServiceCreateWithoutPartsButton';
 import ServiceCreateWithPartsButton from '../components/ServiceCreateWithPartsButton';
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
+import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutPartsButton';
+import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
 
@@ -82,7 +84,7 @@ const Services = () => {
         columns={columns}
         expandable={{
           expandedRowRender: (record) => {
-            const { serviceDetails } = record;
+            const { serviceDetails, typeDetail } = record;
             const columns = [
               { title: 'ID', dataIndex: 'id', align: 'center', width: '10%' },
               {
@@ -97,27 +99,33 @@ const Services = () => {
                 align: 'center',
                 width: '20%',
               },
-              // {
-              //   title: 'Models',
-              //   align: 'center',
-              //   width: '30%',
-              //   render: (_, { group: { models } }) => (
-              //     <Select defaultValue={models[0].id} style={{ width: '100%' }}>
-              //       {models.map((mod) => (
-              //         <Option key={mod.id} value={mod.id}>
-              //           {mod.manufacturerName} {mod.name} {mod.fuelType}{' '}
-              //           {mod.gearbox} ({mod.year})
-              //         </Option>
-              //       ))}
-              //     </Select>
-              //   ),
-              // },
               {
                 title: 'Update',
                 width: '10%',
                 align: 'center',
                 render: (_, record) => {
-                  return 'Update';
+                  const { parts } = record;
+
+                  if (parts.length === 0) {
+                    return (
+                      <ServiceUpdateWithoutPartsButton
+                        onSuccess={fetchServicesData}
+                        serviceDetail={record}
+                        typeDetail={typeDetail}
+                      >
+                        Update
+                      </ServiceUpdateWithoutPartsButton>
+                    );
+                  }
+                  return (
+                    <ServiceUpdateWithPartsButton
+                      onSuccess={fetchServicesData}
+                      serviceDetail={record}
+                      typeDetail={typeDetail}
+                    >
+                      Update
+                    </ServiceUpdateWithPartsButton>
+                  );
                 },
               },
               {

@@ -8,6 +8,8 @@ import {
   fetchServiceTypes,
   initModifyService,
   initModifyServiceWithParts,
+  initUpdateService,
+  initUpdateServiceWithParts,
 } from './services';
 import { fetchManufacturers, fetchModels } from './vehicles';
 
@@ -31,6 +33,11 @@ function* watchServices() {
       initModifyServiceWithParts
     ),
     takeEvery(actionTypes.FETCH_SERVICE_SECTIONS, fetchServiceSections),
+    takeEvery(actionTypes.INIT_UPDATE_SERVICE, initUpdateService),
+    takeEvery(
+      actionTypes.INIT_UPDATE_SERVICE_WITH_PARTS,
+      initUpdateServiceWithParts
+    ),
   ]);
 }
 

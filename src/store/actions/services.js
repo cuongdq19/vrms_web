@@ -12,6 +12,20 @@ export const initModifyServiceWithParts = () => {
   };
 };
 
+export const initUpdateService = (typeDetail, serviceDetail) => {
+  return {
+    type: actionTypes.INIT_UPDATE_SERVICE,
+    payload: { typeDetail, serviceDetail },
+  };
+};
+
+export const initUpdateServiceWithParts = (typeDetail, serviceDetail) => {
+  return {
+    type: actionTypes.INIT_UPDATE_SERVICE_WITH_PARTS,
+    payload: { typeDetail, serviceDetail },
+  };
+};
+
 export const fetchServiceTypes = () => {
   return {
     type: actionTypes.FETCH_SERVICE_TYPES,

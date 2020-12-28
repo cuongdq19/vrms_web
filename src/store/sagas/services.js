@@ -39,6 +39,36 @@ export function* initModifyServiceWithParts(action) {
   }
 }
 
+export function* initUpdateService(action) {
+  const { typeDetail } = action.payload;
+  try {
+    yield all([
+      put(actions.fetchManufacturers()),
+      put(actions.fetchModels()),
+      put(actions.fetchServiceTypes()),
+      put(actions.fetchServiceSections(typeDetail.typeId)),
+    ]);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export function* initUpdateServiceWithParts(action) {
+  const { typeDetail } = action.payload;
+  try {
+    yield all([
+      put(actions.fetchManufacturers()),
+      put(actions.fetchModels()),
+      put(actions.fetchServiceTypes()),
+      put(actions.fetchServiceSections(typeDetail.typeId)),
+      put(actions.fetchPartSectionsWithCategories()),
+      put(actions.fetchParts()),
+    ]);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export function* fetchServiceSections(action) {
   try {
     const sectionsData = yield http
