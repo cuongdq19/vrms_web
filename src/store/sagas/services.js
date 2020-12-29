@@ -1,4 +1,4 @@
-import { all, put } from 'redux-saga/effects';
+import { all, put, select } from 'redux-saga/effects';
 import http from '../../http';
 import * as actions from '../actions';
 
@@ -75,6 +75,18 @@ export function* fetchServiceSections(action) {
       .post(`/service-type-details`, [action.typeId])
       .then(({ data }) => data);
     yield put(actions.fetchServiceSectionsSuccess(sectionsData));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export function* fetchServicesByProviderAndType(action) {
+  try {
+    const providerId = yield select((state) => state.auth.userData.providerId);
+    const servicesData = yield http
+      .get(`/services/providers/${providerId}/types/${action.typeId}`)
+      .then(({ data }) => data);
+    yield put(actions.fetchServicesSuccess(servicesData));
   } catch (error) {
     console.log(error);
   }

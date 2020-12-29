@@ -42,7 +42,7 @@ export const calculateRequestPrice = (request) => {
   return {
     expenses: expensesPrice,
     services: servicesPrice,
-    total: servicesPrice,
+    total: expensesPrice + servicesPrice,
   };
 };
 

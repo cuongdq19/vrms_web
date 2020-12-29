@@ -10,6 +10,7 @@ import authReducer from './reducers/auth';
 import vehiclesReducer from './reducers/vehicles';
 import servicesReducer from './reducers/services';
 import partsReducer from './reducers/parts';
+import requestsReducer from './reducers/requests';
 import watchAll from './sagas';
 
 const composeEnhancers = composeWithDevTools({});
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   vehicles: vehiclesReducer,
   services: servicesReducer,
   parts: partsReducer,
+  requests: requestsReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,22 +1,23 @@
 import { Table, Tag, Typography } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
 
-import RequestCreateButton from '../components/RequestCreateButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
-import http from '../http';
+import RequestCreateButton from '../components/RequestCreateButton';
 import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
+import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
+import RequestCheckoutButton from '../components/RequestCheckoutButton';
+import RequestCanceledButton from '../components/RequestCanceledButton';
+import RequestUpdateButton from '../components/RequestUpdateButton';
+import * as actions from '../store/actions';
 import {
   calculateRequestPrice,
   formatMoney,
   generateRequestStatusColor,
 } from '../utils';
-import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
-import RequestCheckoutButton from '../components/RequestCheckoutButton';
-import RequestCanceledButton from '../components/RequestCanceledButton';
 
 const Header = styled.div`
   display: flex;
@@ -25,9 +26,8 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Requests = () => {
-  const [requestData, setRequestData] = useState([]);
-  const providerId = useSelector((state) => state.auth.userData.providerId);
+const Requests = ({ onFetchRequests, requestsData }) => {
+  const dispatch = useDispatch();
 
   const columns = [
     { title: 'ID', dataIndex: 'id', align: 'center' },
@@ -67,7 +67,14 @@ const Requests = () => {
     {
       align: 'center',
       title: 'Update',
-      render: (_, record) => 'Update',
+      render: (_, record) => (
+        <RequestUpdateButton
+          requestData={record}
+          onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
+        >
+          Update
+        </RequestUpdateButton>
+      ),
     },
     {
       align: 'center',
@@ -123,14 +130,8 @@ const Requests = () => {
   ];
 
   const fetchRequestsData = useCallback(() => {
-    return http
-      .get(`/requests/providers/${providerId}`)
-      .then(({ data }) => {
-        console.log(data);
-        setRequestData(data);
-      })
-      .catch((err) => console.log(err));
-  }, [providerId]);
+    onFetchRequests();
+  }, [onFetchRequests]);
 
   useEffect(() => {
     fetchRequestsData();
@@ -142,9 +143,21 @@ const Requests = () => {
         <Typography.Title level={4}>Requests</Typography.Title>
         <RequestCreateButton>Create Request</RequestCreateButton>
       </Header>
-      <Table dataSource={requestData} columns={columns} rowKey="id" />
+      <Table dataSource={requestsData} columns={columns} rowKey="id" />
     </LayoutWrapper>
   );
 };
 
-export default Requests;
+const mapStateToProps = (state) => {
+  return {
+    requestsData: state.requests.requests,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFetchRequests: () => dispatch(actions.fetchRequests()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Requests);

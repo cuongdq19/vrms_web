@@ -3,7 +3,9 @@ import { all, takeEvery } from 'redux-saga/effects';
 import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
+import { fetchRequests, initUpdateRequest, updateRequest } from './requests';
 import {
+  fetchServicesByProviderAndType,
   fetchServiceSections,
   fetchServiceTypes,
   initModifyService,
@@ -38,6 +40,10 @@ function* watchServices() {
       actionTypes.INIT_UPDATE_SERVICE_WITH_PARTS,
       initUpdateServiceWithParts
     ),
+    takeEvery(
+      actionTypes.FETCH_SERVICES_BY_PROVIDER_AND_TYPE,
+      fetchServicesByProviderAndType
+    ),
   ]);
 }
 
@@ -51,6 +57,20 @@ function* watchParts() {
   ]);
 }
 
+function* watchRequests() {
+  yield all([
+    takeEvery(actionTypes.INIT_UPDATE_REQUEST, initUpdateRequest),
+    takeEvery(actionTypes.UPDATE_REQUEST, updateRequest),
+    takeEvery(actionTypes.FETCH_REQUESTS, fetchRequests),
+  ]);
+}
+
 export default function* watchAll() {
-  yield all([watchAuth(), watchVehicles(), watchServices(), watchParts()]);
+  yield all([
+    watchAuth(),
+    watchVehicles(),
+    watchServices(),
+    watchParts(),
+    watchRequests(),
+  ]);
 }
