@@ -68,3 +68,40 @@ export const updatedExpenseToRequest = (updatedExpense) => {
     updatedExpense,
   };
 };
+
+export const checkInRequest = (requestId, userId, callback) => {
+  return {
+    type: actionTypes.CHECK_IN_REQUEST,
+    requestId,
+    userId,
+    callback,
+  };
+};
+
+export const confirmRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.CONFIRM_REQUEST,
+    callback,
+    requestId,
+  };
+};
+
+export const completeRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.COMPLETE_REQUEST,
+    requestId,
+    callback,
+  };
+};
+
+export const checkoutRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.CHECK_OUT_REQUEST,
+    requestId,
+    callback,
+  };
+};
+
+export const cancelRequest = (requestId, callback) => {
+  return { type: actionTypes.CANCEL_REQUEST, requestId, callback };
+};

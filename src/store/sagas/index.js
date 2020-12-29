@@ -3,7 +3,16 @@ import { all, takeEvery } from 'redux-saga/effects';
 import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
-import { fetchRequests, initUpdateRequest, updateRequest } from './requests';
+import {
+  cancelRequest,
+  checkInRequest,
+  checkoutRequest,
+  completeRequest,
+  confirmRequest,
+  fetchRequests,
+  initUpdateRequest,
+  updateRequest,
+} from './requests';
 import {
   fetchServicesByProviderAndType,
   fetchServiceSections,
@@ -62,6 +71,11 @@ function* watchRequests() {
     takeEvery(actionTypes.INIT_UPDATE_REQUEST, initUpdateRequest),
     takeEvery(actionTypes.UPDATE_REQUEST, updateRequest),
     takeEvery(actionTypes.FETCH_REQUESTS, fetchRequests),
+    takeEvery(actionTypes.CHECK_IN_REQUEST, checkInRequest),
+    takeEvery(actionTypes.CONFIRM_REQUEST, confirmRequest),
+    takeEvery(actionTypes.COMPLETE_REQUEST, completeRequest),
+    takeEvery(actionTypes.CHECK_OUT_REQUEST, checkoutRequest),
+    takeEvery(actionTypes.CANCEL_REQUEST, cancelRequest),
   ]);
 }
 

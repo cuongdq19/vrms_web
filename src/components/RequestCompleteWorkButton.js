@@ -1,16 +1,19 @@
 import { Button, message, Popconfirm } from 'antd';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 
-import http from '../http';
+import * as actions from '../store/actions';
 
-const RequestCompleteWorkButton = ({ children, id, onSuccess }) => {
+const RequestCompleteWorkButton = ({ children, id }) => {
+  const dispatch = useDispatch();
   const text = 'Are you sure to finish this request?';
 
   const submitHandler = () => {
-    http.get(`/requests/done/${id}`).then(({ data }) => {
-      message.success('Update request success.');
-      onSuccess();
-    });
+    dispatch(
+      actions.completeRequest(id, () => {
+        message.success('Update request success.');
+      })
+    );
   };
 
   return (

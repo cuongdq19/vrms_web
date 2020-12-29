@@ -40,4 +40,9 @@ export {
   fetchRequests,
   fetchRequestsSuccess,
   updatedExpenseToRequest,
+  checkInRequest,
+  completeRequest,
+  confirmRequest,
+  checkoutRequest,
+  cancelRequest,
 } from './requests';
