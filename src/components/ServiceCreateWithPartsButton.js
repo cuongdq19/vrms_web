@@ -19,9 +19,13 @@ import * as actions from '../store/actions';
 
 const { Option } = Select;
 
+const INIT_PART_FILTERS = {
+  modelIds: [],
+  categoryId: 0,
+};
+
 const ServiceCreateWithPartsButton = ({
   children,
-  modelsData,
   servicesData,
   partsData,
   onFetchSections,
@@ -31,10 +35,7 @@ const ServiceCreateWithPartsButton = ({
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
-  const [partsFilters, setPartsFilters] = useState({
-    modelIds: [],
-    categoryId: 0,
-  });
+  const [partsFilters, setPartsFilters] = useState(INIT_PART_FILTERS);
   const [selectedParts, setSelectedParts] = useState([]);
 
   const clickedHandler = () => {
@@ -43,6 +44,8 @@ const ServiceCreateWithPartsButton = ({
 
   const closedHandler = () => {
     form.resetFields();
+    setPartsFilters(INIT_PART_FILTERS);
+    setSelectedParts([]);
     setVisible(false);
   };
 
@@ -142,6 +145,14 @@ const ServiceCreateWithPartsButton = ({
                 label="Service Type"
                 rules={[
                   { required: true, message: "Service Type can't be blank!" },
+                  () => ({
+                    validator: (rule, value) => {
+                      if (partsFilters.modelIds.length === 0) {
+                        return Promise.reject("Models can't be blank!");
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
                 ]}
               >
                 <Select onChange={serviceTypeChangedHandler}>
@@ -171,39 +182,16 @@ const ServiceCreateWithPartsButton = ({
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item
-            name="name"
-            label="Service Name"
-            rules={[
-              { required: true, message: "Service Name can't be blank!" },
-            ]}
-          >
-            <Input placeholder="Enter service name" />
-          </Form.Item>
           <Row gutter={8}>
             <Col span={20}>
               <Form.Item
-                label="Models"
-                name="modelIds"
+                name="name"
+                label="Service Name"
                 rules={[
-                  () => ({
-                    validator: (rule, value) => {
-                      if (partsFilters.modelIds.length === 0) {
-                        return Promise.reject("Models can't be blank!");
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
+                  { required: true, message: "Service Name can't be blank!" },
                 ]}
               >
-                <Select mode="multiple" value={partsFilters.modelIds}>
-                  {modelsData.map((model) => (
-                    <Option key={model.id} value={model.id}>
-                      {model.manufacturerName} {model.name} {model.fuelType}{' '}
-                      {model.gearbox} ({model.year})
-                    </Option>
-                  ))}
-                </Select>
+                <Input placeholder="Enter service name" />
               </Form.Item>
             </Col>
             <Col span={4}>
@@ -219,70 +207,61 @@ const ServiceCreateWithPartsButton = ({
           <Row gutter={8}>
             <Col span={10}>
               <Form.Item label="Available Parts">
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <Cascader
-                      onChange={([sectionId, categoryId], selectedOptions) => {
-                        setPartsFilters((curr) => ({ ...curr, categoryId }));
-                      }}
-                      options={partsData.sectionsData.map(
-                        ({ sectionId, sectionName, categories }) => ({
-                          value: sectionId,
-                          label: sectionName,
-                          children: categories.map((cate) => ({
-                            value: cate.id,
-                            label: cate.name,
-                          })),
-                        })
-                      )}
-                      placeholder="Please select"
-                    />
-                  </Col>
-                  <Col span={12}>
-                    {/* <Select>
-                      {categoriesData.map((cate) => (
-                        <Option key={cate.id} value={cate.id}>
-                          {cate.name}
-                        </Option>
-                      ))}
-                    </Select> */}
-                  </Col>
-                </Row>
-                <Table
-                  size="small"
-                  rowKey="id"
-                  dataSource={partsData.partsData.filter(
-                    (part) =>
-                      (partsFilters.categoryId > 0
-                        ? part.categoryId === partsFilters.categoryId
-                        : true) &&
-                      (partsFilters.modelIds.length > 0
-                        ? JSON.stringify(
-                            part.models.map((model) => model.id)
-                          ) === JSON.stringify(partsFilters.modelIds)
-                        : true)
+                <Cascader
+                  onChange={([categoryId]) => {
+                    setPartsFilters((curr) => ({ ...curr, categoryId }));
+                  }}
+                  options={partsData.sectionsData.map(
+                    ({ sectionId, sectionName, categories }) => ({
+                      value: sectionId,
+                      label: sectionName,
+                      children: categories.map((cate) => ({
+                        value: cate.id,
+                        label: cate.name,
+                      })),
+                    })
                   )}
-                  pagination={{ pageSize: 5 }}
-                  columns={[
-                    { title: 'Name', align: 'center', dataIndex: 'name' },
-                    { title: 'Price', align: 'center', dataIndex: 'price' },
-                    {
-                      title: 'Category',
-                      align: 'center',
-                      dataIndex: 'categoryName',
-                    },
-                    {
-                      title: 'Add',
-                      align: 'center',
-                      render: (_, part) => (
-                        <Button onClick={() => partSelectedHandler(part)}>
-                          Add
-                        </Button>
-                      ),
-                    },
-                  ]}
+                  placeholder="Please select"
                 />
               </Form.Item>
+              <Row gutter={8}>
+                <Col span={24}>
+                  <Table
+                    size="small"
+                    rowKey="id"
+                    dataSource={partsData.partsData.filter(
+                      (part) =>
+                        (partsFilters.categoryId > 0
+                          ? part.categoryId === partsFilters.categoryId
+                          : true) &&
+                        (partsFilters.modelIds.length > 0
+                          ? JSON.stringify(
+                              part.models.map((model) => model.id)
+                            ) === JSON.stringify(partsFilters.modelIds)
+                          : true)
+                    )}
+                    pagination={{ pageSize: 5 }}
+                    columns={[
+                      { title: 'Name', align: 'center', dataIndex: 'name' },
+                      { title: 'Price', align: 'center', dataIndex: 'price' },
+                      {
+                        title: 'Category',
+                        align: 'center',
+                        dataIndex: 'categoryName',
+                      },
+                      {
+                        title: 'Add',
+                        align: 'center',
+                        render: (_, part) => (
+                          <Button onClick={() => partSelectedHandler(part)}>
+                            Add
+                          </Button>
+                        ),
+                      },
+                    ]}
+                  />
+                </Col>
+              </Row>
             </Col>
             <Col span={14}>
               <Form.Item
@@ -300,37 +279,45 @@ const ServiceCreateWithPartsButton = ({
                 ]}
               >
                 <Input hidden />
-                {selectedParts.length > 0 && (
-                  <Table
-                    rowKey="id"
-                    size="small"
-                    dataSource={selectedParts}
-                    columns={[
-                      { title: 'Name', align: 'center', dataIndex: 'name' },
-                      { title: 'Price', align: 'center', dataIndex: 'price' },
-                      {
-                        title: 'Quantity',
-                        align: 'center',
-                        dataIndex: 'quantity',
-                      },
-                      {
-                        title: 'Remove',
-                        align: 'center',
-                        dataIndex: 'id',
-                        render: (partId) => (
-                          <Button
-                            onClick={() => {
-                              partRemovedHandler(partId);
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        ),
-                      },
-                    ]}
-                  />
-                )}
               </Form.Item>
+              <Row gutter={8}>
+                <Col span={24}>
+                  {selectedParts.length > 0 && (
+                    <Table
+                      rowKey="id"
+                      size="small"
+                      dataSource={selectedParts}
+                      columns={[
+                        { title: 'Name', align: 'center', dataIndex: 'name' },
+                        {
+                          title: 'Price',
+                          align: 'center',
+                          dataIndex: 'price',
+                        },
+                        {
+                          title: 'Quantity',
+                          align: 'center',
+                          dataIndex: 'quantity',
+                        },
+                        {
+                          title: 'Remove',
+                          align: 'center',
+                          dataIndex: 'id',
+                          render: (partId) => (
+                            <Button
+                              onClick={() => {
+                                partRemovedHandler(partId);
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          ),
+                        },
+                      ]}
+                    />
+                  )}
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Form>

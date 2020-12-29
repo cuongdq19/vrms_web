@@ -11,6 +11,7 @@ import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutP
 import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
 import LayoutWrapper from '../hoc/LayoutWrapper';
 import http from '../http';
+import { formatMoney } from '../utils';
 
 const Header = styled.div`
   display: flex;
@@ -86,22 +87,20 @@ const Services = () => {
           expandedRowRender: (record) => {
             const { serviceDetails, typeDetail } = record;
             const columns = [
-              { title: 'ID', dataIndex: 'id', align: 'center', width: '10%' },
+              { title: 'ID', dataIndex: 'id', align: 'center' },
               {
                 title: 'Name',
                 dataIndex: 'name',
                 align: 'center',
-                width: '20%',
               },
               {
                 title: 'Price',
                 dataIndex: 'price',
                 align: 'center',
-                width: '20%',
+                render: (value) => formatMoney(value),
               },
               {
                 title: 'Update',
-                width: '10%',
                 align: 'center',
                 render: (_, record) => {
                   const { parts } = record;
@@ -130,7 +129,6 @@ const Services = () => {
               },
               {
                 title: 'Remove',
-                width: '10%',
                 align: 'center',
                 render: (_, record) => {
                   const { id } = record;

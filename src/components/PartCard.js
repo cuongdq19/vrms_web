@@ -1,6 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { formatMoney } from '../utils';
 import PartUpdateButton from './PartUpdateButton';
 
 const Card = styled.div`
@@ -57,7 +58,7 @@ const PartCard = ({ part, onSuccess }) => {
       </ImageContainer>
       <Footer>
         <Typography.Title level={4} style={{ marginBottom: 0 }}>
-          {part.price}
+          {formatMoney(part.price)}
         </Typography.Title>
         <Buttons>
           <PartUpdateButton onSuccess={onSuccess} part={part}>
