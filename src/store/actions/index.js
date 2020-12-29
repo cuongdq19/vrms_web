@@ -43,4 +43,5 @@ export {
   checkInRequest,
   completeRequest,
   confirmRequest,
+  checkoutRequest,
 } from './requests';

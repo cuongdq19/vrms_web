@@ -93,3 +93,11 @@ export const completeRequest = (requestId, callback) => {
     callback,
   };
 };
+
+export const checkoutRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.CHECK_OUT_REQUEST,
+    requestId,
+    callback,
+  };
+};

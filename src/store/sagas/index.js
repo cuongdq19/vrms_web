@@ -5,6 +5,7 @@ import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
 import {
   checkInRequest,
+  checkoutRequest,
   completeRequest,
   confirmRequest,
   fetchRequests,
@@ -72,6 +73,7 @@ function* watchRequests() {
     takeEvery(actionTypes.CHECK_IN_REQUEST, checkInRequest),
     takeEvery(actionTypes.CONFIRM_REQUEST, confirmRequest),
     takeEvery(actionTypes.COMPLETE_REQUEST, completeRequest),
+    takeEvery(actionTypes.CHECK_OUT_REQUEST, checkoutRequest),
   ]);
 }
 

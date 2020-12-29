@@ -75,3 +75,15 @@ export function* completeRequest(action) {
     console.log(error);
   }
 }
+
+export function* checkoutRequest(action) {
+  try {
+    yield http
+      .get(`/requests/checkout/${action.requestId}`)
+      .then(({ data }) => data);
+    yield put(actions.fetchRequests());
+    action.callback();
+  } catch (error) {
+    console.log(error);
+  }
+}
