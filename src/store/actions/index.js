@@ -41,4 +41,5 @@ export {
   fetchRequestsSuccess,
   updatedExpenseToRequest,
   checkInRequest,
+  confirmRequest,
 } from './requests';

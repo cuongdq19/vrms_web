@@ -77,3 +77,11 @@ export const checkInRequest = (requestId, userId, callback) => {
     callback,
   };
 };
+
+export const confirmRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.CONFIRM_REQUEST,
+    callback,
+    requestId,
+  };
+};

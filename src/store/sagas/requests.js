@@ -51,3 +51,15 @@ export function* checkInRequest(action) {
     console.log(error);
   }
 }
+
+export function* confirmRequest(action) {
+  try {
+    yield http
+      .get(`/requests/confirm/${action.requestId}`)
+      .then(({ data }) => data);
+    yield put(actions.fetchRequests());
+    action.callback();
+  } catch (error) {
+    console.log(error);
+  }
+}
