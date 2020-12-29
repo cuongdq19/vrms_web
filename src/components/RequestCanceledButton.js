@@ -1,16 +1,19 @@
 import { Button, message, Popconfirm } from 'antd';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 
-import http from '../http';
+import * as actions from '../store/actions';
 
-const RequestCanceledButton = ({ children, id, onSuccess }) => {
+const RequestCanceledButton = ({ children, id }) => {
   const text = 'Are you sure to cancel this request?';
+  const dispatch = useDispatch();
 
   const submitHandler = () => {
-    http.delete(`/requests/${id}`).then(({ data }) => {
-      message.info('Canceled request.');
-      onSuccess();
-    });
+    dispatch(
+      actions.cancelRequest(id, () => {
+        message.info('Canceled request.');
+      })
+    );
   };
 
   return (

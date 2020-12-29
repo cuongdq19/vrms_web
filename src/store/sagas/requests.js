@@ -87,3 +87,13 @@ export function* checkoutRequest(action) {
     console.log(error);
   }
 }
+
+export function* cancelRequest(action) {
+  try {
+    yield http.delete(`/requests/${action.requestId}`).then(({ data }) => data);
+    yield put(actions.fetchRequests());
+    action.callback();
+  } catch (error) {
+    console.log(error);
+  }
+}

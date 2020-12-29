@@ -4,6 +4,7 @@ import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
 import {
+  cancelRequest,
   checkInRequest,
   checkoutRequest,
   completeRequest,
@@ -74,6 +75,7 @@ function* watchRequests() {
     takeEvery(actionTypes.CONFIRM_REQUEST, confirmRequest),
     takeEvery(actionTypes.COMPLETE_REQUEST, completeRequest),
     takeEvery(actionTypes.CHECK_OUT_REQUEST, checkoutRequest),
+    takeEvery(actionTypes.CANCEL_REQUEST, cancelRequest),
   ]);
 }
 

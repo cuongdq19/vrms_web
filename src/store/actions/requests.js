@@ -101,3 +101,7 @@ export const checkoutRequest = (requestId, callback) => {
     callback,
   };
 };
+
+export const cancelRequest = (requestId, callback) => {
+  return { type: actionTypes.CANCEL_REQUEST, requestId, callback };
+};
