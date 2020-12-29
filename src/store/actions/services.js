@@ -52,3 +52,17 @@ export const fetchServiceSectionsSuccess = (sectionsData) => {
     payload: sectionsData,
   };
 };
+
+export const fetchServicesByProviderAndType = (typeId) => {
+  return {
+    type: actionTypes.FETCH_SERVICES_BY_PROVIDER_AND_TYPE,
+    typeId,
+  };
+};
+
+export const fetchServicesSuccess = (servicesData) => {
+  return {
+    type: actionTypes.FETCH_SERVICES_SUCCESS,
+    payload: servicesData,
+  };
+};

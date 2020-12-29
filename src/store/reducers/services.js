@@ -4,6 +4,7 @@ import * as actionTypes from '../actions/actionTypes';
 const initialState = {
   types: [],
   sections: [],
+  services: [],
   loading: false,
   initModify: false,
 };
@@ -23,6 +24,13 @@ const fetchServiceSectionsSuccess = (state, action) => {
   });
 };
 
+const fetchServicesSuccess = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    services: action.payload,
+  });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.FETCH_SERVICE_TYPES:
@@ -32,6 +40,8 @@ const reducer = (state = initialState, action) => {
       return fetchServiceTypesSuccess(state, action);
     case actionTypes.FETCH_SERVICE_SECTIONS_SUCCESS:
       return fetchServiceSectionsSuccess(state, action);
+    case actionTypes.FETCH_SERVICES_SUCCESS:
+      return fetchServicesSuccess(state, action);
     default:
       return state;
   }

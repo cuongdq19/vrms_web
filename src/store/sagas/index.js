@@ -5,6 +5,7 @@ import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
 import { initUpdateRequest } from './requests';
 import {
+  fetchServicesByProviderAndType,
   fetchServiceSections,
   fetchServiceTypes,
   initModifyService,
@@ -38,6 +39,10 @@ function* watchServices() {
     takeEvery(
       actionTypes.INIT_UPDATE_SERVICE_WITH_PARTS,
       initUpdateServiceWithParts
+    ),
+    takeEvery(
+      actionTypes.FETCH_SERVICES_BY_PROVIDER_AND_TYPE,
+      fetchServicesByProviderAndType
     ),
   ]);
 }

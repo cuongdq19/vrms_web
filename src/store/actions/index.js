@@ -18,6 +18,8 @@ export {
   fetchServiceSectionsSuccess,
   initUpdateService,
   initUpdateServiceWithParts,
+  fetchServicesByProviderAndType,
+  fetchServicesSuccess,
 } from './services';
 
 export {
@@ -27,4 +29,10 @@ export {
   fetchPartSectionsWithCategoriesSuccess,
 } from './parts';
 
-export { initUpdateRequest, resetUpdateRequest } from './requests';
+export {
+  initUpdateRequest,
+  resetUpdateRequest,
+  addServiceToRequest,
+  removeServiceFromRequest,
+  removeExpenseFromRequest,
+} from './requests';
