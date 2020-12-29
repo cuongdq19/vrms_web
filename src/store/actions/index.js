@@ -35,4 +35,9 @@ export {
   addServiceToRequest,
   removeServiceFromRequest,
   removeExpenseFromRequest,
+  addExpenseToRequest,
+  updateRequest,
+  fetchRequests,
+  fetchRequestsSuccess,
+  updatedExpenseToRequest,
 } from './requests';

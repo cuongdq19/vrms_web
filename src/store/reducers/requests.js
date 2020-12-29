@@ -5,6 +5,7 @@ const initialState = {
   id: 0,
   expenses: [],
   services: [],
+  requests: [],
 };
 
 const initUpdateRequest = (state, action) => {
@@ -16,7 +17,11 @@ const initUpdateRequest = (state, action) => {
 };
 
 const resetUpdateRequest = (state, action) => {
-  return initialState;
+  return updateObject(state, {
+    expenses: [],
+    services: [],
+    id: 0,
+  });
 };
 
 const addServiceToRequest = (state, action) => {
@@ -45,6 +50,29 @@ const removeExpenseFromRequest = (state, action) => {
   return updateObject(state, { expenses: updatedExpenses });
 };
 
+const addExpenseToRequest = (state, action) => {
+  return updateObject(state, {
+    expenses: [...state.expenses, action.newExpense],
+  });
+};
+
+const fetchRequestsSuccess = (state, action) => {
+  return updateObject(state, {
+    requests: action.requestsData,
+  });
+};
+
+const updateExpenseToRequest = (state, action) => {
+  const updatedExpenses = [...state.expenses];
+  const index = updatedExpenses.findIndex(
+    (expense) => expense.id === action.updatedExpense.id
+  );
+  updatedExpenses[index] = action.updatedExpense;
+  return updateObject(state, {
+    expenses: updatedExpenses,
+  });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.INIT_UPDATE_REQUEST:
@@ -57,6 +85,12 @@ const reducer = (state = initialState, action) => {
       return removeServiceFromRequest(state, action);
     case actionTypes.REMOVE_EXPENSE_FROM_REQUEST:
       return removeExpenseFromRequest(state, action);
+    case actionTypes.ADD_EXPENSE_TO_REQUEST:
+      return addExpenseToRequest(state, action);
+    case actionTypes.FETCH_REQUESTS_SUCCESS:
+      return fetchRequestsSuccess(state, action);
+    case actionTypes.UPDATE_EXPENSE_TO_REQUEST:
+      return updateExpenseToRequest(state, action);
     default:
       return state;
   }

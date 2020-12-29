@@ -33,3 +33,38 @@ export const removeExpenseFromRequest = (expenseId) => {
     expenseId,
   };
 };
+
+export const addExpenseToRequest = (newExpense) => {
+  return {
+    type: actionTypes.ADD_EXPENSE_TO_REQUEST,
+    newExpense,
+  };
+};
+
+export const updateRequest = (updatedRequest, callback) => {
+  return {
+    type: actionTypes.UPDATE_REQUEST,
+    updatedRequest,
+    callback,
+  };
+};
+
+export const fetchRequests = () => {
+  return {
+    type: actionTypes.FETCH_REQUESTS,
+  };
+};
+
+export const fetchRequestsSuccess = (requestsData) => {
+  return {
+    type: actionTypes.FETCH_REQUESTS_SUCCESS,
+    requestsData,
+  };
+};
+
+export const updatedExpenseToRequest = (updatedExpense) => {
+  return {
+    type: actionTypes.UPDATE_EXPENSE_TO_REQUEST,
+    updatedExpense,
+  };
+};

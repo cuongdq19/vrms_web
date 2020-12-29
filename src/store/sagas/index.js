@@ -3,7 +3,7 @@ import { all, takeEvery } from 'redux-saga/effects';
 import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
-import { initUpdateRequest } from './requests';
+import { fetchRequests, initUpdateRequest, updateRequest } from './requests';
 import {
   fetchServicesByProviderAndType,
   fetchServiceSections,
@@ -58,7 +58,11 @@ function* watchParts() {
 }
 
 function* watchRequests() {
-  yield all([takeEvery(actionTypes.INIT_UPDATE_REQUEST, initUpdateRequest)]);
+  yield all([
+    takeEvery(actionTypes.INIT_UPDATE_REQUEST, initUpdateRequest),
+    takeEvery(actionTypes.UPDATE_REQUEST, updateRequest),
+    takeEvery(actionTypes.FETCH_REQUESTS, fetchRequests),
+  ]);
 }
 
 export default function* watchAll() {

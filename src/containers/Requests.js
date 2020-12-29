@@ -1,6 +1,6 @@
 import { Table, Tag, Typography } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
 
@@ -12,7 +12,6 @@ import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../components/RequestCheckoutButton';
 import RequestCanceledButton from '../components/RequestCanceledButton';
 import RequestUpdateButton from '../components/RequestUpdateButton';
-import http from '../http';
 import * as actions from '../store/actions';
 import {
   calculateRequestPrice,
@@ -27,9 +26,7 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Requests = () => {
-  const [requestsData, setRequestsData] = useState([]);
-  const providerId = useSelector((state) => state.auth.userData.providerId);
+const Requests = ({ onFetchRequests, requestsData }) => {
   const dispatch = useDispatch();
 
   const columns = [
@@ -133,13 +130,8 @@ const Requests = () => {
   ];
 
   const fetchRequestsData = useCallback(() => {
-    http
-      .get(`/requests/providers/${providerId}`)
-      .then(({ data }) => {
-        setRequestsData(data);
-      })
-      .catch((err) => console.log(err));
-  }, [providerId]);
+    onFetchRequests();
+  }, [onFetchRequests]);
 
   useEffect(() => {
     fetchRequestsData();
@@ -156,4 +148,16 @@ const Requests = () => {
   );
 };
 
-export default Requests;
+const mapStateToProps = (state) => {
+  return {
+    requestsData: state.requests.requests,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFetchRequests: () => dispatch(actions.fetchRequests()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Requests);
