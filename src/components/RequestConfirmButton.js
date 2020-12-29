@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
-import http from '../http';
 import { formatMoney } from '../utils';
 import * as actions from '../store/actions';
 
@@ -34,6 +33,7 @@ const partColumns = [
   {
     title: 'Price',
     dataIndex: 'price',
+    render: (value) => formatMoney(value),
     align: 'center',
   },
   {
@@ -43,7 +43,7 @@ const partColumns = [
   },
   {
     title: 'Total Price',
-    render: (_, record) => record.price * record.quantity,
+    render: (_, record) => formatMoney(record.price * record.quantity),
     align: 'center',
   },
 ];
@@ -103,7 +103,12 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
               columns={[
                 { title: 'ID', dataIndex: 'serviceId', align: 'center' },
                 { title: 'Name', dataIndex: 'serviceName', align: 'center' },
-                { title: 'Price', dataIndex: 'servicePrice', align: 'center' },
+                {
+                  title: 'Price',
+                  dataIndex: 'servicePrice',
+                  render: (value) => formatMoney(value),
+                  align: 'center',
+                },
               ]}
               expandable={{
                 rowExpandable: (record) => record.parts.length > 0,
@@ -129,7 +134,12 @@ const RequestConfirmButton = ({ children, request, onSuccess }) => {
               columns={[
                 { title: 'ID', dataIndex: 'id', align: 'center' },
                 { title: 'Name', dataIndex: 'name', align: 'center' },
-                { title: 'Price', dataIndex: 'price', align: 'center' },
+                {
+                  title: 'Price',
+                  dataIndex: 'price',
+                  render: (value) => formatMoney(value),
+                  align: 'center',
+                },
               ]}
               expandable={{
                 rowExpandable: (record) => record.parts.length > 0,
