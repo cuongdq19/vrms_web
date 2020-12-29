@@ -63,3 +63,15 @@ export function* confirmRequest(action) {
     console.log(error);
   }
 }
+
+export function* completeRequest(action) {
+  try {
+    yield http
+      .get(`/requests/done/${action.requestId}`)
+      .then(({ data }) => data);
+    yield put(actions.fetchRequests());
+    action.callback();
+  } catch (error) {
+    console.log(error);
+  }
+}

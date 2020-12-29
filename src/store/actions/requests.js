@@ -85,3 +85,11 @@ export const confirmRequest = (requestId, callback) => {
     requestId,
   };
 };
+
+export const completeRequest = (requestId, callback) => {
+  return {
+    type: actionTypes.COMPLETE_REQUEST,
+    requestId,
+    callback,
+  };
+};
