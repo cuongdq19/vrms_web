@@ -68,3 +68,12 @@ export const updatedExpenseToRequest = (updatedExpense) => {
     updatedExpense,
   };
 };
+
+export const checkInRequest = (requestId, userId, callback) => {
+  return {
+    type: actionTypes.CHECK_IN_REQUEST,
+    requestId,
+    userId,
+    callback,
+  };
+};

@@ -9,8 +9,9 @@ import {
   Typography,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import * as actions from '../store/actions';
 import http from '../http';
 
 const UserCardRadio = ({ user }) => {
@@ -49,6 +50,7 @@ const RequestCheckInButton = ({ children, request, onSuccess }) => {
   const title = `Check In Request #${request.id}`;
   const { bookingTime, id: requestId } = request;
 
+  const dispatch = useDispatch();
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
@@ -64,17 +66,12 @@ const RequestCheckInButton = ({ children, request, onSuccess }) => {
   };
 
   const submitHandler = ({ technicianId }) => {
-    http
-      .post(`/requests/checkin/${requestId}/technicians/${technicianId}`)
-      .then(({ data }) => {
-        message.success('Check in request success.');
-        onSuccess().then(() => {
-          closedHandler();
-        });
+    dispatch(
+      actions.checkInRequest(requestId, technicianId, () => {
+        message.success('Check in success.');
+        closedHandler();
       })
-      .catch((err) => {
-        console.log(err);
-      });
+    );
   };
 
   const fetchAvailableUsers = useCallback(() => {

@@ -37,3 +37,17 @@ export function* fetchRequests(action) {
     console.log(error);
   }
 }
+
+export function* checkInRequest(action) {
+  try {
+    yield http
+      .post(
+        `/requests/checkin/${action.requestId}/technicians/${action.userId}`
+      )
+      .then(({ data }) => data);
+    yield put(actions.fetchRequests());
+    action.callback();
+  } catch (error) {
+    console.log(error);
+  }
+}
