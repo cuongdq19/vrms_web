@@ -48,7 +48,7 @@ const partColumns = [
   },
 ];
 
-const RequestConfirmButton = ({ children, request, onSuccess }) => {
+const RequestConfirmButton = ({ children, request }) => {
   const { user, bookingTime, price, services, expenses, id } = request;
   const title = 'Confirm Request';
   const dispatch = useDispatch();

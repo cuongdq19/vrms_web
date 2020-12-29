@@ -46,7 +46,7 @@ const UserCardRadio = ({ user }) => {
   );
 };
 
-const RequestCheckInButton = ({ children, request, onSuccess }) => {
+const RequestCheckInButton = ({ children, request }) => {
   const title = `Check In Request #${request.id}`;
   const { bookingTime, id: requestId } = request;
 
