@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import http from '../http';
 import { useSelector } from 'react-redux';
@@ -35,6 +35,7 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
   const [sections, setSections] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
+  const modelsRef = useRef(null);
   const [form] = Form.useForm();
 
   const clickedHandler = () => {
@@ -57,9 +58,10 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
   };
 
   const manufacturerChangedHandler = (manuId) => {
-    http
-      .get(`/models/manufacturers/${manuId}`)
-      .then(({ data }) => setModels(data));
+    http.get(`/models/manufacturers/${manuId}`).then(({ data }) => {
+      setModels(data);
+      modelsRef.current.focus();
+    });
   };
 
   const fetchSelections = useCallback(() => {
@@ -266,7 +268,13 @@ const PartUpdateButton = ({ children, onSuccess, part }) => {
                   },
                 ]}
               >
-                <Select mode="multiple" allowClear>
+                <Select
+                  mode="multiple"
+                  allowClear
+                  ref={(ref) => {
+                    modelsRef.current = ref;
+                  }}
+                >
                   {models.map((model) => (
                     <Option key={model.id} value={model.id}>
                       {model.manufacturerName} {model.name} {model.fuelType}{' '}

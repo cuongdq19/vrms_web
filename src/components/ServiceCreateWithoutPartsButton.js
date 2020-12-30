@@ -9,7 +9,7 @@ import {
   Row,
   Select,
 } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 
 import http from '../http';
@@ -30,6 +30,8 @@ const ServiceCreateWithoutPartsButton = ({
 }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [form] = Form.useForm();
+  const [modelsFilters, setModelsFilters] = useState({ manufacturerId: 0 });
+  const modelsRef = useRef(null);
   const [visible, setVisible] = useState(false);
 
   const clickedHandler = () => {
@@ -77,7 +79,7 @@ const ServiceCreateWithoutPartsButton = ({
 
   return (
     <>
-      <Button type="text" onClick={clickedHandler}>
+      <Button type="link" onClick={clickedHandler}>
         {children}
       </Button>
       <Modal
@@ -136,13 +138,39 @@ const ServiceCreateWithoutPartsButton = ({
             <Input placeholder="Enter service name" />
           </Form.Item>
           <Row gutter={8}>
-            <Col span={20}>
+            <Col span={4}>
+              <Form.Item label="Manufacturer">
+                <Select
+                  onChange={(value) => {
+                    setModelsFilters((curr) => ({
+                      ...curr,
+                      manufacturerId: value,
+                    }));
+                    modelsRef.current.focus();
+                  }}
+                  allowClear
+                  onClear={() =>
+                    setModelsFilters((curr) => ({ ...curr, manufacturerId: 0 }))
+                  }
+                >
+                  {manufacturersData.map((m) => (
+                    <Option key={m.id} value={m.id}>
+                      {m.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={16}>
               <Form.Item
                 label="Models"
                 name="modelIds"
                 rules={[{ required: true, message: "Models can't be blank!" }]}
               >
                 <Select
+                  ref={(ref) => {
+                    modelsRef.current = ref;
+                  }}
                   showSearch
                   mode="multiple"
                   loading={loading}
@@ -156,12 +184,18 @@ const ServiceCreateWithoutPartsButton = ({
                     );
                   }}
                 >
-                  {modelsData.map((model) => (
-                    <Option key={model.id} value={model.id}>
-                      {model.manufacturerName} {model.name} {model.fuelType}{' '}
-                      {model.gearbox} ({model.year})
-                    </Option>
-                  ))}
+                  {[...modelsData]
+                    .filter((model) =>
+                      modelsFilters.manufacturerId === 0
+                        ? true
+                        : model.manufacturerId === modelsFilters.manufacturerId
+                    )
+                    .map((model) => (
+                      <Option key={model.id} value={model.id}>
+                        {model.manufacturerName} {model.name} {model.fuelType}{' '}
+                        {model.gearbox} ({model.year})
+                      </Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>

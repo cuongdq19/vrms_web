@@ -11,7 +11,7 @@ import {
   Select,
   Upload,
 } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
 import http from '../http';
@@ -25,6 +25,7 @@ const PartCreateButton = ({ children, onSuccess }) => {
   const [sections, setSections] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
+  const modelsRef = useRef(null);
   const [form] = Form.useForm();
 
   const clickedHandler = () => {
@@ -70,7 +71,10 @@ const PartCreateButton = ({ children, onSuccess }) => {
   const manufacturerChangedHandler = (manuId) => {
     http
       .get(`/models/manufacturers/${manuId}`)
-      .then(({ data }) => setModels(data))
+      .then(({ data }) => {
+        setModels(data);
+        modelsRef.current.focus();
+      })
       .catch((err) => console.log(err));
   };
 
@@ -255,7 +259,12 @@ const PartCreateButton = ({ children, onSuccess }) => {
                   },
                 ]}
               >
-                <Select mode="multiple">
+                <Select
+                  mode="multiple"
+                  ref={(ref) => {
+                    modelsRef.current = ref;
+                  }}
+                >
                   {models.map((model) => (
                     <Option key={model.id} value={model.id}>
                       {model.manufacturerName} {model.name} {model.fuelType}{' '}
