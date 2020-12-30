@@ -67,6 +67,7 @@ const RequestCheckoutButton = ({ children, request }) => {
   const submitHandler = () => {
     dispatch(
       actions.checkoutRequest(id, () => {
+        request.checkOut();
         message.success('Request has been checkout.');
         closedHandler();
       })

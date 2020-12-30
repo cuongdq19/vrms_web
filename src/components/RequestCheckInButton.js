@@ -66,6 +66,7 @@ const RequestCheckInButton = ({ children, request }) => {
   const submitHandler = ({ technicianId }) => {
     dispatch(
       actions.checkInRequest(requestId, technicianId, () => {
+        request.checkIn();
         message.success('Check in success.');
         closedHandler();
       })
@@ -88,7 +89,9 @@ const RequestCheckInButton = ({ children, request }) => {
 
   return (
     <>
-      <Button onClick={clickedHandler}>{children}</Button>
+      <Button disabled={request.cannot('checkIn')} onClick={clickedHandler}>
+        {children}
+      </Button>
       <Modal
         width="70%"
         visible={visible}

@@ -4,13 +4,19 @@ import { useDispatch } from 'react-redux';
 
 import * as actions from '../store/actions';
 
-const RequestCanceledButton = ({ children, id }) => {
+const RequestCanceledButton = ({
+  children,
+  id,
+  disabled,
+  onStateTransition,
+}) => {
   const text = 'Are you sure to cancel this request?';
   const dispatch = useDispatch();
 
   const submitHandler = () => {
     dispatch(
       actions.cancelRequest(id, () => {
+        onStateTransition();
         message.info('Canceled request.');
       })
     );
@@ -24,7 +30,9 @@ const RequestCanceledButton = ({ children, id }) => {
       placement="left"
       title={text}
     >
-      <Button danger>{children}</Button>
+      <Button disabled={disabled} danger>
+        {children}
+      </Button>
     </Popconfirm>
   );
 };

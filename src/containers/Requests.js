@@ -101,7 +101,12 @@ const Requests = ({ onFetchRequests, requestsData }) => {
       align: 'center',
       title: 'Completed',
       render: (_, record) => (
-        <RequestCompleteWorkButton id={record.id} onSuccess={fetchRequestsData}>
+        <RequestCompleteWorkButton
+          id={record.id}
+          disabled={record.cannot('done')}
+          onStateTransition={() => record.done()}
+          onSuccess={fetchRequestsData}
+        >
           Completed
         </RequestCompleteWorkButton>
       ),
@@ -122,7 +127,12 @@ const Requests = ({ onFetchRequests, requestsData }) => {
       align: 'center',
       title: 'Canceled',
       render: (_, record) => (
-        <RequestCanceledButton id={record.id} onSuccess={fetchRequestsData}>
+        <RequestCanceledButton
+          disabled={record.cannot('cancel')}
+          onStateTransition={() => record.cancel()}
+          id={record.id}
+          onSuccess={fetchRequestsData}
+        >
           Canceled
         </RequestCanceledButton>
       ),

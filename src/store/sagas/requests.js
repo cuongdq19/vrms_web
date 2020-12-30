@@ -35,7 +35,10 @@ export function* fetchRequests(action) {
       .get(`/requests/providers/${providerId}`)
       .then(({ data }) => {
         data.forEach((req) => {
-          StateMachine.apply(req, requestStateMachineConfig);
+          StateMachine.apply(req, {
+            ...requestStateMachineConfig,
+            init: req.status,
+          });
         });
         return data;
       });
