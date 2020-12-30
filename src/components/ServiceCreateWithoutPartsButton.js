@@ -77,7 +77,7 @@ const ServiceCreateWithoutPartsButton = ({
 
   return (
     <>
-      <Button type="text" onClick={clickedHandler}>
+      <Button type="link" onClick={clickedHandler}>
         {children}
       </Button>
       <Modal

@@ -123,9 +123,11 @@ const ServiceCreateWithPartsButton = ({
     fetchSelections();
   }, [fetchSelections]);
 
+  console.log(partsFilters);
+
   return (
     <>
-      <Button type="text" onClick={clickedHandler}>
+      <Button type="link" onClick={clickedHandler}>
         {children}
       </Button>
       <Modal
@@ -208,7 +210,7 @@ const ServiceCreateWithPartsButton = ({
             <Col span={10}>
               <Form.Item label="Available Parts">
                 <Cascader
-                  onChange={([categoryId]) => {
+                  onChange={([sectionId, categoryId]) => {
                     setPartsFilters((curr) => ({ ...curr, categoryId }));
                   }}
                   options={partsData.sectionsData.map(
@@ -253,7 +255,10 @@ const ServiceCreateWithPartsButton = ({
                         title: 'Add',
                         align: 'center',
                         render: (_, part) => (
-                          <Button onClick={() => partSelectedHandler(part)}>
+                          <Button
+                            size="small"
+                            onClick={() => partSelectedHandler(part)}
+                          >
                             Add
                           </Button>
                         ),
