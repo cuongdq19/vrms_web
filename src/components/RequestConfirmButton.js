@@ -49,7 +49,9 @@ const partColumns = [
 ];
 
 const RequestConfirmButton = ({ children, request }) => {
-  const { user, bookingTime, price, services, expenses, id } = request;
+  const { user, bookingTime, price, id } = request;
+  const services = request.services.filter((ser) => ser.serviceId);
+  const expenses = request.services.filter((ser) => !ser.serviceId);
   const title = 'Confirm Request';
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
@@ -133,10 +135,10 @@ const RequestConfirmButton = ({ children, request }) => {
               rowKey="id"
               columns={[
                 { title: 'ID', dataIndex: 'id', align: 'center' },
-                { title: 'Name', dataIndex: 'name', align: 'center' },
+                { title: 'Name', dataIndex: 'serviceName', align: 'center' },
                 {
                   title: 'Price',
-                  dataIndex: 'price',
+                  dataIndex: 'servicePrice',
                   render: (value) => formatMoney(value),
                   align: 'center',
                 },
@@ -167,14 +169,7 @@ const RequestConfirmButton = ({ children, request }) => {
                   {formatMoney(price.services)}
                 </Typography.Title>
               </Col>
-              <Col span={8}>
-                <Typography.Text>Expenses:</Typography.Text>
-              </Col>
-              <Col span={16}>
-                <Typography.Title level={5}>
-                  {formatMoney(price.expenses)}
-                </Typography.Title>
-              </Col>
+
               <Col span={8}>
                 <Typography.Text>Total:</Typography.Text>
               </Col>

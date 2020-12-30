@@ -45,4 +45,5 @@ export {
   confirmRequest,
   checkoutRequest,
   cancelRequest,
+  updatePartsInRequestService,
 } from './requests';

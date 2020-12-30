@@ -15,14 +15,16 @@ import {
   Typography,
 } from 'antd';
 import { connect } from 'react-redux';
-
-import * as actions from '../store/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEdit,
   faMinusCircle,
   faPlusCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import _ from 'lodash';
+
+import * as actions from '../store/actions';
+import { formatMoney } from '../utils';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -48,10 +50,12 @@ const RequestUpdateButton = ({
   onAddExpense,
   onUpdateExpense,
   onRemoveExpense,
+  onUpdatePartsInService,
   onUpdateRequest,
   onFetchServices,
 }) => {
   const { services: requestServices, expenses: requestExpenses } = requestData;
+
   const [visible, setVisible] = useState(false);
   const [expenseInputs, setExpenseInputs] = useState(INIT_EXPENSE);
   const newService = useRef(null);
@@ -67,8 +71,21 @@ const RequestUpdateButton = ({
 
   const addServiceHandler = () => {
     if (newService.current) {
-      onAddService(newService.current);
-      newService.current = null;
+      const index = requestServices.findIndex((ser) => {
+        return ser.serviceId === newService.current.serviceId;
+      });
+      if (index < 0) {
+        onAddService({
+          ...newService.current,
+          parts: newService.current.parts.map((part) => ({
+            partId: part.id,
+            partName: part.name,
+            quantity: part.quantity,
+            price: part.price,
+          })),
+        });
+        newService.current = null;
+      }
     }
   };
 
@@ -84,11 +101,16 @@ const RequestUpdateButton = ({
 
   const addPartToExpenseHandler = (record) => {
     const updatedParts = [...expenseInputs.parts];
-    const index = updatedParts.findIndex((part) => part.id === record.id);
+    const index = updatedParts.findIndex((part) => part.partId === record.id);
     if (index >= 0) {
       updatedParts[index].quantity++;
     } else {
-      updatedParts.push({ ...record, quantity: 1 });
+      updatedParts.push({
+        partId: record.id,
+        partName: record.name,
+        price: record.price,
+        quantity: 1,
+      });
     }
     setExpenseInputs((curr) => ({
       ...curr,
@@ -98,7 +120,8 @@ const RequestUpdateButton = ({
 
   const removePartFromExpenseHandler = (partId) => {
     const updatedParts = [...expenseInputs.parts];
-    const index = updatedParts.findIndex((part) => part.id === partId);
+    console.log(updatedParts, partId);
+    const index = updatedParts.findIndex((part) => part.partId === partId);
     if (index >= 0) {
       if (updatedParts[index].quantity > 1) {
         updatedParts[index].quantity--;
@@ -118,12 +141,13 @@ const RequestUpdateButton = ({
     if (expenseInputs.id === 0) {
       // Create
       onAddExpense({
-        name: expenseInputs.name,
-        description: expenseInputs.description,
-        price: expenseInputs.price,
+        id: Math.random(),
+        serviceId: null,
+        serviceName: expenseInputs.name,
+        servicePrice: expenseInputs.price,
         parts: expenseInputs.parts.map((part) => ({
-          partId: part.id,
-          partName: part.name,
+          partId: part.partId,
+          partName: part.partName,
           price: part.price,
           quantity: part.quantity,
         })),
@@ -132,12 +156,12 @@ const RequestUpdateButton = ({
       // Update
       onUpdateExpense({
         id: expenseInputs.id,
-        name: expenseInputs.name,
-        description: expenseInputs.description,
-        price: expenseInputs.price,
+        serviceId: null,
+        serviceName: expenseInputs.name,
+        servicePrice: expenseInputs.price,
         parts: expenseInputs.parts.map((part) => ({
-          partId: part.id,
-          partName: part.name,
+          partId: part.partId,
+          partName: part.partName,
           price: part.price,
           quantity: part.quantity,
         })),
@@ -146,22 +170,55 @@ const RequestUpdateButton = ({
     setExpenseInputs(INIT_EXPENSE);
   };
 
+  const decreasePartQuantityInService = (requestService, part) => {
+    const updatedParts = [...requestService.parts];
+    const index = updatedParts.findIndex((p) => p.partId === part.partId);
+    if (index >= 0 && updatedParts[index].quantity > 0) {
+      updatedParts[index].quantity--;
+    } else {
+      return;
+    }
+    onUpdatePartsInService(requestService.serviceId, updatedParts);
+  };
+
+  const increasePartQuantityInService = (requestService, part) => {
+    const updatedParts = [...requestService.parts];
+    const index = updatedParts.findIndex((p) => p.partId === part.partId);
+    if (index >= 0) {
+      updatedParts[index].quantity++;
+    } else {
+      return;
+    }
+    onUpdatePartsInService(requestService.serviceId, updatedParts);
+  };
+
   const submitHandler = () => {
+    const servicePartMap = {};
+    requestData.services.forEach((ser) => {
+      const { serviceId, parts } = ser;
+      const partsMap = {};
+      parts.forEach((part) => {
+        partsMap[part.partId] = part.quantity;
+      });
+      servicePartMap[serviceId] = partsMap;
+    });
     const updatedRequest = {
       id: requestData.id,
+      packageMap: null,
+      servicePartMap,
       expenses: requestData.expenses.map((expense) => {
         const expenseParts = {};
         expense.parts.forEach((part) => {
           expenseParts[part.partId] = part.quantity;
         });
         return {
-          ...expense,
+          name: expense.serviceName,
+          price: expense.servicePrice,
           parts: expenseParts,
         };
       }),
-      packageIds: [],
-      serviceIds: requestData.services.map((ser) => ser.serviceId),
     };
+
     onUpdateRequest(updatedRequest, () => {
       message.success('Update success.');
       closedHandler();
@@ -193,7 +250,7 @@ const RequestUpdateButton = ({
         <Tabs centered defaultActiveKey="services">
           <TabPane tab="Services" key="services">
             <Form layout="vertical">
-              <Row gutter={[8, 8]}>
+              <Row justify="center" align="middle" gutter={[8, 8]}>
                 <Col span={6}>
                   <Form.Item label="Service Type">
                     <Select
@@ -232,9 +289,10 @@ const RequestUpdateButton = ({
                   </Form.Item>
                 </Col>
 
-                <Col span={6}>
-                  <Form.Item label="Add Service">
+                <Col span={2}>
+                  <Form.Item label="Add">
                     <Button
+                      size="small"
                       icon={<FontAwesomeIcon icon={faPlusCircle} />}
                       onClick={addServiceHandler}
                     />
@@ -263,7 +321,7 @@ const RequestUpdateButton = ({
                       </Col>
                       <Col span={24}>
                         <Typography.Text>
-                          Wages: {reqSer.servicePrice}
+                          Wages: {formatMoney(reqSer.servicePrice)}
                         </Typography.Text>
                       </Col>
                     </Row>
@@ -273,23 +331,65 @@ const RequestUpdateButton = ({
                       <Table
                         size="small"
                         dataSource={reqSer.parts}
-                        rowKey="id"
+                        rowKey="partId"
                         columns={[
-                          { title: 'ID', align: 'center', dataIndex: 'id' },
+                          { title: 'ID', align: 'center', dataIndex: 'partId' },
                           {
                             title: 'Name',
                             align: 'center',
                             dataIndex: 'partName',
                           },
                           {
-                            title: 'Quantity',
-                            align: 'center',
-                            dataIndex: 'quantity',
-                          },
-                          {
                             title: 'Price',
                             align: 'center',
                             dataIndex: 'price',
+                            render: (value) => formatMoney(value),
+                          },
+                          {
+                            title: 'Quantity',
+                            align: 'center',
+                            dataIndex: 'quantity',
+                            render: (value, record) => {
+                              return (
+                                <Row gutter={8} justify="center" align="middle">
+                                  <Col span={10}>
+                                    <Button
+                                      size="small"
+                                      icon={
+                                        <FontAwesomeIcon icon={faMinusCircle} />
+                                      }
+                                      onClick={() => {
+                                        decreasePartQuantityInService(
+                                          reqSer,
+                                          record
+                                        );
+                                      }}
+                                    />
+                                  </Col>
+                                  <Col span={4}>{value}</Col>
+                                  <Col span={10}>
+                                    <Button
+                                      size="small"
+                                      icon={
+                                        <FontAwesomeIcon icon={faPlusCircle} />
+                                      }
+                                      onClick={() => {
+                                        increasePartQuantityInService(
+                                          reqSer,
+                                          record
+                                        );
+                                      }}
+                                    />
+                                  </Col>
+                                </Row>
+                              );
+                            },
+                          },
+                          {
+                            title: 'Total Price',
+                            align: 'center',
+                            render: (_, record) =>
+                              formatMoney(record.price * record.quantity),
                           },
                         ]}
                       />
@@ -307,7 +407,7 @@ const RequestUpdateButton = ({
           </TabPane>
           <TabPane tab="Expenses" key="expenses">
             <Form layout="vertical">
-              <Row gutter={[8, 8]}>
+              <Row justify="center" gutter={[8, 8]}>
                 <Col span={6}>
                   <Form.Item label="Name">
                     <Input
@@ -317,20 +417,6 @@ const RequestUpdateButton = ({
                         setExpenseInputs((curr) => ({
                           ...curr,
                           name: event.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item label="Description">
-                    <Input
-                      size="small"
-                      value={expenseInputs.description}
-                      onChange={(event) =>
-                        setExpenseInputs((curr) => ({
-                          ...curr,
-                          description: event.target.value,
                         }))
                       }
                     />
@@ -350,9 +436,10 @@ const RequestUpdateButton = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col span={2}>
                   <Form.Item label="Add">
                     <Button
+                      size="small"
                       icon={<FontAwesomeIcon icon={faPlusCircle} />}
                       onClick={addExpenseHandler}
                     />
@@ -368,7 +455,12 @@ const RequestUpdateButton = ({
                     columns={[
                       { title: 'ID', dataIndex: 'id', align: 'center' },
                       { title: 'Name', dataIndex: 'name', align: 'center' },
-                      { title: 'Price', dataIndex: 'price', align: 'center' },
+                      {
+                        title: 'Price',
+                        dataIndex: 'price',
+                        align: 'center',
+                        render: (value) => formatMoney(value),
+                      },
                       {
                         title: 'Add',
                         align: 'center',
@@ -385,27 +477,38 @@ const RequestUpdateButton = ({
                 </Col>
                 <Col span={12}>
                   <Table
-                    rowKey="id"
+                    rowKey="partId"
                     size="small"
                     title={() => 'Selected Parts'}
                     dataSource={expenseInputs.parts}
                     pagination={{ pageSize: 5 }}
                     columns={[
-                      { title: 'ID', dataIndex: 'id', align: 'center' },
-                      { title: 'Name', dataIndex: 'name', align: 'center' },
-                      { title: 'Price', dataIndex: 'price', align: 'center' },
+                      { title: 'ID', dataIndex: 'partId', align: 'center' },
+                      { title: 'Name', dataIndex: 'partName', align: 'center' },
+                      {
+                        title: 'Price',
+                        dataIndex: 'price',
+                        align: 'center',
+                        render: (value) => formatMoney(value),
+                      },
                       {
                         title: 'Quantity',
                         dataIndex: 'quantity',
                         align: 'center',
                       },
                       {
-                        title: 'Add',
+                        title: 'Price',
+                        align: 'center',
+                        render: (_, record) =>
+                          formatMoney(record.price * record.quantity),
+                      },
+                      {
+                        title: 'Remove',
                         align: 'center',
                         render: (_, record) => (
                           <Button
                             onClick={() =>
-                              removePartFromExpenseHandler(record.id)
+                              removePartFromExpenseHandler(record.partId)
                             }
                           >
                             Remove
@@ -436,11 +539,13 @@ const RequestUpdateButton = ({
                     <Row gutter={[8, 8]}>
                       <Col span={24}>
                         <Typography.Title level={5}>
-                          {reqExp.name}
+                          {reqExp.serviceName}
                         </Typography.Title>
                       </Col>
                       <Col span={24}>
-                        <Typography.Text>Wages: {reqExp.price}</Typography.Text>
+                        <Typography.Text>
+                          Wages: {formatMoney(reqExp.servicePrice)}
+                        </Typography.Text>
                       </Col>
                     </Row>
                   </Col>
@@ -458,14 +563,21 @@ const RequestUpdateButton = ({
                             dataIndex: 'partName',
                           },
                           {
+                            title: 'Price',
+                            align: 'center',
+                            dataIndex: 'price',
+                            render: (value) => formatMoney(value),
+                          },
+                          {
                             title: 'Quantity',
                             align: 'center',
                             dataIndex: 'quantity',
                           },
                           {
-                            title: 'Price',
+                            title: 'Total Price',
                             align: 'center',
-                            dataIndex: 'price',
+                            render: (_, record) =>
+                              formatMoney(record.price * record.quantity),
                           },
                         ]}
                       />
@@ -474,15 +586,15 @@ const RequestUpdateButton = ({
                   <Col style={{ textAlign: 'center' }} span={2}>
                     <Button
                       icon={<FontAwesomeIcon icon={faEdit} />}
-                      onClick={() =>
+                      onClick={() => {
+                        const expense = _.cloneDeep(reqExp);
                         setExpenseInputs({
-                          id: reqExp.id,
-                          name: reqExp.name,
-                          description: reqExp.description,
-                          price: reqExp.price,
-                          parts: reqExp.parts,
-                        })
-                      }
+                          id: expense.id,
+                          name: expense.serviceName,
+                          price: expense.servicePrice,
+                          parts: expense.parts,
+                        });
+                      }}
                     />
                   </Col>
                   <Col style={{ textAlign: 'center' }} span={2}>
@@ -503,7 +615,11 @@ const RequestUpdateButton = ({
 
 const mapStateToProps = (state) => {
   return {
-    requestData: state.requests,
+    requestData: {
+      id: state.requests.id,
+      services: state.requests.services,
+      expenses: state.requests.expenses,
+    },
     serviceTypesData: state.services.types,
     servicesData: state.services.services,
     partsData: state.parts.parts,
@@ -527,6 +643,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actions.updatedExpenseToRequest(updatedExpense)),
     onUpdateRequest: (updatedRequest, callback) =>
       dispatch(actions.updateRequest(updatedRequest, callback)),
+    onUpdatePartsInService: (serviceId, updatedParts) =>
+      dispatch(actions.updatePartsInRequestService(serviceId, updatedParts)),
   };
 };
 

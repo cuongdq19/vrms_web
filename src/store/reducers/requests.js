@@ -11,8 +11,8 @@ const initialState = {
 const initUpdateRequest = (state, action) => {
   return updateObject(state, {
     id: action.payload.id,
-    expenses: action.payload.expenses,
-    services: action.payload.services,
+    expenses: action.payload.services.filter((ser) => !ser.serviceId),
+    services: action.payload.services.filter((ser) => ser.serviceId),
   });
 };
 
@@ -73,6 +73,17 @@ const updateExpenseToRequest = (state, action) => {
   });
 };
 
+const updatePartsInRequestService = (state, action) => {
+  const updatedServices = [...state.services];
+  const index = updatedServices.findIndex(
+    (ser) => ser.serviceId === action.serviceId
+  );
+  updatedServices[index].parts = action.updatedParts;
+  return updateObject(state, {
+    services: updatedServices,
+  });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.INIT_UPDATE_REQUEST:
@@ -91,6 +102,8 @@ const reducer = (state = initialState, action) => {
       return fetchRequestsSuccess(state, action);
     case actionTypes.UPDATE_EXPENSE_TO_REQUEST:
       return updateExpenseToRequest(state, action);
+    case actionTypes.UPDATE_PARTS_IN_REQUEST_SERVICE:
+      return updatePartsInRequestService(state, action);
     default:
       return state;
   }

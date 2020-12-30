@@ -105,3 +105,11 @@ export const checkoutRequest = (requestId, callback) => {
 export const cancelRequest = (requestId, callback) => {
   return { type: actionTypes.CANCEL_REQUEST, requestId, callback };
 };
+
+export const updatePartsInRequestService = (serviceId, updatedParts) => {
+  return {
+    type: actionTypes.UPDATE_PARTS_IN_REQUEST_SERVICE,
+    serviceId,
+    updatedParts,
+  };
+};

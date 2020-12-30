@@ -15,7 +15,7 @@ import * as actions from '../store/actions';
 import http from '../http';
 
 const UserCardRadio = ({ user }) => {
-  const { fullName, id } = user;
+  const { fullName, id, imageUrl } = user;
   return (
     <div
       style={{
@@ -33,9 +33,7 @@ const UserCardRadio = ({ user }) => {
       <div style={{ height: '10rem' }}>
         <img
           style={{ maxWidth: '100%', maxHeight: '100%' }}
-          src={
-            'https://images.unsplash.com/photo-1544806145-8ae17e81eca7?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80'
-          }
+          src={imageUrl}
           alt={fullName}
         />
       </div>
@@ -108,9 +106,9 @@ const RequestCheckInButton = ({ children, request }) => {
             }
           >
             <Radio.Group>
-              <Row justify="space-between" gutter={8}>
+              <Row justify="center" gutter={8}>
                 {users.map((user) => (
-                  <Col flex key={user.id} span={Math.floor(24 / users.length)}>
+                  <Col key={user.id} span={6}>
                     <UserCardRadio user={user} />
                   </Col>
                 ))}
