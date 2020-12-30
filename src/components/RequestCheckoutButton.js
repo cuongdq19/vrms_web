@@ -75,7 +75,9 @@ const RequestCheckoutButton = ({ children, request }) => {
 
   return (
     <>
-      <Button onClick={clickedHandler}>{children}</Button>
+      <Button disabled={request.cannot('checkOut')} onClick={clickedHandler}>
+        {children}
+      </Button>
       <Modal
         maskClosable={false}
         visible={visible}
