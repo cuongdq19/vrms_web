@@ -2,6 +2,7 @@ export const roles = {
   Manager: 'MANAGER',
   Staff: 'STAFF',
   Technician: 'TECHNICIAN',
+  Admin: 'ADMIN',
 };
 
 export const providerRoles = {
