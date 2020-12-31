@@ -1,7 +1,9 @@
 import { all, put, select } from 'redux-saga/effects';
+import * as StateMachine from 'javascript-state-machine';
 
 import * as actions from '../actions';
 import http from '../../http';
+import { requestStateMachineConfig } from '../../utils/constants';
 
 export function* initUpdateRequest(action) {
   try {
@@ -31,7 +33,15 @@ export function* fetchRequests(action) {
     const providerId = yield select((state) => state.auth.userData.providerId);
     const data = yield http
       .get(`/requests/providers/${providerId}`)
-      .then(({ data }) => data);
+      .then(({ data }) => {
+        data.forEach((req) => {
+          StateMachine.apply(req, {
+            ...requestStateMachineConfig,
+            init: req.status,
+          });
+        });
+        return data;
+      });
     yield put(actions.fetchRequestsSuccess(data));
   } catch (error) {
     console.log(error);

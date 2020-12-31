@@ -4,7 +4,12 @@ import { useDispatch } from 'react-redux';
 
 import * as actions from '../store/actions';
 
-const RequestCompleteWorkButton = ({ children, id }) => {
+const RequestCompleteWorkButton = ({
+  children,
+  id,
+  disabled,
+  onStateTransition,
+}) => {
   const dispatch = useDispatch();
   const text = 'Are you sure to finish this request?';
 
@@ -24,7 +29,7 @@ const RequestCompleteWorkButton = ({ children, id }) => {
       placement="left"
       title={text}
     >
-      <Button>{children}</Button>
+      <Button disabled={disabled}>{children}</Button>
     </Popconfirm>
   );
 };

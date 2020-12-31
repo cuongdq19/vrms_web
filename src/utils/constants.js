@@ -34,3 +34,30 @@ export const moneyFormat = {
   thousand: '.',
   precision: 0,
 };
+
+export const requestStateMachineConfig = {
+  transitions: [
+    { name: 'cancel', from: ['ACCEPTED', 'ARRIVED'], to: 'CANCELED' },
+    { name: 'checkIn', from: 'ACCEPTED', to: 'ARRIVED' },
+    { name: 'confirm', from: 'ARRIVED', to: 'CONFIRMED' },
+    { name: 'done', from: 'CONFIRMED', to: 'WORK COMPLETED' },
+    { name: 'checkOut', from: 'WORK COMPLETED', to: 'FINISHED' },
+  ],
+  methods: {
+    onCancel: () => {
+      console.log('Request canceled');
+    },
+    onCheckIn: () => {
+      console.log('Request checked in');
+    },
+    onConfirm: () => {
+      console.log('Request confirmed');
+    },
+    onDone: () => {
+      console.log('Request done');
+    },
+    onCheckOut: () => {
+      console.log('Request checked out');
+    },
+  },
+};

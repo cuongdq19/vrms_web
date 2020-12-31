@@ -67,6 +67,7 @@ const RequestConfirmButton = ({ children, request }) => {
   const submitHandler = () => {
     dispatch(
       actions.confirmRequest(id, () => {
+        request.confirm();
         message.success('Request has been confirmed.');
         closedHandler();
       })
@@ -75,7 +76,9 @@ const RequestConfirmButton = ({ children, request }) => {
 
   return (
     <>
-      <Button onClick={clickedHandler}>{children}</Button>
+      <Button disabled={request.cannot('confirm')} onClick={clickedHandler}>
+        {children}
+      </Button>
       <Modal
         maskClosable={false}
         visible={visible}

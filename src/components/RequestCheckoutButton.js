@@ -67,6 +67,7 @@ const RequestCheckoutButton = ({ children, request }) => {
   const submitHandler = () => {
     dispatch(
       actions.checkoutRequest(id, () => {
+        request.checkOut();
         message.success('Request has been checkout.');
         closedHandler();
       })
@@ -75,7 +76,9 @@ const RequestCheckoutButton = ({ children, request }) => {
 
   return (
     <>
-      <Button onClick={clickedHandler}>{children}</Button>
+      <Button disabled={request.cannot('checkOut')} onClick={clickedHandler}>
+        {children}
+      </Button>
       <Modal
         maskClosable={false}
         visible={visible}
