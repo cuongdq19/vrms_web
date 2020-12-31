@@ -36,7 +36,6 @@ export const moneyFormat = {
 };
 
 export const requestStateMachineConfig = {
-  init: 'ACCEPTED',
   transitions: [
     { name: 'cancel', from: ['ACCEPTED', 'ARRIVED'], to: 'CANCELED' },
     { name: 'checkIn', from: 'ACCEPTED', to: 'ARRIVED' },
