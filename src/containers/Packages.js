@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Table, Typography } from 'antd';
 import { connect } from 'react-redux';
 
@@ -8,6 +8,7 @@ import * as actions from '../store/actions';
 import { formatMoney } from '../utils';
 
 const Packages = ({ packagesData, loading, onFetchPackages }) => {
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   useEffect(() => {
     onFetchPackages();
   }, [onFetchPackages]);
@@ -44,6 +45,11 @@ const Packages = ({ packagesData, loading, onFetchPackages }) => {
             },
           ]}
           expandable={{
+            onExpandedRowsChange: (expandedKeys) => {
+              const latestExpandedKey = expandedKeys[expandedKeys.length - 1];
+              setExpandedRowKeys([latestExpandedKey]);
+            },
+            expandedRowKeys: expandedRowKeys,
             expandedRowRender: (record) => {
               return (
                 <Table
