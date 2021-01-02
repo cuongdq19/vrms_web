@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../components/PrivateRoute';
 import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
+import Packages from '../containers/Packages';
 import Parts from '../containers/Parts';
 import Register from '../containers/Register';
 import Requests from '../containers/Requests';
@@ -50,6 +51,12 @@ const providerRoutes = [
     component: Services,
   },
   {
+    key: 'packages',
+    path: '/packages',
+    exact: true,
+    component: Packages,
+  },
+  {
     key: 'staffs',
     path: '/staffs',
     exact: true,
@@ -78,6 +85,12 @@ const providerRoutes = [
     path: '/requests',
     exact: true,
     component: Requests,
+  },
+  {
+    key: 'packages',
+    path: '/packages',
+    exact: true,
+    component: Packages,
   },
 ];
 
