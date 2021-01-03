@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ProviderConfirmButton from '../components/ProviderConfirmButton';
 import ProviderResolveButton from '../components/ProviderResolveButton';
 
-import LayoutWrapper from '../hoc/LayoutWrapper';
+import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
 import http from '../http';
 
 const Header = styled.div`

@@ -7,9 +7,8 @@ import {
   BarChartOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCar,
@@ -18,23 +17,26 @@ import {
   faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 
-import * as actions from '../store/actions';
-import { roles } from '../utils/constants';
+import {
+  CollapsedIcon,
+  CustomContent,
+  CustomHeader,
+  Logo,
+  Profile,
+} from './layout-wrapper.styles';
+import * as actions from '../../store/actions';
+import { roles } from '../../utils/constants';
 
-const Profile = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-`;
+const { Sider } = Layout;
 
-const { Header, Sider, Content } = Layout;
-
-const LayoutWrapper = ({ children }) => {
-  const userFullName = useSelector((state) => state.auth.userData.fullName);
-  const userRole = useSelector((state) => state.auth.userData.roleName);
-  const dispatch = useDispatch();
+const LayoutWrapper = ({
+  children,
+  currentUser,
+  openKeys,
+  setOpenKeys,
+  signOut,
+}) => {
   const history = useHistory();
-  const openKeys = useSelector((state) => state.common.openKeys);
   const [collapsed, setCollapsed] = useState(false);
 
   const toggle = () => {
@@ -92,7 +94,7 @@ const LayoutWrapper = ({ children }) => {
       onClick: () => history.push('/parts'),
     },
     {
-      hidden: userRole !== roles.Admin,
+      hidden: currentUser.roleName !== roles.Admin,
       icon: <FontAwesomeIcon icon={faFileContract} />,
       key: 'contracts',
       title: 'Contracts',
@@ -109,14 +111,12 @@ const LayoutWrapper = ({ children }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
+        <Logo />
         <Menu
           theme="dark"
           mode="inline"
           openKeys={openKeys}
-          onOpenChange={(keys) =>
-            console.log(keys) || dispatch(actions.setOpenKeys(keys))
-          }
+          onOpenChange={(keys) => console.log(keys) || setOpenKeys(keys)}
         >
           {SIDER_MENU.map((submenu) =>
             Array.isArray(submenu.children) ? (
@@ -152,25 +152,13 @@ const LayoutWrapper = ({ children }) => {
           )}
         </Menu>
       </Sider>
-      <Layout className="site-layout">
-        <Header
-          className="site-layout-background"
-          style={{
-            padding: 0,
-            display: 'flex',
-            justifyContent: 'space-between',
-            paddingRight: '0.75rem',
-          }}
-        >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: 'trigger',
-              onClick: toggle,
-            }
-          )}
+      <Layout>
+        <CustomHeader>
+          <CollapsedIcon onClick={toggle}>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </CollapsedIcon>
           <div style={{ flex: 1 }} />
-          <div>{userFullName}</div>
+          <div>{currentUser.fullName}</div>
           <Dropdown
             overlay={
               <Menu>
@@ -178,9 +166,7 @@ const LayoutWrapper = ({ children }) => {
                   Profile
                 </Menu.Item>
                 <Menu.Divider />
-                <Menu.Item onClick={() => dispatch(actions.signOut())}>
-                  Sign out
-                </Menu.Item>
+                <Menu.Item onClick={signOut}>Sign out</Menu.Item>
               </Menu>
             }
             placement="bottomRight"
@@ -191,19 +177,25 @@ const LayoutWrapper = ({ children }) => {
               />
             </Profile>
           </Dropdown>
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: '24px 16px',
-            padding: 24,
-          }}
-        >
-          {children}
-        </Content>
+        </CustomHeader>
+        <CustomContent>{children}</CustomContent>
       </Layout>
     </Layout>
   );
 };
 
-export default LayoutWrapper;
+const mapStateToProps = (state) => {
+  return {
+    currentUser: state.auth.userData,
+    openKeys: state.common.openKeys,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setOpenKeys: (keys) => dispatch(actions.setOpenKeys(keys)),
+    signOut: () => dispatch(actions.signOut()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LayoutWrapper);

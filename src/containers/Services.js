@@ -9,7 +9,7 @@ import ServiceCreateWithPartsButton from '../components/ServiceCreateWithPartsBu
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
 import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutPartsButton';
 import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
-import LayoutWrapper from '../hoc/LayoutWrapper';
+import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
 import http from '../http';
 import { formatMoney } from '../utils';
 

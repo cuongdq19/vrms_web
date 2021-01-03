@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import PartCard from '../components/PartCard';
 import PartCreateButton from '../components/PartCreateButton';
-import LayoutWrapper from '../hoc/LayoutWrapper';
+import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
 import http from '../http';
 import { pageSize } from '../utils/constants';
 

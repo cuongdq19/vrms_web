@@ -4,7 +4,7 @@ import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
 
-import LayoutWrapper from '../hoc/LayoutWrapper';
+import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
 import RequestCreateButton from '../components/RequestCreateButton';
 import RequestCheckInButton from '../components/RequestCheckInButton';
 import RequestConfirmButton from '../components/RequestConfirmButton';
