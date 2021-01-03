@@ -48,4 +48,8 @@ export {
   updatePartsInRequestService,
 } from './requests';
 
-export { fetchServicePackages, fetchServicePackagesSuccess } from './packages';
+export {
+  fetchServicePackages,
+  fetchServicePackagesSuccess,
+  createServicePackage,
+} from './packages';

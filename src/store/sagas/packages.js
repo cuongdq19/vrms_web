@@ -14,3 +14,16 @@ export function* fetchServicePackages(action) {
     console.log(error);
   }
 }
+
+export function* createServicePackage(action) {
+  try {
+    const providerId = yield select((state) => state.auth.userData.providerId);
+    yield http.post(
+      `/service-packages/providers/${providerId}`,
+      action.newPackage
+    );
+    yield put(actions.fetchServicePackages());
+  } catch (error) {
+    console.log(error);
+  }
+}

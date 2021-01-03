@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Typography } from 'antd';
+import { Table, Typography } from 'antd';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 import LayoutWrapper from '../hoc/LayoutWrapper';
+import PackageCreateButton from '../components/PackageCreateButton';
 
 import * as actions from '../store/actions';
 import { formatMoney } from '../utils';
+
+const StyledHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const Packages = ({ packagesData, loading, onFetchPackages }) => {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -14,10 +22,10 @@ const Packages = ({ packagesData, loading, onFetchPackages }) => {
   }, [onFetchPackages]);
   return (
     <LayoutWrapper>
-      <div>
+      <StyledHeader>
         <h1>Packages</h1>
-        <Button>New Package</Button>
-      </div>
+        <PackageCreateButton>Create</PackageCreateButton>
+      </StyledHeader>
       <div>
         <Table
           rowKey="id"

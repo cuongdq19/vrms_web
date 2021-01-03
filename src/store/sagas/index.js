@@ -2,7 +2,7 @@ import { all, takeEvery } from 'redux-saga/effects';
 
 import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
-import { fetchServicePackages } from './packages';
+import { createServicePackage, fetchServicePackages } from './packages';
 import { fetchParts, fetchPartSectionsWithCategories } from './parts';
 import {
   cancelRequest,
@@ -83,6 +83,7 @@ function* watchRequests() {
 function* watchPackages() {
   yield all([
     takeEvery(actionTypes.FETCH_SERVICE_PACKAGES, fetchServicePackages),
+    takeEvery(actionTypes.CREATE_SERVICE_PACKAGE, createServicePackage),
   ]);
 }
 

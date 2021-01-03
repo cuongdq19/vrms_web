@@ -12,3 +12,10 @@ export const fetchServicePackagesSuccess = (packagesData) => {
     packagesData,
   };
 };
+
+export const createServicePackage = (newPackage) => {
+  return {
+    type: actionTypes.CREATE_SERVICE_PACKAGE,
+    newPackage,
+  };
+};
