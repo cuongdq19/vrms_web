@@ -19,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import * as actions from '../store/actions';
+import { roles } from '../utils/constants';
 
 const Profile = styled.div`
   display: flex;
@@ -30,6 +31,7 @@ const { Header, Sider, Content } = Layout;
 
 const LayoutWrapper = ({ children }) => {
   const userFullName = useSelector((state) => state.auth.userData.fullName);
+  const userRole = useSelector((state) => state.auth.userData.roleName);
   const dispatch = useDispatch();
   const history = useHistory();
   const openKeys = useSelector((state) => state.common.openKeys);
@@ -51,6 +53,12 @@ const LayoutWrapper = ({ children }) => {
       key: 'services',
       title: 'Services',
       onClick: () => history.push('/services'),
+    },
+    {
+      icon: <FontAwesomeIcon icon={faTools} />,
+      key: 'packages',
+      title: 'Packages',
+      onClick: () => history.push('/packages'),
     },
     {
       icon: <UserOutlined />,
@@ -84,6 +92,7 @@ const LayoutWrapper = ({ children }) => {
       onClick: () => history.push('/parts'),
     },
     {
+      hidden: userRole !== roles.Admin,
       icon: <FontAwesomeIcon icon={faFileContract} />,
       key: 'contracts',
       title: 'Contracts',
