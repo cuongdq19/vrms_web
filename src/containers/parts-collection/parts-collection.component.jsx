@@ -1,82 +1,72 @@
-import { Col, Modal, Pagination, Row, Spin, Typography } from 'antd';
+import { Button, Col, Pagination, Row, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Title, Content } from './parts-collection.styles';
 import PartItem from '../../components/part-item/part-item.component';
-import PartCreateButton from '../../components/PartCreateButton';
 import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
 import http from '../../http';
+import PartModal from '../../components/part-modal/part-modal.component';
+import { updateObject } from '../../utils';
 
 const PAGE_SIZE = 12;
 
 const PartsCollection = () => {
   const [current, setCurrent] = useState(1);
-  const [loading, setLoading] = useState(false);
   const providerId = useSelector((state) => state.auth.userData.providerId);
-  const [parts, setParts] = useState([]);
+  const [parts, setParts] = useState({ data: [], loading: false });
+  const [modal, setModal] = useState({ visible: false, item: null });
 
   const pageChangedHandler = (page) => {
     setCurrent(page);
   };
 
-  const fetchPartsData = useCallback(() => {
-    setLoading(true);
+  const loadData = useCallback(() => {
+    setParts((curr) => updateObject(curr, { loading: true }));
     return http
       .get(`/parts/${providerId}`)
       .then(({ data }) => {
-        setParts(data);
-        setLoading(false);
+        setParts({ data, loading: false });
       })
       .catch((err) => console.log(err));
   }, [providerId]);
 
   useEffect(() => {
-    fetchPartsData();
-  }, [fetchPartsData]);
+    loadData();
+  }, [loadData]);
   return (
     <LayoutWrapper>
-      {loading && (
-        <Modal
-          visible={loading}
-          closable={false}
-          footer={null}
-          maskClosable={false}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Spin size="large" />
-          </div>
-        </Modal>
-      )}
       <Title>
         <Typography.Title level={4}>Automobile Parts</Typography.Title>
-        <PartCreateButton onSuccess={fetchPartsData}>
+        <Button
+          onClick={() =>
+            setModal((curr) => updateObject(curr, { visible: true }))
+          }
+        >
           Create Part
-        </PartCreateButton>
+        </Button>
       </Title>
       <Content>
         <Row gutter={[8, 16]}>
-          {[...parts]
+          {[...parts.data]
             .splice((current - 1) * PAGE_SIZE, PAGE_SIZE)
             .map((part) => (
               <Col span={6} key={part.id}>
-                <PartItem part={part} onSuccess={fetchPartsData} />
+                <PartItem part={part} onSuccess={loadData} />
               </Col>
             ))}
         </Row>
         <Pagination
           current={current}
           pageSize={PAGE_SIZE}
-          total={parts.length}
+          total={parts.data.length}
           onChange={pageChangedHandler}
         />
       </Content>
+      <PartModal
+        {...modal}
+        onClose={() => setModal({ visible: false, item: null })}
+      />
     </LayoutWrapper>
   );
 };
