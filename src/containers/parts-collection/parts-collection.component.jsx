@@ -1,22 +1,16 @@
 import { Col, Modal, Pagination, Row, Spin, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
 
-import PartCard from '../components/PartCard';
-import PartCreateButton from '../components/PartCreateButton';
-import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
-import http from '../http';
-import { pageSize } from '../utils/constants';
+import { Title, Content } from './parts-collection.styles';
+import PartItem from '../../components/part-item/part-item.component';
+import PartCreateButton from '../../components/PartCreateButton';
+import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
+import http from '../../http';
 
-const Header = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
+const PAGE_SIZE = 12;
 
-const Parts = () => {
+const PartsCollection = () => {
   const [current, setCurrent] = useState(1);
   const [loading, setLoading] = useState(false);
   const providerId = useSelector((state) => state.auth.userData.providerId);
@@ -60,27 +54,31 @@ const Parts = () => {
           </div>
         </Modal>
       )}
-      <Header>
+      <Title>
         <Typography.Title level={4}>Automobile Parts</Typography.Title>
         <PartCreateButton onSuccess={fetchPartsData}>
           Create Part
         </PartCreateButton>
-      </Header>
-      <Row gutter={[8, 8]}>
-        {[...parts].splice((current - 1) * pageSize, pageSize).map((part) => (
-          <Col span={8} key={part.id}>
-            <PartCard part={part} onSuccess={fetchPartsData} />
-          </Col>
-        ))}
-      </Row>
-      <Pagination
-        current={current}
-        pageSize={pageSize}
-        total={parts.length}
-        onChange={pageChangedHandler}
-      />
+      </Title>
+      <Content>
+        <Row gutter={[8, 16]}>
+          {[...parts]
+            .splice((current - 1) * PAGE_SIZE, PAGE_SIZE)
+            .map((part) => (
+              <Col span={6} key={part.id}>
+                <PartItem part={part} onSuccess={fetchPartsData} />
+              </Col>
+            ))}
+        </Row>
+        <Pagination
+          current={current}
+          pageSize={PAGE_SIZE}
+          total={parts.length}
+          onChange={pageChangedHandler}
+        />
+      </Content>
     </LayoutWrapper>
   );
 };
 
-export default Parts;
+export default PartsCollection;

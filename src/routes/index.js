@@ -5,7 +5,7 @@ import PrivateRoute from '../components/PrivateRoute';
 import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Packages from '../containers/Packages';
-import Parts from '../containers/Parts';
+import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import Register from '../containers/Register';
 import Requests from '../containers/Requests';
 import Services from '../containers/Services';
@@ -78,7 +78,7 @@ const providerRoutes = [
     key: 'parts',
     path: '/parts',
     exact: true,
-    component: Parts,
+    component: PartsCollection,
   },
   {
     key: 'requests',
