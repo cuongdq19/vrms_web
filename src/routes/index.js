@@ -9,7 +9,7 @@ import Parts from '../containers/Parts';
 import Register from '../containers/Register';
 import Requests from '../containers/Requests';
 import Services from '../containers/Services';
-import SignIn from '../containers/SignIn';
+import SignIn from '../containers/sign-in/sign-in.component';
 import Users from '../containers/Users';
 import _403 from '../containers/_403';
 import _404 from '../containers/_404';
