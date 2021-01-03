@@ -9,20 +9,19 @@ import {
   CustomButton,
   Container,
   Footer,
-  FooterContainer,
   CustomForm,
   Icon,
   Title,
 } from './sign-in.styles';
 import * as actions from '../../store/actions';
 
-const SignIn = ({ loading, onSignIn, userData }) => {
-  const submitHandler = (formValues) => {
-    const { username, password } = formValues;
-    onSignIn(username, password);
+const SignIn = ({ loading, signIn, currentUser }) => {
+  const submitHandler = (values) => {
+    const { username, password } = values;
+    signIn(username, password);
   };
 
-  if (userData) {
+  if (currentUser) {
     return <Redirect to="/dashboard" />;
   }
 
@@ -31,13 +30,19 @@ const SignIn = ({ loading, onSignIn, userData }) => {
       <CustomForm onFinish={submitHandler}>
         <Icon icon={faCar} size="4x" />
         <Title>Vehicle Repairing And Maintaining Website</Title>
-        <CustomForm.Item name="username">
+        <CustomForm.Item
+          name="username"
+          rules={[{ required: true, message: "Username can't be blank" }]}
+        >
           <Input
             placeholder="Username"
             prefix={<FontAwesomeIcon icon={faUser} />}
           />
         </CustomForm.Item>
-        <CustomForm.Item name="password">
+        <CustomForm.Item
+          name="password"
+          rules={[{ required: true, message: "Password can't be blank" }]}
+        >
           <Input.Password
             placeholder="Password"
             prefix={<FontAwesomeIcon icon={faLock} />}
@@ -47,9 +52,7 @@ const SignIn = ({ loading, onSignIn, userData }) => {
           Login
         </CustomButton>
       </CustomForm>
-      <FooterContainer>
-        <Footer>VRMS ©2020 Created By FPT Students</Footer>
-      </FooterContainer>
+      <Footer>VRMS ©2020 Created By FPT Students</Footer>
     </Container>
   );
 };
@@ -57,13 +60,13 @@ const SignIn = ({ loading, onSignIn, userData }) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
-    userData: state.auth.userData,
+    currentUser: state.auth.userData,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSignIn: (username, password) =>
+    signIn: (username, password) =>
       dispatch(actions.signIn(username, password)),
   };
 };

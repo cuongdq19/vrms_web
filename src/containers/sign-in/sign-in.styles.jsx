@@ -38,11 +38,8 @@ export const CustomButton = styled(Button)`
   margin-top: 1rem;
 `;
 
-export const FooterContainer = styled.div`
-  position: absolute;
-  bottom: 20px;
-`;
-
 export const Footer = styled(Layout.Footer)`
   background-color: transparent;
+  position: absolute;
+  bottom: 20px;
 `;
