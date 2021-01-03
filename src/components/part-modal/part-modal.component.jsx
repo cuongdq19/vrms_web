@@ -13,9 +13,9 @@ import {
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
+import { connect } from 'react-redux';
 
 import http from '../../http';
-import { connect } from 'react-redux';
 
 const { Option } = Select;
 

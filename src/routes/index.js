@@ -7,7 +7,7 @@ import Dashboard from '../containers/Dashboard';
 import Packages from '../containers/Packages';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import Register from '../containers/Register';
-import Requests from '../containers/Requests';
+import Requests from '../containers/requests-collection/requests-collection.component';
 import Services from '../containers/Services';
 import SignIn from '../containers/sign-in/sign-in.component';
 import Users from '../containers/Users';

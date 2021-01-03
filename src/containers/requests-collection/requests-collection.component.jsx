@@ -1,33 +1,38 @@
-import { Table, Tag, Typography } from 'antd';
-import React, { useCallback, useEffect } from 'react';
+import { Button, message, Modal, Table, Tag, Typography } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import styled from 'styled-components';
 import moment from 'moment';
 
-import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
-import RequestCreateButton from '../components/RequestCreateButton';
-import RequestCheckInButton from '../components/RequestCheckInButton';
-import RequestConfirmButton from '../components/RequestConfirmButton';
-import RequestCompleteWorkButton from '../components/RequestCompleteWorkButton';
-import RequestCheckoutButton from '../components/RequestCheckoutButton';
-import RequestCanceledButton from '../components/RequestCanceledButton';
-import RequestUpdateButton from '../components/RequestUpdateButton';
-import * as actions from '../store/actions';
+import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
+import RequestCheckInButton from '../../components/RequestCheckInButton';
+import RequestCompleteWorkButton from '../../components/RequestCompleteWorkButton';
+import RequestCheckoutButton from '../../components/RequestCheckoutButton';
+import RequestCanceledButton from '../../components/RequestCanceledButton';
+import RequestUpdateButton from '../../components/RequestUpdateButton';
+import * as actions from '../../store/actions';
 import {
   calculateRequestPrice,
   formatMoney,
   generateRequestStatusColor,
-} from '../utils';
+} from '../../utils';
+import { Title, Content } from './requests-collection.styles';
+import RequestOverview from '../../components/request-overview/request-overview.component';
 
-const Header = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Requests = ({ onFetchRequests, requestsData }) => {
+const Requests = ({ onFetchRequests, requestsData, confirmRequest }) => {
   const dispatch = useDispatch();
+  const [modal, setModal] = useState({
+    visible: false,
+    item: null,
+    onOk: null,
+  });
+
+  const openHandler = (item, onOk) => {
+    setModal({ visible: true, item, onOk });
+  };
+
+  const closedHandler = () => {
+    setModal({ visible: false, item: null });
+  };
 
   const columns = [
     { title: 'ID', dataIndex: 'id', align: 'center' },
@@ -68,12 +73,14 @@ const Requests = ({ onFetchRequests, requestsData }) => {
       align: 'center',
       title: 'Update',
       render: (_, record) => (
-        <RequestUpdateButton
-          requestData={record}
-          onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
-        >
-          Update
-        </RequestUpdateButton>
+        <>
+          <RequestUpdateButton
+            requestData={record}
+            onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
+          >
+            Update
+          </RequestUpdateButton>
+        </>
       ),
     },
     {
@@ -89,12 +96,16 @@ const Requests = ({ onFetchRequests, requestsData }) => {
       align: 'center',
       title: 'Confirm',
       render: (_, record) => (
-        <RequestConfirmButton
-          request={{ ...record, price: calculateRequestPrice(record) }}
-          onSuccess={fetchRequestsData}
+        <Button
+          onClick={() =>
+            openHandler(record, () => {
+              confirmRequest(record.id);
+              closedHandler();
+            })
+          }
         >
           Confirm
-        </RequestConfirmButton>
+        </Button>
       ),
     },
     {
@@ -149,11 +160,15 @@ const Requests = ({ onFetchRequests, requestsData }) => {
 
   return (
     <LayoutWrapper>
-      <Header>
+      <Title>
         <Typography.Title level={4}>Requests</Typography.Title>
-        <RequestCreateButton>Create Request</RequestCreateButton>
-      </Header>
-      <Table dataSource={requestsData} columns={columns} rowKey="id" />
+      </Title>
+      <Content>
+        <Table dataSource={requestsData} columns={columns} rowKey="id" />
+      </Content>
+      <Modal {...modal} onCancel={closedHandler}>
+        <RequestOverview item={modal.item} />
+      </Modal>
     </LayoutWrapper>
   );
 };
@@ -167,6 +182,12 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onFetchRequests: () => dispatch(actions.fetchRequests()),
+    confirmRequest: (requestId) =>
+      dispatch(
+        actions.confirmRequest(requestId, () => {
+          message.success('Request confirmed');
+        })
+      ),
   };
 };
 
