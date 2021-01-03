@@ -20,6 +20,17 @@ import { connect } from 'react-redux';
 const { Option } = Select;
 
 const PartModal = ({ visible, item, providerId, onClose }) => {
+  const {
+    id,
+    name,
+    description,
+    price,
+    warrantyDuration,
+    monthsPerMaintenance,
+    sectionId,
+    categoryId,
+    models: itemModels,
+  } = item || {};
   const [form] = Form.useForm();
   const [sections, setSections] = useState({
     data: [],
@@ -32,7 +43,6 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
   const [models, setModels] = useState({ loading: false, data: [] });
 
   const submitHandler = (values) => {
-    console.log(values);
     if (!item) {
       const formData = new FormData();
       formData.append('providerId', providerId);
@@ -62,6 +72,18 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
           message.success('Create success');
         })
         .catch((err) => console.log(err));
+    } else {
+      const reqBody = {
+        ...values,
+        id,
+        categoryId: values.categoryId[1],
+        providerId,
+      };
+      http.post(`/parts/${reqBody.id}`, reqBody).then(() => {
+        form.resetFields();
+        onClose();
+        message.success('Update success');
+      });
     }
   };
 
@@ -95,7 +117,24 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
         onCancel={onClose}
         onOk={() => form.submit()}
       >
-        <Form layout="vertical" form={form} onFinish={submitHandler}>
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={submitHandler}
+          initialValues={
+            item
+              ? {
+                  name,
+                  description,
+                  price,
+                  categoryId: [sectionId, categoryId],
+                  warrantyDuration,
+                  monthsPerMaintenance,
+                  modelIds: itemModels.map((model) => model.id),
+                }
+              : {}
+          }
+        >
           <Form.Item
             name="name"
             label="Name"

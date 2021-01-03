@@ -2,7 +2,6 @@ import { Button } from 'antd';
 import React from 'react';
 
 import { formatMoney } from '../../utils';
-import PartUpdateButton from '../PartUpdateButton';
 import {
   Container,
   BackgroundImage,
@@ -12,8 +11,8 @@ import {
   ButtonContainer,
 } from './part-item.styles';
 
-const PartItem = ({ part, onSuccess }) => {
-  const { name, price, imageUrls } = part;
+const PartItem = ({ item, onInitUpdate }) => {
+  const { name, price, imageUrls } = item;
   return (
     <Container>
       <NameContainer level={4}>{name}</NameContainer>
@@ -22,9 +21,7 @@ const PartItem = ({ part, onSuccess }) => {
         <PriceContainer>{formatMoney(price)}</PriceContainer>
       </Footer>
       <ButtonContainer className="buttons">
-        <PartUpdateButton part={part} onSuccess={onSuccess}>
-          Update
-        </PartUpdateButton>
+        <Button onClick={onInitUpdate}>Update</Button>
         <Button danger>Remove</Button>
       </ButtonContainer>
     </Container>

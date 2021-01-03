@@ -50,9 +50,12 @@ const PartsCollection = () => {
         <Row gutter={[8, 16]}>
           {[...parts.data]
             .splice((current - 1) * PAGE_SIZE, PAGE_SIZE)
-            .map((part) => (
-              <Col span={6} key={part.id}>
-                <PartItem part={part} onSuccess={loadData} />
+            .map((item) => (
+              <Col span={6} key={item.id}>
+                <PartItem
+                  item={item}
+                  onInitUpdate={() => setModal({ item, visible: true })}
+                />
               </Col>
             ))}
         </Row>
@@ -65,7 +68,10 @@ const PartsCollection = () => {
       </Content>
       <PartModal
         {...modal}
-        onClose={() => setModal({ visible: false, item: null })}
+        onClose={() => {
+          setModal({ visible: false, item: null });
+          loadData();
+        }}
       />
     </LayoutWrapper>
   );
