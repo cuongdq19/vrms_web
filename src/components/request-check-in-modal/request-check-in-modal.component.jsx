@@ -20,6 +20,7 @@ const RequestCheckInModal = ({
 
   const submitHandler = () =>
     checkIn(id, 1, () => {
+      item.checkIn();
       message.success('Check in success.');
       onSuccess();
       onCancel();

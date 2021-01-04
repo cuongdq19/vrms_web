@@ -24,6 +24,7 @@ const RequestConfirmModal = ({
       onCancel={onCancel}
       onOk={() =>
         confirmRequest(id, () => {
+          item.confirm();
           message.success('Confirm success.');
           onSuccess();
           onCancel();

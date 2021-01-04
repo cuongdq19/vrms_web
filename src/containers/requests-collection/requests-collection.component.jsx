@@ -1,10 +1,9 @@
-import { Button, Table, Tag, Typography } from 'antd';
+import { Button, message, Popconfirm, Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
-import RequestCompleteWorkButton from '../../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../../components/RequestCheckoutButton';
 import RequestCanceledButton from '../../components/RequestCanceledButton';
 import RequestUpdateButton from '../../components/RequestUpdateButton';
@@ -18,7 +17,7 @@ import { Title, Content } from './requests-collection.styles';
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 
-const Requests = ({ loadRequests, requestsData }) => {
+const Requests = ({ loadRequests, completeRequest, requestsData }) => {
   const dispatch = useDispatch();
   const [modals, setModals] = useState({
     confirm: false,
@@ -103,16 +102,22 @@ const Requests = ({ loadRequests, requestsData }) => {
     },
     {
       align: 'center',
-      title: 'Completed',
+      title: 'Complete',
       render: (_, record) => (
-        <RequestCompleteWorkButton
-          id={record.id}
-          disabled={record.cannot('done')}
-          onStateTransition={() => record.done()}
-          onSuccess={fetchRequestsData}
+        <Popconfirm
+          okText="Confirm"
+          placement="top"
+          title="Are you sure to complete work for this request?"
+          onConfirm={() =>
+            completeRequest(record.id, () => {
+              record.confirm();
+              message.success('Successfully complete.');
+              fetchRequestsData();
+            })
+          }
         >
-          Completed
-        </RequestCompleteWorkButton>
+          <Button>Complete</Button>
+        </Popconfirm>
       ),
     },
     {
@@ -188,6 +193,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     loadRequests: () => dispatch(actions.fetchRequests()),
+    completeRequest: (requestId, callback) =>
+      dispatch(actions.completeRequest(requestId, callback)),
   };
 };
 
