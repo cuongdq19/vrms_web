@@ -38,6 +38,7 @@ const INIT_EXPENSE = {
 };
 
 const RequestUpdateButton = ({
+  disabled,
   children,
   requestData,
   serviceTypesData,
@@ -237,7 +238,9 @@ const RequestUpdateButton = ({
 
   return (
     <div>
-      <Button onClick={clickedHandler}>{children}</Button>
+      <Button onClick={clickedHandler} disabled={disabled}>
+        {children}
+      </Button>
       <Modal
         width="100%"
         centered

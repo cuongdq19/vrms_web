@@ -4,7 +4,6 @@ import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
-import RequestCanceledButton from '../../components/RequestCanceledButton';
 import RequestUpdateButton from '../../components/RequestUpdateButton';
 import * as actions from '../../store/actions';
 import {
@@ -72,6 +71,11 @@ const Requests = ({
       render: (_, record) => (
         <>
           <RequestUpdateButton
+            disabled={
+              record.is('FINISHED') ||
+              record.is('WORK COMPLETED') ||
+              record.is('CANCELED')
+            }
             requestData={record}
             onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
           >
@@ -85,6 +89,7 @@ const Requests = ({
       title: 'Check in',
       render: (_, record) => (
         <Button
+          disabled={record.cannot('checkIn')}
           onClick={() => {
             setModals((curr) => ({ ...curr, checkIn: true, item: record }));
           }}
@@ -98,6 +103,7 @@ const Requests = ({
       title: 'Confirm',
       render: (_, record) => (
         <Button
+          disabled={record.cannot('confirm')}
           onClick={() => {
             setModals((curr) => ({ ...curr, confirm: true, item: record }));
           }}
@@ -115,14 +121,14 @@ const Requests = ({
           placement="top"
           title="Are you sure to complete work for this request?"
           onConfirm={() =>
-            cancelRequest(record.id, () => {
+            completeRequest(record.id, () => {
               record.cancel();
               message.info('Canceled request.');
               fetchRequestsData();
             })
           }
         >
-          <Button>Complete</Button>
+          <Button disabled={record.cannot('done')}>Complete</Button>
         </Popconfirm>
       ),
     },
@@ -131,6 +137,7 @@ const Requests = ({
       title: 'Checkout',
       render: (_, record) => (
         <Button
+          disabled={record.cannot('checkOut')}
           onClick={() => {
             setModals((curr) => ({ ...curr, checkout: true, item: record }));
           }}
@@ -141,7 +148,7 @@ const Requests = ({
     },
     {
       align: 'center',
-      title: 'Canceled',
+      title: 'Cancel',
       render: (_, record) => (
         <Popconfirm
           okText="Cancel"
@@ -156,7 +163,9 @@ const Requests = ({
             })
           }
         >
-          <Button danger>Cancel</Button>
+          <Button danger disabled={record.cannot('cancel')}>
+            Cancel
+          </Button>
         </Popconfirm>
       ),
     },
