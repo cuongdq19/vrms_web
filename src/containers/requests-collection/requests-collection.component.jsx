@@ -17,7 +17,12 @@ import RequestConfirmModal from '../../components/request-confirm-modal/request-
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
 
-const Requests = ({ loadRequests, completeRequest, requestsData }) => {
+const Requests = ({
+  loadRequests,
+  completeRequest,
+  cancelRequest,
+  requestsData,
+}) => {
   const dispatch = useDispatch();
   const [modals, setModals] = useState({
     confirm: false,
@@ -110,9 +115,9 @@ const Requests = ({ loadRequests, completeRequest, requestsData }) => {
           placement="top"
           title="Are you sure to complete work for this request?"
           onConfirm={() =>
-            completeRequest(record.id, () => {
-              record.confirm();
-              message.success('Successfully complete.');
+            cancelRequest(record.id, () => {
+              record.cancel();
+              message.info('Canceled request.');
               fetchRequestsData();
             })
           }
@@ -138,14 +143,21 @@ const Requests = ({ loadRequests, completeRequest, requestsData }) => {
       align: 'center',
       title: 'Canceled',
       render: (_, record) => (
-        <RequestCanceledButton
-          disabled={record.cannot('cancel')}
-          onStateTransition={() => record.cancel()}
-          id={record.id}
-          onSuccess={fetchRequestsData}
+        <Popconfirm
+          okText="Cancel"
+          okButtonProps={{ danger: true }}
+          placement="top"
+          title="Are you sure to cancel this request?"
+          onConfirm={() =>
+            cancelRequest(record.id, () => {
+              record.confirm();
+              message.success('Successfully complete.');
+              fetchRequestsData();
+            })
+          }
         >
-          Canceled
-        </RequestCanceledButton>
+          <Button danger>Cancel</Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -205,6 +217,8 @@ const mapDispatchToProps = (dispatch) => {
     loadRequests: () => dispatch(actions.fetchRequests()),
     completeRequest: (requestId, callback) =>
       dispatch(actions.completeRequest(requestId, callback)),
+    cancelRequest: (requestId, callback) =>
+      dispatch(actions.cancelRequest(requestId, callback)),
   };
 };
 
