@@ -1,11 +1,12 @@
 import { Col, Row, Table } from 'antd';
 import React from 'react';
+import moment from 'moment';
 
 import { calculateRequestPrice, formatMoney } from '../../utils';
 import { Summary } from './request-overview.styles';
 
 const RequestOverview = ({ item }) => {
-  const { services, user } = item;
+  const { services, user, bookingTime } = item;
 
   let total = null;
 
@@ -38,42 +39,54 @@ const RequestOverview = ({ item }) => {
       <Col span={12}>
         <Row align="middle" gutter={[8, 8]}>
           <Col span={24}>
-            <h1>Customer Information</h1>
+            <h3>Request Details</h3>
           </Col>
-          <Col span={6}>
+          <Col span={8}>
             <span>Full Name: </span>
           </Col>
-          <Col span={18}>
-            <h2>{user.fullName}</h2>
+          <Col span={16}>
+            <h4>{user.fullName}</h4>
           </Col>
-          <Col span={6}>
+          <Col span={8}>
             <span>Phone Number: </span>
           </Col>
-          <Col span={18}>
-            <h2>{user.phoneNumber}</h2>
+          <Col span={16}>
+            <h4>{user.phoneNumber}</h4>
+          </Col>
+          <Col span={8}>
+            <span>Booking Date: </span>
+          </Col>
+          <Col span={16}>
+            <h4>{moment.unix(bookingTime).format('DD/MM/YYYY')}</h4>
+          </Col>
+          <Col span={8}>
+            <span>Booking Time: </span>
+          </Col>
+          <Col span={16}>
+            <h4>{moment.unix(bookingTime).format('HH:mm')}</h4>
           </Col>
         </Row>
       </Col>
       <Col span={12}></Col>
       <Col span={24}>
-        <h1>Services</h1>
+        <h3>Services</h3>
       </Col>
       <Col span={24}>
         <Table dataSource={services} columns={columns} rowKey="id" />
       </Col>
-      <Col span={6} offset={18}>
+      <Col span={8} offset={16}>
         <Summary justify="end" align="middle" gutter={[8, 8]}>
           <Col span={6}>
             <span>Services: </span>
           </Col>
           <Col span={18}>
-            <h2>{formatMoney(total.services)}</h2>
+            <h3>{formatMoney(total.services)}</h3>
           </Col>
           <Col span={6}>
             <span>Total: </span>
           </Col>
           <Col span={18}>
-            <h2>{formatMoney(total.total)}</h2>
+            <h3>{formatMoney(total.total)}</h3>
           </Col>
         </Summary>
       </Col>

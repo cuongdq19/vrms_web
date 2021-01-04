@@ -4,7 +4,6 @@ import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
-import RequestCheckInButton from '../../components/RequestCheckInButton';
 import RequestCompleteWorkButton from '../../components/RequestCompleteWorkButton';
 import RequestCheckoutButton from '../../components/RequestCheckoutButton';
 import RequestCanceledButton from '../../components/RequestCanceledButton';
@@ -17,11 +16,13 @@ import {
 } from '../../utils';
 import { Title, Content } from './requests-collection.styles';
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
+import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 
 const Requests = ({ loadRequests, requestsData }) => {
   const dispatch = useDispatch();
   const [modals, setModals] = useState({
     confirm: false,
+    checkIn: false,
     item: null,
   });
 
@@ -78,9 +79,13 @@ const Requests = ({ loadRequests, requestsData }) => {
       align: 'center',
       title: 'Check in',
       render: (_, record) => (
-        <RequestCheckInButton request={record} onSuccess={fetchRequestsData}>
+        <Button
+          onClick={() => {
+            setModals((curr) => ({ ...curr, checkIn: true, item: record }));
+          }}
+        >
           Check in
-        </RequestCheckInButton>
+        </Button>
       ),
     },
     {
@@ -161,6 +166,14 @@ const Requests = ({ loadRequests, requestsData }) => {
         onSuccess={fetchRequestsData}
         visible={modals.confirm}
         item={modals.item}
+      />
+      <RequestCheckInModal
+        onSuccess={fetchRequestsData}
+        visible={modals.checkIn}
+        item={modals.item}
+        onCancel={() =>
+          setModals((curr) => ({ ...curr, checkIn: false, item: null }))
+        }
       />
     </LayoutWrapper>
   );
