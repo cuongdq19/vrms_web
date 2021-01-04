@@ -62,12 +62,7 @@ const RequestOverview = ({ item }) => {
         <Table dataSource={services} columns={columns} rowKey="id" />
       </Col>
       <Col span={6} offset={18}>
-        <Summary
-          justify="end"
-          align="middle"
-          gutter={[8, 8]}
-          style={{ border: '1px solid #ccc', textAlign: 'right' }}
-        >
+        <Summary justify="end" align="middle" gutter={[8, 8]}>
           <Col span={6}>
             <span>Services: </span>
           </Col>
