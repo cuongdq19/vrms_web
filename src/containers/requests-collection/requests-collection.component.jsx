@@ -1,4 +1,4 @@
-import { Button, message, Modal, Table, Tag, Typography } from 'antd';
+import { Button, Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
@@ -16,23 +16,14 @@ import {
   generateRequestStatusColor,
 } from '../../utils';
 import { Title, Content } from './requests-collection.styles';
-import RequestOverview from '../../components/request-overview/request-overview.component';
+import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 
-const Requests = ({ onFetchRequests, requestsData, confirmRequest }) => {
+const Requests = ({ loadRequests, requestsData }) => {
   const dispatch = useDispatch();
-  const [modal, setModal] = useState({
-    visible: false,
+  const [modals, setModals] = useState({
+    confirm: false,
     item: null,
-    onOk: null,
   });
-
-  const openHandler = (item, onOk) => {
-    setModal({ visible: true, item, onOk });
-  };
-
-  const closedHandler = () => {
-    setModal({ visible: false, item: null });
-  };
 
   const columns = [
     { title: 'ID', dataIndex: 'id', align: 'center' },
@@ -97,12 +88,9 @@ const Requests = ({ onFetchRequests, requestsData, confirmRequest }) => {
       title: 'Confirm',
       render: (_, record) => (
         <Button
-          onClick={() =>
-            openHandler(record, () => {
-              confirmRequest(record.id);
-              closedHandler();
-            })
-          }
+          onClick={() => {
+            setModals((curr) => ({ ...curr, confirm: true, item: record }));
+          }}
         >
           Confirm
         </Button>
@@ -151,8 +139,8 @@ const Requests = ({ onFetchRequests, requestsData, confirmRequest }) => {
   ];
 
   const fetchRequestsData = useCallback(() => {
-    onFetchRequests();
-  }, [onFetchRequests]);
+    loadRequests();
+  }, [loadRequests]);
 
   useEffect(() => {
     fetchRequestsData();
@@ -166,9 +154,14 @@ const Requests = ({ onFetchRequests, requestsData, confirmRequest }) => {
       <Content>
         <Table dataSource={requestsData} columns={columns} rowKey="id" />
       </Content>
-      <Modal {...modal} onCancel={closedHandler}>
-        <RequestOverview item={modal.item} />
-      </Modal>
+      <RequestConfirmModal
+        onCancel={() =>
+          setModals((curr) => ({ ...curr, confirm: false, item: null }))
+        }
+        onSuccess={fetchRequestsData}
+        visible={modals.confirm}
+        item={modals.item}
+      />
     </LayoutWrapper>
   );
 };
@@ -181,13 +174,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchRequests: () => dispatch(actions.fetchRequests()),
-    confirmRequest: (requestId) =>
-      dispatch(
-        actions.confirmRequest(requestId, () => {
-          message.success('Request confirmed');
-        })
-      ),
+    loadRequests: () => dispatch(actions.fetchRequests()),
   };
 };
 
