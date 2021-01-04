@@ -8,12 +8,13 @@ import Packages from '../containers/Packages';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import ServiceForm from '../containers/service-form/service-form.component';
 import Register from '../containers/Register';
-import Requests from '../containers/requests-collection/requests-collection.component';
+import RequestsCollection from '../containers/requests-collection/requests-collection.component';
 import Services from '../containers/Services';
 import SignIn from '../containers/sign-in/sign-in.component';
 import Users from '../containers/Users';
 import _403 from '../containers/_403';
 import _404 from '../containers/_404';
+import RequestUpdate from '../containers/request-update/request-update.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -91,7 +92,13 @@ const providerRoutes = [
     key: 'requests',
     path: '/requests',
     exact: true,
-    component: Requests,
+    component: RequestsCollection,
+  },
+  {
+    key: 'update-request',
+    path: '/requests/:requestId',
+    exact: true,
+    component: RequestUpdate,
   },
   {
     key: 'packages',

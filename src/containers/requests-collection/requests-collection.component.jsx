@@ -16,7 +16,8 @@ import RequestConfirmModal from '../../components/request-confirm-modal/request-
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
 
-const Requests = ({
+const RequestsCollection = ({
+  history,
   loadRequests,
   completeRequest,
   cancelRequest,
@@ -70,6 +71,13 @@ const Requests = ({
       title: 'Update',
       render: (_, record) => (
         <>
+          <Button
+            onClick={() => {
+              history.push(`/requests/${record.id}`);
+            }}
+          >
+            Update
+          </Button>
           <RequestUpdateButton
             disabled={
               record.is('FINISHED') ||
@@ -231,4 +239,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Requests);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestsCollection);

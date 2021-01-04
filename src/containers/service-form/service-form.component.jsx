@@ -74,12 +74,12 @@ const ServiceForm = ({ providerId }) => {
   };
 
   const submitHandler = (values) => {
-    const { serviceType, name, price } = values;
+    const { serviceType, serviceName, price } = values;
     if (serviceParts.length === 0) {
       const requestBody = {
         typeDetailId: serviceType[1],
         modelIds: serviceModels,
-        name,
+        serviceName,
         price,
       };
       http
@@ -90,7 +90,7 @@ const ServiceForm = ({ providerId }) => {
         });
     } else {
       const groupPriceRequest = {
-        name,
+        name: serviceName,
         price,
         partQuantity: serviceParts.reduce((accumulatedPart, item) => {
           return {
@@ -153,7 +153,7 @@ const ServiceForm = ({ providerId }) => {
             </Form.Item>
           </Col>
           <Col flex="1">
-            <Form.Item label="Service Name" name="name">
+            <Form.Item label="Service Name" name="serviceName">
               <Input placeholder="Service Name" />
             </Form.Item>
           </Col>
