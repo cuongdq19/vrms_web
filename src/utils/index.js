@@ -60,3 +60,7 @@ export const generateRequestStatusColor = (stat) => {
       return 'default';
   }
 };
+
+export const modelToString = (model) => {
+  return `${model.manufacturerName} ${model.name} ${model.fuelType} ${model.gearbox} (${model.year})`;
+};

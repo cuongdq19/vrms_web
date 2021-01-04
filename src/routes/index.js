@@ -6,6 +6,7 @@ import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
 import Packages from '../containers/Packages';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
+import ServiceForm from '../containers/service-form/service-form.component';
 import Register from '../containers/Register';
 import Requests from '../containers/requests-collection/requests-collection.component';
 import Services from '../containers/Services';
@@ -49,6 +50,12 @@ const providerRoutes = [
     path: '/services',
     exact: true,
     component: Services,
+  },
+  {
+    key: 'add-service',
+    path: '/services/add',
+    exact: true,
+    component: ServiceForm,
   },
   {
     key: 'packages',

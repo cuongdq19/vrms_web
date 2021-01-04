@@ -1,15 +1,12 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, Table, Typography } from 'antd';
+import { Button, Table, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import ServiceCreateWithoutPartsButton from '../components/ServiceCreateWithoutPartsButton';
-import ServiceCreateWithPartsButton from '../components/ServiceCreateWithPartsButton';
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
 import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutPartsButton';
 import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
-import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
+import LayoutWrapper from '../components/layout-wrapper/layout-wrapper.component';
 import http from '../http';
 import { formatMoney } from '../utils';
 
@@ -22,7 +19,7 @@ const Header = styled.div`
 
 // const { Option } = Select;
 
-const Services = () => {
+const Services = ({ history }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
   const [services, setServices] = useState([]);
 
@@ -56,28 +53,14 @@ const Services = () => {
   useEffect(() => {
     fetchServicesData();
   }, [fetchServicesData]);
+
   return (
     <LayoutWrapper>
       <Header>
         <Typography.Title level={4}>Services</Typography.Title>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item>
-                <ServiceCreateWithPartsButton onSuccess={fetchServicesData}>
-                  With Parts
-                </ServiceCreateWithPartsButton>
-              </Menu.Item>
-              <Menu.Item>
-                <ServiceCreateWithoutPartsButton onSuccess={fetchServicesData}>
-                  Without Parts
-                </ServiceCreateWithoutPartsButton>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button icon={<PlusOutlined />}>New Service</Button>
-        </Dropdown>
+        <Button onClick={() => history.push('/services/add')}>
+          Create Service
+        </Button>
       </Header>
       <Table
         rowKey={(record) => record.typeDetail.id}

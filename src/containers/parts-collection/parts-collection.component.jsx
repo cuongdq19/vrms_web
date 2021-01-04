@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { Title, Content } from './parts-collection.styles';
 import PartItem from '../../components/part-item/part-item.component';
-import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
+import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import http from '../../http';
 import PartModal from '../../components/part-modal/part-modal.component';
 import { updateObject } from '../../utils';

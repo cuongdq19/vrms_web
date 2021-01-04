@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
 
-import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
+import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestUpdateButton from '../../components/RequestUpdateButton';
 import * as actions from '../../store/actions';
 import {

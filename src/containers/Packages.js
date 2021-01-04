@@ -3,7 +3,7 @@ import { Table, Typography } from 'antd';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
+import LayoutWrapper from '../components/layout-wrapper/layout-wrapper.component';
 import PackageCreateButton from '../components/PackageCreateButton';
 
 import * as actions from '../store/actions';

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
 import http from '../http';
-import LayoutWrapper from '../hoc/LayoutWrapper/layout-wrapper.component';
+import LayoutWrapper from '../components/layout-wrapper/layout-wrapper.component';
 import UserUpdateButton from '../components/UserUpdateButton';
 import UserCreateButton from '../components/UserCreateButton';
 
