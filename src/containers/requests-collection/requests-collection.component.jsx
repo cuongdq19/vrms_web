@@ -4,7 +4,6 @@ import { connect, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import LayoutWrapper from '../../hoc/LayoutWrapper/layout-wrapper.component';
-import RequestCheckoutButton from '../../components/RequestCheckoutButton';
 import RequestCanceledButton from '../../components/RequestCanceledButton';
 import RequestUpdateButton from '../../components/RequestUpdateButton';
 import * as actions from '../../store/actions';
@@ -16,12 +15,14 @@ import {
 import { Title, Content } from './requests-collection.styles';
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
+import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
 
 const Requests = ({ loadRequests, completeRequest, requestsData }) => {
   const dispatch = useDispatch();
   const [modals, setModals] = useState({
     confirm: false,
     checkIn: false,
+    checkout: false,
     item: null,
   });
 
@@ -124,12 +125,13 @@ const Requests = ({ loadRequests, completeRequest, requestsData }) => {
       align: 'center',
       title: 'Checkout',
       render: (_, record) => (
-        <RequestCheckoutButton
-          request={{ ...record, price: calculateRequestPrice(record) }}
-          onSuccess={fetchRequestsData}
+        <Button
+          onClick={() => {
+            setModals((curr) => ({ ...curr, checkout: true, item: record }));
+          }}
         >
           Checkout
-        </RequestCheckoutButton>
+        </Button>
       ),
     },
     {
@@ -178,6 +180,14 @@ const Requests = ({ loadRequests, completeRequest, requestsData }) => {
         item={modals.item}
         onCancel={() =>
           setModals((curr) => ({ ...curr, checkIn: false, item: null }))
+        }
+      />
+      <RequestCheckoutModal
+        onSuccess={fetchRequestsData}
+        visible={modals.checkout}
+        item={modals.item}
+        onCancel={() =>
+          setModals((curr) => ({ ...curr, checkout: false, item: null }))
         }
       />
     </LayoutWrapper>
