@@ -9,7 +9,7 @@ import PartsCollection from '../containers/parts-collection/parts-collection.com
 import ServiceForm from '../containers/service-form/service-form.component';
 import Register from '../containers/Register';
 import RequestsCollection from '../containers/requests-collection/requests-collection.component';
-import Services from '../containers/Services';
+import ServicesCollection from '../containers/services-collection/services-collection.component';
 import SignIn from '../containers/sign-in/sign-in.component';
 import Users from '../containers/Users';
 import _403 from '../containers/_403';
@@ -52,7 +52,7 @@ const providerRoutes = [
     key: 'services',
     path: '/services',
     exact: true,
-    component: Services,
+    component: ServicesCollection,
   },
   {
     key: 'add-service',
