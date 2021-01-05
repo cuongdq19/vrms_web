@@ -3,6 +3,7 @@ import React from 'react';
 import { formatMoney, modelToString } from '../../utils';
 
 const PartsCollectionTable = ({
+  size = 'middle',
   columns,
   dataSource,
   showDesc = true,
@@ -11,7 +12,9 @@ const PartsCollectionTable = ({
 }) => {
   return (
     <Table
+      size={size}
       rowKey="id"
+      pagination={{ pageSize: 5 }}
       dataSource={dataSource}
       columns={[
         { title: 'ID', dataIndex: 'id', align: 'center' },

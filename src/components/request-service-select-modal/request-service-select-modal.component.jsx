@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   InputNumber,
+  List,
   Modal,
   Radio,
   Row,
@@ -17,6 +18,7 @@ import PartsCollectionTable from '../parts-collection-table/parts-collection-tab
 
 import http from '../../http';
 import { formatMoney } from '../../utils';
+import { ItemContainer } from './request-service-select-modal.styles';
 
 const RequestServiceSelectModal = ({
   visible,
@@ -96,13 +98,14 @@ const RequestServiceSelectModal = ({
 
   return (
     <Modal
+      centered
       width="70%"
       visible={visible}
       onCancel={resetHandler}
       onOk={() => form.submit()}
     >
       <Form form={form} onFinish={submitHandler} layout="vertical">
-        <Row gutter={[8, 8]} align="middle">
+        <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item label="Existed Service">
               <Radio.Group
@@ -247,8 +250,27 @@ const RequestServiceSelectModal = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={24}>
+              <Col span={6}>
+                <List
+                  header="Service Parts"
+                  size="small"
+                  bordered
+                  dataSource={selected?.parts}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <ItemContainer>
+                        <span style={{ flex: 1, margin: 8 }}>{item.name}</span>
+                        <span>x {item.quantity}</span>
+                      </ItemContainer>
+                    </List.Item>
+                  )}
+                />
+              </Col>
+              <Col span={18}>
                 <PartsCollectionTable
+                  size="small"
+                  showModels={false}
+                  showDefaultQuantity={false}
                   dataSource={parts}
                   columns={[
                     {
