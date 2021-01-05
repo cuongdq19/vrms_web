@@ -1,13 +1,14 @@
 import { Button, message, Modal, Popconfirm, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { Content, Title } from './packages-collection.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
+import ModelsSelect from '../../components/models-select/models-select.component';
 
 import http from '../../http';
-import ModelsSelect from '../../components/models-select/models-select.component';
 
 const PackagesCollection = ({ providerId, history }) => {
   const [packages, setPackages] = useState([]);
@@ -15,18 +16,14 @@ const PackagesCollection = ({ providerId, history }) => {
   const [models, setModels] = useState([]);
 
   const removedHandler = (id) => {
-    http
-      .delete(`/maintenance-packages/packages/${id}`)
-      .then(() => {
-        return loadData();
-      })
-      .then(() => {
-        message.info('Package successfully removed.');
-      });
+    http.delete(`/maintenance-packages/packages/${id}`).then(() => {
+      message.success('Successfully removed package.');
+      loadData();
+    });
   };
 
   const loadData = useCallback(() => {
-    return http
+    http
       .get(`/maintenance-packages/providers/${providerId}`)
       .then(({ data }) => {
         setPackages(data);
@@ -61,6 +58,15 @@ const PackagesCollection = ({ providerId, history }) => {
               dataIndex: 'sectionName',
               align: 'center',
               render: (value) => value ?? 'N/A',
+            },
+            {
+              title: 'Update',
+              align: 'center',
+              render: (_, record) => (
+                <Button onClick={() => history.push(`/packages/${record.id}`)}>
+                  Update
+                </Button>
+              ),
             },
             {
               title: 'Remove',

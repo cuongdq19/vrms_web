@@ -73,6 +73,12 @@ const providerRoutes = [
     component: PackageForm,
   },
   {
+    key: 'add-package',
+    path: '/packages/:packageId',
+    exact: true,
+    component: PackageForm,
+  },
+  {
     key: 'staffs',
     path: '/staffs',
     exact: true,
