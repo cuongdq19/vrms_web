@@ -1,4 +1,4 @@
-import { Button, message, Popconfirm, Table } from 'antd';
+import { Button, message, Modal, Popconfirm, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -7,9 +7,12 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
 
 import http from '../../http';
+import ModelsSelect from '../../components/models-select/models-select.component';
 
-const PackagesCollection = ({ providerId }) => {
+const PackagesCollection = ({ providerId, history }) => {
   const [packages, setPackages] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [models, setModels] = useState([]);
 
   const removedHandler = (id) => {
     http
@@ -38,7 +41,7 @@ const PackagesCollection = ({ providerId }) => {
     <LayoutWrapper>
       <Title>
         <h1>Maintenance Packages</h1>
-        <Button>Create Package</Button>
+        <Button onClick={() => setVisible(true)}>Create Package</Button>
       </Title>
       <Content>
         <Table
@@ -84,6 +87,17 @@ const PackagesCollection = ({ providerId }) => {
             ),
           }}
         />
+        <Modal
+          visible={visible}
+          title="Choose New Package Models"
+          onCancel={() => setVisible(false)}
+          onOk={() => history.push('/packages/add', { models })}
+        >
+          <ModelsSelect
+            models={models}
+            onChange={(value) => setModels(value)}
+          />
+        </Modal>
       </Content>
     </LayoutWrapper>
   );
