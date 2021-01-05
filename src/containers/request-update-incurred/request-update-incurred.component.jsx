@@ -1,4 +1,4 @@
-import { Button, Col, message, Row, Switch, Table, Tag } from 'antd';
+import { Button, Col, message, Row, Switch, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import StateMachine from 'javascript-state-machine';
@@ -10,7 +10,7 @@ import { calculateRequestPrice, formatMoney } from '../../utils';
 import { Summary } from './request-update-incurred.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
-import PartsCollectionTable from '../../components/parts-collection-table/parts-collection-table.component';
+import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
 
 const RequestUpdateIncurred = () => {
   const { requestId } = useParams();
@@ -22,9 +22,17 @@ const RequestUpdateIncurred = () => {
   const [disabled, setDisabled] = useState([]);
 
   const { services } = request ?? {};
-  const requestPrice = request ? calculateRequestPrice(request) : 0;
+  const requestPrice = request
+    ? calculateRequestPrice({
+        services: request.services.filter(
+          (service) => !disabled.includes(service.id)
+        ),
+      })
+    : 0;
 
-  const incurredPrice = calculateRequestPrice({ services: incurred });
+  const incurredPrice = calculateRequestPrice({
+    services: incurred,
+  });
 
   const addService = (service) => {
     const updatedIncurred = [...incurred];
@@ -83,7 +91,7 @@ const RequestUpdateIncurred = () => {
       return;
     }
     updatedIncurred.splice(index, 1);
-    setRequest((curr) => ({ ...curr, services: updatedIncurred }));
+    setIncurred(updatedIncurred);
     message.info('Service removed.');
   };
 
@@ -186,39 +194,6 @@ const RequestUpdateIncurred = () => {
     });
   }, [requestId]);
 
-  const columns = [
-    { title: 'ID', align: 'center', render: (_, record, index) => index + 1 },
-    { title: 'Service Name', dataIndex: 'serviceName', align: 'center' },
-    {
-      title: 'Price',
-      dataIndex: 'servicePrice',
-      align: 'center',
-      render: (value) => formatMoney(value),
-    },
-    {
-      title: 'Incurred',
-      dataIndex: 'isIncurred',
-      align: 'center',
-      render: (value) => (
-        <Tag color={value ? 'success' : 'error'}>
-          {value.toString().toUpperCase()}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Active',
-      align: 'center',
-      render: (_, record) => {
-        return (
-          <Switch
-            checked={!disabled.includes(record.id)}
-            onChange={(checked) => toggleService(record.id, checked)}
-          />
-        );
-      },
-    },
-  ];
-
   if (redirect) {
     return <Redirect to="/requests" />;
   }
@@ -232,117 +207,101 @@ const RequestUpdateIncurred = () => {
         </Button>
 
         <Col span={24}>
-          <Table
-            title={() => <h1>Confirmed Services</h1>}
-            size="large"
+          <ServicesCollectionTable
+            dataSource={services?.map(
+              ({ serviceName, servicePrice, id, ...rest }) => ({
+                id,
+                name: serviceName,
+                price: servicePrice,
+                ...rest,
+              })
+            )}
             rowKey="id"
-            dataSource={services}
-            columns={columns}
-            expandable={{
-              rowExpandable: (record) => record.parts.length > 0,
-              expandedRowRender: (record) => {
-                return (
-                  <PartsCollectionTable
-                    showDesc={false}
-                    showModels={false}
-                    dataSource={record.parts.map(
-                      ({ partId, partName, price, quantity, ...rest }) => ({
-                        id: partId,
-                        name: partName,
-                        price,
-                        quantity,
-                        ...rest,
-                      })
-                    )}
-                    columns={[
-                      {
-                        title: 'Quantity',
-                        dataIndex: 'quantity',
-                        align: 'center',
-                      },
-                      {
-                        title: 'Total Price',
-                        align: 'center',
-                        render: (_, record) =>
-                          formatMoney(record.price * record.quantity),
-                      },
-                    ]}
-                  />
-                );
+            columns={[
+              {
+                title: 'Incurred',
+                dataIndex: 'isIncurred',
+                align: 'center',
+                render: (value = true) => (
+                  <Tag color={value ? 'success' : 'error'}>
+                    {value.toString().toUpperCase()}
+                  </Tag>
+                ),
               },
-            }}
+              {
+                title: 'Active',
+                align: 'center',
+                render: (_, record) => {
+                  return (
+                    <Switch
+                      checked={!disabled.includes(record.id)}
+                      onChange={(checked) => toggleService(record.id, checked)}
+                    />
+                  );
+                },
+              },
+            ]}
           />
         </Col>
         <Col span={24}>
           <Button onClick={() => setVisible(true)}>Add Service</Button>
         </Col>
         <Col span={24}>
-          <Table
-            title={() => <h1>Incurred Services</h1>}
-            size="large"
+          <ServicesCollectionTable
             rowKey="id"
-            dataSource={incurred}
-            columns={columns}
-            expandable={{
-              rowExpandable: (record) => record.parts.length > 0,
-              expandedRowRender: (record) => {
-                const { id } = record;
-
-                return (
-                  <PartsCollectionTable
-                    showDesc={false}
-                    showModels={false}
-                    dataSource={record.parts.map(
-                      ({ partId, partName, price, quantity, ...rest }) => ({
-                        id: partId,
-                        name: partName,
-                        price,
-                        quantity,
-                        ...rest,
-                      })
-                    )}
-                    columns={[
-                      {
-                        title: 'Quantity',
-                        dataIndex: 'quantity',
-                        align: 'center',
-                        render: (value, record) => {
-                          return (
-                            <Row
-                              align="middle"
-                              justify="space-between"
-                              gutter={[8, 8]}
-                            >
-                              <Button
-                                onClick={() =>
-                                  decreasePartQuantity(id, record.id)
-                                }
-                              >
-                                Remove
-                              </Button>
-                              <span>{value}</span>
-                              <Button
-                                onClick={() =>
-                                  increasePartQuantity(id, record.id)
-                                }
-                              >
-                                Add
-                              </Button>
-                            </Row>
-                          );
-                        },
-                      },
-                      {
-                        title: 'Total Price',
-                        align: 'center',
-                        render: (_, record) =>
-                          formatMoney(record.price * record.quantity),
-                      },
-                    ]}
-                  />
-                );
+            dataSource={incurred.map(
+              ({ serviceId, serviceName, servicePrice, ...rest }) => ({
+                id: serviceId,
+                name: serviceName,
+                price: servicePrice,
+                ...rest,
+              })
+            )}
+            columns={[
+              {
+                title: 'Remove',
+                align: 'center',
+                render: (_, record) => (
+                  <Button danger onClick={() => removeService(record.id)}>
+                    Remove
+                  </Button>
+                ),
               },
-            }}
+            ]}
+            partsExpandedColumns={[
+              {
+                title: 'Quantity',
+                dataIndex: 'quantity',
+                align: 'center',
+                render: (value, record) => {
+                  return (
+                    <Row align="middle" justify="space-between" gutter={[8, 8]}>
+                      <Button
+                        onClick={() =>
+                          decreasePartQuantity(record.serviceId, record.id)
+                        }
+                      >
+                        Remove
+                      </Button>
+                      <span>{value}</span>
+                      <Button
+                        onClick={() =>
+                          increasePartQuantity(record.serviceId, record.id)
+                        }
+                      >
+                        Add
+                      </Button>
+                    </Row>
+                  );
+                },
+              },
+              {
+                title: 'Total Price',
+                align: 'center',
+                render: (_, record) =>
+                  formatMoney(record.price * record.quantity),
+              },
+            ]}
           />
         </Col>
         <Col span={8} offset={16}>
