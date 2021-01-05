@@ -44,7 +44,6 @@ const PackageForm = ({ history, providerId }) => {
   const [services, setServices] = useState([]);
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
   const [redirect, setRedirect] = useState(false);
-  const [packageDetail, setPackageDetail] = useState(null);
 
   const toggleSelect = (serviceId) => {
     const updatedSelected = [...selectedServiceIds];
@@ -89,8 +88,10 @@ const PackageForm = ({ history, providerId }) => {
   const loadServices = useCallback(() => {
     return http
       .get(`/maintenance-packages/providers/${providerId}/services`)
-      .then(({ data }) => setServices(filterServicesByModelIds(data)));
-  }, [providerId]);
+      .then(({ data }) =>
+        setServices(filterServicesByModelIds(data, packageModels))
+      );
+  }, [packageModels, providerId]);
 
   const loadDetail = useCallback(() => {
     if (packageId) {

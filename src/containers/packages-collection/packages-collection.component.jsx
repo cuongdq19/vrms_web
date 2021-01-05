@@ -1,7 +1,6 @@
 import { Button, message, Modal, Popconfirm, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
 
 import { Content, Title } from './packages-collection.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
