@@ -15,6 +15,7 @@ import Users from '../containers/Users';
 import _403 from '../containers/_403';
 import _404 from '../containers/_404';
 import RequestUpdate from '../containers/request-update/request-update.component';
+import RequestUpdateIncurred from '../containers/request-update-incurred/request-update-incurred.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -99,6 +100,12 @@ const providerRoutes = [
     path: '/requests/:requestId',
     exact: true,
     component: RequestUpdate,
+  },
+  {
+    key: 'update-request-incurred',
+    path: '/requests/:requestId/incurred',
+    exact: true,
+    component: RequestUpdateIncurred,
   },
   {
     key: 'packages',

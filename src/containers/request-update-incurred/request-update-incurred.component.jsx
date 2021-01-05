@@ -1,54 +1,60 @@
-import { Button, Col, message, Row, Table } from 'antd';
+import { Button, Col, message, Row, Switch, Table, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import StateMachine from 'javascript-state-machine';
 
 import http from '../../http';
-import { calculateRequestPrice, formatMoney } from '../../utils';
 import { requestStateMachineConfig } from '../../utils/constants';
+import { calculateRequestPrice, formatMoney } from '../../utils';
 
-import { Summary } from './request-update.styles';
+import { Summary } from './request-update-incurred.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
+import PartsCollectionTable from '../../components/parts-collection-table/parts-collection-table.component';
 
-const RequestUpdate = () => {
+const RequestUpdateIncurred = () => {
   const { requestId } = useParams();
 
   const [request, setRequest] = useState(null);
   const [visible, setVisible] = useState(false);
   const [redirect, setRedirect] = useState(null);
+  const [incurred, setIncurred] = useState([]);
+  const [disabled, setDisabled] = useState([]);
 
   const { services } = request ?? {};
-  const total = request ? calculateRequestPrice(request) : 0;
+  const requestPrice = request ? calculateRequestPrice(request) : 0;
+
+  const incurredPrice = calculateRequestPrice({ services: incurred });
 
   const addService = (service) => {
-    const updatedServices = [...request.services];
+    const updatedIncurred = [...incurred];
     if (service.typeDetail && service.serviceDetail) {
       const { serviceDetail } = service;
       const { id, name, price, parts, ...rest } = serviceDetail;
-      const index = updatedServices.findIndex(
+      const index = updatedIncurred.findIndex(
         (service) => service.serviceId === id
       );
       if (index >= 0) {
         message.info('Service has already been added.');
         return;
       }
-      updatedServices.push({
+      updatedIncurred.push({
         id: Math.random(),
         serviceId: id,
         serviceName: name,
         servicePrice: price,
-        parts: parts.map(({ id, name, price, quantity }) => ({
+        parts: parts.map(({ id, name, price, quantity, ...rest }) => ({
           partId: id,
           partName: name,
           price,
           quantity,
+          ...rest,
         })),
         ...rest,
       });
     } else {
       const { serviceName, servicePrice, note, parts } = service;
-      updatedServices.push({
+      updatedIncurred.push({
         id: Math.random(),
         serviceId: null,
         serviceName,
@@ -63,30 +69,42 @@ const RequestUpdate = () => {
         })),
       });
     }
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    setIncurred(updatedIncurred);
     message.success('Service added.');
     setVisible(false);
   };
 
   const removeService = (id) => {
-    const updatedServices = [...request.services];
+    const updatedIncurred = [...incurred];
 
-    const index = updatedServices.findIndex((service) => service.id === id);
+    const index = updatedIncurred.findIndex((service) => service.id === id);
     if (index < 0) {
       message.info('Service has already been removed.');
       return;
     }
-    updatedServices.splice(index, 1);
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    updatedIncurred.splice(index, 1);
+    setRequest((curr) => ({ ...curr, services: updatedIncurred }));
     message.info('Service removed.');
   };
 
-  const decreasePartQuantity = (id, serviceId, partId) => {
-    const updatedServices = [...request.services];
-    const serviceIndex = updatedServices.findIndex(
-      (service) => service.id === id
+  const toggleService = (id, checked) => {
+    const updatedRemovedServices = [...disabled];
+    const index = updatedRemovedServices.findIndex((service) => service === id);
+    if (!checked) {
+      updatedRemovedServices.push(id);
+    } else {
+      updatedRemovedServices.splice(index, 1);
+    }
+
+    setDisabled(updatedRemovedServices);
+  };
+
+  const decreasePartQuantity = (incurredId, partId) => {
+    const updatedIncurred = [...incurred];
+    const incurredIndex = updatedIncurred.findIndex(
+      (incurred) => incurred.id === incurredId
     );
-    const updatedParts = [...updatedServices[serviceIndex].parts];
+    const updatedParts = [...updatedIncurred[incurredIndex].parts];
     const index = updatedParts.findIndex((part) => part.partId === partId);
     if (updatedParts[index].quantity <= 0) {
       return;
@@ -95,33 +113,32 @@ const RequestUpdate = () => {
     if (updatedParts[index].quantity > 1) {
       updatedParts[index].quantity--;
     } else {
-      if (serviceId) {
+      if (incurredId) {
         updatedParts[index].quantity--;
       } else {
         updatedParts.splice(index, 1);
       }
     }
-    updatedServices[serviceIndex].parts = updatedParts;
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    updatedIncurred[incurredIndex].parts = updatedParts;
+    setIncurred(updatedIncurred);
   };
 
-  const increasePartQuantity = (id, serviceId, partId) => {
-    const updatedServices = [...request.services];
-    const serviceIndex = updatedServices.findIndex(
-      (service) => service.id === id
+  const increasePartQuantity = (incurredId, partId) => {
+    const updatedIncurred = [...incurred];
+    const incurredIndex = updatedIncurred.findIndex(
+      (incurred) => incurred.id === incurredId
     );
-    const updatedParts = [...updatedServices[serviceIndex].parts];
+    const updatedParts = [...updatedIncurred[incurredIndex].parts];
     const index = updatedParts.findIndex((part) => part.partId === partId);
     updatedParts[index].quantity++;
 
-    updatedServices[serviceIndex].parts = updatedParts;
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    updatedIncurred[incurredIndex].parts = updatedParts;
+    setIncurred(updatedIncurred);
   };
 
   const submitHandler = () => {
-    const { services } = request;
-    const reqExpenses = services
-      .filter((service) => !service.serviceId)
+    const incurredExpenses = incurred
+      .filter((incurred) => !incurred.serviceId)
       .map((exp) => ({
         name: exp.serviceName,
         note: exp.note,
@@ -130,12 +147,12 @@ const RequestUpdate = () => {
         }, {}),
         price: exp.servicePrice,
       }));
-    const reqServices = services
-      .filter((service) => service.serviceId)
-      .reduce((accumulatedServices, service) => {
+    const incurredServices = incurred
+      .filter((incurred) => incurred.serviceId)
+      .reduce((accumulatedIncurred, incurred) => {
         return {
-          ...accumulatedServices,
-          [service.serviceId]: service.parts.reduce(
+          ...accumulatedIncurred,
+          [incurred.serviceId]: incurred.parts.reduce(
             (accumulatedParts, item) => {
               return { ...accumulatedParts, [item.partId]: item.quantity };
             },
@@ -144,11 +161,17 @@ const RequestUpdate = () => {
         };
       }, {});
 
+    const enabled = request.services
+      .filter((reqService) => !disabled.includes(reqService.id))
+      .map((reqService) => reqService.id);
+
     http
       .post(`/requests/update/${requestId}`, {
-        expenses: reqExpenses,
-        servicePartMap: reqServices,
+        expenses: incurredExpenses,
+        servicePartMap: incurredServices,
         packageMap: {},
+        disabled: disabled,
+        enabled: enabled,
       })
       .then(({ data }) => {
         message.success('Update request success.');
@@ -173,13 +196,26 @@ const RequestUpdate = () => {
       render: (value) => formatMoney(value),
     },
     {
-      title: 'Remove',
+      title: 'Incurred',
+      dataIndex: 'isIncurred',
       align: 'center',
-      render: (_, record) => (
-        <Button danger onClick={() => removeService(record.id)}>
-          Remove
-        </Button>
+      render: (value) => (
+        <Tag color={value ? 'success' : 'error'}>
+          {value.toString().toUpperCase()}
+        </Tag>
       ),
+    },
+    {
+      title: 'Active',
+      align: 'center',
+      render: (_, record) => {
+        return (
+          <Switch
+            checked={!disabled.includes(record.id)}
+            onChange={(checked) => toggleService(record.id, checked)}
+          />
+        );
+      },
     },
   ];
 
@@ -194,11 +230,10 @@ const RequestUpdate = () => {
         <Button type="primary" onClick={submitHandler}>
           Submit
         </Button>
-        <Col span={24}>
-          <Button onClick={() => setVisible(true)}>Add Service</Button>
-        </Col>
+
         <Col span={24}>
           <Table
+            title={() => <h1>Confirmed Services</h1>}
             size="large"
             rowKey="id"
             dataSource={services}
@@ -206,19 +241,67 @@ const RequestUpdate = () => {
             expandable={{
               rowExpandable: (record) => record.parts.length > 0,
               expandedRowRender: (record) => {
-                const { id, serviceId } = record;
                 return (
-                  <Table
-                    dataSource={record.parts}
+                  <PartsCollectionTable
+                    showDesc={false}
+                    showModels={false}
+                    dataSource={record.parts.map(
+                      ({ partId, partName, price, quantity, ...rest }) => ({
+                        id: partId,
+                        name: partName,
+                        price,
+                        quantity,
+                        ...rest,
+                      })
+                    )}
                     columns={[
-                      { title: 'ID', dataIndex: 'partId', align: 'center' },
-                      { title: 'Name', dataIndex: 'partName', align: 'center' },
                       {
-                        title: 'Price',
-                        dataIndex: 'price',
+                        title: 'Quantity',
+                        dataIndex: 'quantity',
                         align: 'center',
-                        render: (value) => formatMoney(value),
                       },
+                      {
+                        title: 'Total Price',
+                        align: 'center',
+                        render: (_, record) =>
+                          formatMoney(record.price * record.quantity),
+                      },
+                    ]}
+                  />
+                );
+              },
+            }}
+          />
+        </Col>
+        <Col span={24}>
+          <Button onClick={() => setVisible(true)}>Add Service</Button>
+        </Col>
+        <Col span={24}>
+          <Table
+            title={() => <h1>Incurred Services</h1>}
+            size="large"
+            rowKey="id"
+            dataSource={incurred}
+            columns={columns}
+            expandable={{
+              rowExpandable: (record) => record.parts.length > 0,
+              expandedRowRender: (record) => {
+                const { id } = record;
+
+                return (
+                  <PartsCollectionTable
+                    showDesc={false}
+                    showModels={false}
+                    dataSource={record.parts.map(
+                      ({ partId, partName, price, quantity, ...rest }) => ({
+                        id: partId,
+                        name: partName,
+                        price,
+                        quantity,
+                        ...rest,
+                      })
+                    )}
+                    columns={[
                       {
                         title: 'Quantity',
                         dataIndex: 'quantity',
@@ -232,11 +315,7 @@ const RequestUpdate = () => {
                             >
                               <Button
                                 onClick={() =>
-                                  decreasePartQuantity(
-                                    id,
-                                    serviceId,
-                                    record.partId
-                                  )
+                                  decreasePartQuantity(id, record.id)
                                 }
                               >
                                 Remove
@@ -244,11 +323,7 @@ const RequestUpdate = () => {
                               <span>{value}</span>
                               <Button
                                 onClick={() =>
-                                  increasePartQuantity(
-                                    id,
-                                    serviceId,
-                                    record.partId
-                                  )
+                                  increasePartQuantity(id, record.id)
                                 }
                               >
                                 Add
@@ -264,7 +339,6 @@ const RequestUpdate = () => {
                           formatMoney(record.price * record.quantity),
                       },
                     ]}
-                    rowKey="partId"
                   />
                 );
               },
@@ -277,13 +351,19 @@ const RequestUpdate = () => {
               <span>Services: </span>
             </Col>
             <Col span={18}>
-              <h3>{formatMoney(total.services)}</h3>
+              <h3>{formatMoney(requestPrice.total)}</h3>
+            </Col>
+            <Col span={6}>
+              <span>Incurred: </span>
+            </Col>
+            <Col span={18}>
+              <h3>{formatMoney(incurredPrice.total)}</h3>
             </Col>
             <Col span={6}>
               <span>Total: </span>
             </Col>
             <Col span={18}>
-              <h3>{formatMoney(total.total)}</h3>
+              <h3>{formatMoney(requestPrice.total + incurredPrice.total)}</h3>
             </Col>
           </Summary>
         </Col>
@@ -298,4 +378,4 @@ const RequestUpdate = () => {
   );
 };
 
-export default RequestUpdate;
+export default RequestUpdateIncurred;

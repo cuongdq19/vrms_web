@@ -76,7 +76,11 @@ const RequestsCollection = ({
               record.is('CANCELED')
             }
             onClick={() => {
-              history.push(`/requests/${record.id}`);
+              history.push(
+                `/requests/${record.id}${
+                  record.is('CONFIRMED') ? `/incurred` : ''
+                }`
+              );
             }}
           >
             Update
