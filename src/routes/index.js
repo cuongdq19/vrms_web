@@ -11,6 +11,7 @@ import Register from '../containers/Register';
 import RequestsCollection from '../containers/requests-collection/requests-collection.component';
 import ServicesCollection from '../containers/services-collection/services-collection.component';
 import SignIn from '../containers/sign-in/sign-in.component';
+import UsersCollection from '../containers/users-collection/users-collection.component';
 import Users from '../containers/Users';
 import _403 from '../containers/_403';
 import _404 from '../containers/_404';
@@ -88,7 +89,7 @@ const providerRoutes = [
     key: 'staffs',
     path: '/staffs',
     exact: true,
-    component: Users,
+    component: UsersCollection,
   },
   {
     key: 'technicians',
