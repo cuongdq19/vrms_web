@@ -15,7 +15,7 @@ const PartItem = ({ item, onInitUpdate }) => {
   const { name, price, imageUrls } = item;
   return (
     <Container>
-      <NameContainer level={4}>{name}</NameContainer>
+      <NameContainer level={5}>{name}</NameContainer>
       <BackgroundImage className="image" imageUrl={imageUrls[0]} />
       <Footer>
         <PriceContainer>{formatMoney(price)}</PriceContainer>

@@ -2,9 +2,10 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: 100%;
-  height: 350px;
+  height: 400px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   position: relative;
 
@@ -31,9 +32,8 @@ export const BackgroundImage = styled.img`
 
 export const Footer = styled.div`
   width: 100%;
-  height: 5%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -41,10 +41,10 @@ export const NameContainer = styled.span`
   flex: 1;
   font-weight: bold;
   font-size: 18px;
+  text-align: center;
 `;
 
 export const PriceContainer = styled.span`
-  flex: 1;
   text-align: center;
 `;
 
