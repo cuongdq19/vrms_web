@@ -1,12 +1,14 @@
 import { Button, Col, message, Row, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
+import StateMachine from 'javascript-state-machine';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
 import http from '../../http';
 import { calculateRequestPrice, formatMoney } from '../../utils';
 import { Summary } from './request-update.styles';
+import { requestStateMachineConfig } from '../../utils/constants';
 
 const RequestUpdate = () => {
   const { requestId } = useParams();
@@ -19,11 +21,10 @@ const RequestUpdate = () => {
   const total = request ? calculateRequestPrice(request) : 0;
 
   const addService = (service) => {
-    if (service.serviceId > 0) {
+    if (service.typeDetail && service.serviceDetail) {
       const updatedServices = [...request.services];
-
       const { serviceDetail } = service;
-      const { id, name, price, ...rest } = serviceDetail;
+      const { id, name, price, parts, ...rest } = serviceDetail;
       const index = updatedServices.findIndex(
         (service) => service.serviceId === id
       );
@@ -36,42 +37,45 @@ const RequestUpdate = () => {
         serviceId: id,
         serviceName: name,
         servicePrice: price,
+        parts: parts.map(({ id, name, price, quantity }) => ({
+          partId: id,
+          partName: name,
+          price,
+          quantity,
+        })),
         ...rest,
       });
       setRequest((curr) => ({ ...curr, services: updatedServices }));
       message.success('Service added.');
     } else {
-      const updatedServices = [...request.services];
-      const { serviceId, serviceName, servicePrice, note, parts } = service;
-
-      updatedServices.push({
-        id: Math.random(),
-        serviceId,
-        serviceName,
-        servicePrice,
-        note,
-        parts: parts.map(({ id, name, price, quantity, ...rest }) => ({
-          partId: id,
-          partName: name,
-          quantity,
-          price,
-          ...rest,
-        })),
-      });
-      setRequest((curr) => ({ ...curr, services: updatedServices }));
-      message.success('Service added.');
+      // const updatedServices = [...request.services];
+      // const { serviceId, serviceName, servicePrice, note, parts } = service;
+      // updatedServices.push({
+      //   id: Math.random(),
+      //   serviceId,
+      //   serviceName,
+      //   servicePrice,
+      //   note,
+      //   parts: parts.map(({ id, name, price, quantity, ...rest }) => ({
+      //     partId: id,
+      //     partName: name,
+      //     quantity,
+      //     price,
+      //     ...rest,
+      //   })),
+      // });
+      // setRequest((curr) => ({ ...curr, services: updatedServices }));
+      // message.success('Service added.');
     }
 
     setVisible(false);
   };
 
-  const removeService = (serviceId) => {
+  const removeService = (id) => {
     const updatedServices = [...request.services];
 
-    const index = updatedServices.findIndex(
-      (service) => service.serviceId === serviceId
-    );
-    if (index >= 0) {
+    const index = updatedServices.findIndex((service) => service.id === id);
+    if (index < 0) {
       message.info('Service has already been removed.');
       return;
     }
@@ -156,7 +160,10 @@ const RequestUpdate = () => {
   };
 
   useEffect(() => {
-    http.get(`/requests/${requestId}`).then(({ data }) => setRequest(data));
+    http.get(`/requests/${requestId}`).then(({ data }) => {
+      StateMachine.apply(data, requestStateMachineConfig);
+      setRequest(data);
+    });
   }, [requestId]);
 
   const columns = [
@@ -187,9 +194,15 @@ const RequestUpdate = () => {
     <LayoutWrapper>
       <Row justify="space-between" align="middle" gutter={[8, 8]}>
         <h1>Update Request</h1>
-        <Button onClick={() => setVisible(true)}>Add Service</Button>
+        <Button type="primary" onClick={submitHandler}>
+          Submit
+        </Button>
+        <Col span={24}>
+          <Button onClick={() => setVisible(true)}>Add Service</Button>
+        </Col>
         <Col span={24}>
           <Table
+            size="large"
             rowKey="id"
             dataSource={services}
             columns={columns}
@@ -277,8 +290,6 @@ const RequestUpdate = () => {
             </Col>
           </Summary>
         </Col>
-        <Col flex="1"></Col>
-        <Button onClick={submitHandler}>Submit</Button>
       </Row>
       <RequestServiceSelectModal
         modelId="1"

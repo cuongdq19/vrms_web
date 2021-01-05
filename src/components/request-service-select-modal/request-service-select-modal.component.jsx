@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import PartsCollectionTable from '../parts-collection-table/parts-collection-table.component';
 
 import http from '../../http';
+import { formatMoney } from '../../utils';
 
 const RequestServiceSelectModal = ({
   visible,
@@ -28,31 +29,26 @@ const RequestServiceSelectModal = ({
   const [existed, setExisted] = useState(true);
   const [types, setTypes] = useState([]);
   const [services, setServices] = useState([]);
-  const [selected, setSelected] = useState({
-    serviceId: null,
-    serviceName: '',
-    servicePrice: '',
-    note: '',
-    parts: [],
-  });
+  const [selected, setSelected] = useState(null);
   const [parts, setParts] = useState([]);
 
-  const reset = () => {
+  const resetHandler = () => {
+    onCancel();
+    form.resetFields();
     setParts([]);
-    setSelected({
-      serviceId: null,
-      serviceName: '',
-      servicePrice: '',
-      note: '',
-      parts: [],
-    });
+    setSelected(null);
     setServices([]);
     setTypes([]);
   };
 
+  const submitHandler = () => {
+    onOk(selected);
+    resetHandler();
+  };
+
   const addPart = (part) => {
     const { id } = part;
-    const updatedParts = [...selected.parts];
+    const updatedParts = [...(selected?.parts ?? [])];
     const index = updatedParts.findIndex((part) => part.id === id);
     if (index >= 0) {
       updatedParts[index].quantity++;
@@ -62,25 +58,50 @@ const RequestServiceSelectModal = ({
     setSelected((curr) => ({ ...curr, parts: updatedParts }));
   };
 
+  const decreasePartQuantity = (partId) => {
+    const updatedParts = [...selected.serviceDetail.parts];
+    const index = updatedParts.findIndex((part) => part.id === partId);
+    if (index >= 0 && updatedParts[index].quantity > 0) {
+      updatedParts[index].quantity--;
+    } else {
+      return;
+    }
+
+    setSelected((curr) => ({
+      ...curr,
+      typeDetail: { ...curr.typeDetail, parts: updatedParts },
+    }));
+  };
+
+  const increasePartQuantity = (partId) => {
+    const updatedParts = [...selected.serviceDetail.parts];
+    const index = updatedParts.findIndex((part) => part.id === partId);
+    if (index >= 0) {
+      updatedParts[index].quantity++;
+    } else {
+      return;
+    }
+
+    setSelected((curr) => ({
+      ...curr,
+      typeDetail: { ...curr.typeDetail, parts: updatedParts },
+    }));
+  };
+
   useEffect(() => {
-    http.get('/service-types').then(({ data }) => setTypes(data));
-  }, []);
+    if (visible) {
+      http.get('/service-types').then(({ data }) => setTypes(data));
+    }
+  }, [visible]);
 
   return (
     <Modal
-      width="60%"
+      width="70%"
       visible={visible}
-      onCancel={onCancel}
+      onCancel={resetHandler}
       onOk={() => form.submit()}
     >
-      <Form
-        form={form}
-        onFinish={() => {
-          onOk(selected);
-          reset();
-        }}
-        layout="vertical"
-      >
+      <Form form={form} onFinish={submitHandler} layout="vertical">
         <Row gutter={[8, 8]} align="middle">
           <Col span={24}>
             <Form.Item label="Existed Service">
@@ -106,7 +127,7 @@ const RequestServiceSelectModal = ({
           {existed ? (
             <>
               <Col span={12}>
-                <Form.Item label="Service Type">
+                <Form.Item label="Service Type" name="typeId">
                   <Select
                     onChange={(value) => {
                       http
@@ -121,7 +142,7 @@ const RequestServiceSelectModal = ({
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Service">
+                <Form.Item label="Service" name="serviceId">
                   <Cascader
                     onChange={(_, selectedOptions) => {
                       const [
@@ -143,6 +164,41 @@ const RequestServiceSelectModal = ({
                   />
                 </Form.Item>
               </Col>
+              <Col span={24}>
+                <PartsCollectionTable
+                  showDesc={false}
+                  showModels={false}
+                  dataSource={selected?.serviceDetail?.parts}
+                  columns={[
+                    {
+                      title: 'Quantity',
+                      dataIndex: 'quantity',
+                      align: 'center',
+                      render: (value, record) => (
+                        <Row justify="space-between" align="middle">
+                          <Button
+                            onClick={() => decreasePartQuantity(record.id)}
+                          >
+                            Remove
+                          </Button>
+                          <span>{value}</span>
+                          <Button
+                            onClick={() => increasePartQuantity(record.id)}
+                          >
+                            Add
+                          </Button>
+                        </Row>
+                      ),
+                    },
+                    {
+                      title: 'Total Price',
+                      align: 'center',
+                      render: (_, record) =>
+                        formatMoney(record.price * record.quantity),
+                    },
+                  ]}
+                />
+              </Col>
             </>
           ) : (
             <>
@@ -150,7 +206,7 @@ const RequestServiceSelectModal = ({
                 <Form.Item label="Service Name">
                   <Input
                     placeholder="Service Name"
-                    value={selected.serviceName}
+                    value={selected?.serviceName}
                     onChange={(event) =>
                       setSelected((curr) => ({
                         ...curr,
@@ -165,7 +221,7 @@ const RequestServiceSelectModal = ({
                   <Input.TextArea
                     autoSize
                     placeholder="Note"
-                    value={selected.note}
+                    value={selected?.note}
                     onChange={(event) =>
                       setSelected((curr) => ({
                         ...curr,
@@ -180,7 +236,7 @@ const RequestServiceSelectModal = ({
                   <InputNumber
                     type="number"
                     min={0}
-                    value={selected.servicePrice}
+                    value={selected?.servicePrice}
                     onChange={(value) =>
                       setSelected((curr) => ({
                         ...curr,

@@ -1,10 +1,9 @@
 import { Button, message, Popconfirm, Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import moment from 'moment';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import RequestUpdateButton from '../../components/RequestUpdateButton';
 import * as actions from '../../store/actions';
 import {
   calculateRequestPrice,
@@ -23,7 +22,6 @@ const RequestsCollection = ({
   cancelRequest,
   requestsData,
 }) => {
-  const dispatch = useDispatch();
   const [modals, setModals] = useState({
     confirm: false,
     checkIn: false,
@@ -72,13 +70,18 @@ const RequestsCollection = ({
       render: (_, record) => (
         <>
           <Button
+            disabled={
+              record.is('FINISHED') ||
+              record.is('WORK COMPLETED') ||
+              record.is('CANCELED')
+            }
             onClick={() => {
               history.push(`/requests/${record.id}`);
             }}
           >
             Update
           </Button>
-          <RequestUpdateButton
+          {/* <RequestUpdateButton
             disabled={
               record.is('FINISHED') ||
               record.is('WORK COMPLETED') ||
@@ -88,7 +91,7 @@ const RequestsCollection = ({
             onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
           >
             Update
-          </RequestUpdateButton>
+          </RequestUpdateButton> */}
         </>
       ),
     },
