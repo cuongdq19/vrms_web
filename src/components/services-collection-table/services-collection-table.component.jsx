@@ -15,6 +15,21 @@ const ServicesCollectionTable = ({
     <Table
       rowKey={rowKey}
       dataSource={dataSource}
+      columns={[
+        {
+          title: 'ID',
+          align: 'center',
+          render: (_, record, index) => index + 1,
+        },
+        { title: 'Service Name', dataIndex: 'name', align: 'center' },
+        {
+          title: 'Price',
+          dataIndex: 'price',
+          align: 'center',
+          render: (value) => formatMoney(value),
+        },
+        ...(columns ?? []),
+      ]}
       expandable={{
         rowExpandable: (record) => record.parts.length > 0,
         expandedRowRender: (record) => {
@@ -38,21 +53,6 @@ const ServicesCollectionTable = ({
           );
         },
       }}
-      columns={[
-        {
-          title: 'ID',
-          align: 'center',
-          render: (_, record, index) => index + 1,
-        },
-        { title: 'Service Name', dataIndex: 'name', align: 'center' },
-        {
-          title: 'Price',
-          dataIndex: 'price',
-          align: 'center',
-          render: (value) => formatMoney(value),
-        },
-        ...(columns ?? []),
-      ]}
     />
   );
 };

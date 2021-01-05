@@ -1,6 +1,5 @@
 import {
   Button,
-  Cascader,
   Col,
   Form,
   Input,
@@ -29,10 +28,11 @@ const RequestServiceSelectModal = ({
 }) => {
   const [form] = Form.useForm();
   const [existed, setExisted] = useState(true);
-  const [types, setTypes] = useState([]);
+  const [typeDetails, setTypeDetails] = useState([]);
   const [services, setServices] = useState([]);
   const [selected, setSelected] = useState(null);
   const [parts, setParts] = useState([]);
+  const [serviceFilter, setServiceFilter] = useState(0);
 
   const resetHandler = () => {
     onCancel();
@@ -40,7 +40,7 @@ const RequestServiceSelectModal = ({
     setParts([]);
     setSelected(null);
     setServices([]);
-    setTypes([]);
+    setTypeDetails([]);
   };
 
   const submitHandler = () => {
@@ -92,9 +92,15 @@ const RequestServiceSelectModal = ({
 
   useEffect(() => {
     if (visible) {
-      http.get('/service-types').then(({ data }) => setTypes(data));
+      Promise.all([
+        http.get('/service-type-details/sections'),
+        http.get(`/maintenance-packages/providers/${providerId}/services`),
+      ]).then(([typeDetails, services]) => {
+        setTypeDetails(typeDetails?.data ?? []);
+        setServices(services?.data ?? []);
+      });
     }
-  }, [visible]);
+  }, [providerId, visible]);
 
   return (
     <Modal
@@ -129,41 +135,36 @@ const RequestServiceSelectModal = ({
           </Col>
           {existed ? (
             <>
-              <Col span={12}>
-                <Form.Item label="Service Type" name="typeId">
+              <Col span={8}>
+                <Form.Item label="Service Type" name="id">
                   <Select
+                    allowClear
+                    onClear={() => setServiceFilter(0)}
                     onChange={(value) => {
-                      http
-                        .get(`/services/providers/${providerId}/types/${value}`)
-                        .then(({ data }) => setServices(data));
+                      form.resetFields(['serviceId']);
+                      setServiceFilter(value);
                     }}
-                    options={types.map((type) => ({
-                      label: type.name,
+                    options={typeDetails.map((type) => ({
+                      label: type.typeName + ' ' + type.sectionName,
                       value: type.id,
                     }))}
                   />
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col flex="1">
                 <Form.Item label="Service" name="serviceId">
-                  <Cascader
-                    onChange={(_, selectedOptions) => {
-                      const [
-                        { typeDetail },
-                        { serviceDetail },
-                      ] = selectedOptions;
-                      setSelected({ typeDetail, serviceDetail });
-                    }}
-                    options={services.map(({ typeDetail, serviceDetails }) => ({
-                      label: typeDetail.sectionName,
-                      value: typeDetail.id,
-                      typeDetail,
-                      children: serviceDetails.map((detail) => ({
-                        serviceDetail: detail,
-                        label: detail.name,
-                        value: detail.id,
-                      })),
-                    }))}
+                  <Select
+                    onChange={(value) => setSelected(value)}
+                    options={services
+                      .filter(({ typeDetail }) => {
+                        return serviceFilter > 0
+                          ? serviceFilter === typeDetail.id
+                          : true;
+                      })
+                      .map(({ name, id }) => ({
+                        label: name,
+                        value: id,
+                      }))}
                   />
                 </Form.Item>
               </Col>
@@ -172,7 +173,7 @@ const RequestServiceSelectModal = ({
                   showDefaultQuantity={false}
                   showDesc={false}
                   showModels={false}
-                  dataSource={selected?.serviceDetail?.parts}
+                  dataSource={selected?.parts}
                   columns={[
                     {
                       title: 'Quantity',

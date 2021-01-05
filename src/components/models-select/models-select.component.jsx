@@ -2,7 +2,7 @@ import { Col, Row, Select } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import http from '../../http';
-import { modelToString } from '../../utils';
+import { modelToString, nonAccentVietnamese } from '../../utils';
 
 const transformModelsDataToOptions = (data) => {
   return data.map((m) => ({
@@ -32,10 +32,16 @@ const ModelsSelect = ({ disabled = false, models = [], onChange }) => {
     <Row gutter={[16, 16]}>
       <Col span={8}>
         <Select
+          showSearch
+          allowClear
+          filterOption={(input, option) => {
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          }}
+          onClear={loadData}
           disabled={disabled}
           placeholder="Select Manufacturer"
           options={manuOptions}
-          onChange={(value) => {
+          onSelect={(value) => {
             http.get(`/models/manufacturers/${value}`).then(({ data }) => {
               setModelOptions(transformModelsDataToOptions(data));
             });
@@ -44,6 +50,14 @@ const ModelsSelect = ({ disabled = false, models = [], onChange }) => {
       </Col>
       <Col span={16}>
         <Select
+          showSearch
+          filterOption={(input, option) => {
+            return (
+              nonAccentVietnamese(option.label)
+                .toLowerCase()
+                .indexOf(nonAccentVietnamese(input.toLowerCase())) >= 0
+            );
+          }}
           disabled={disabled}
           value={models}
           allowClear

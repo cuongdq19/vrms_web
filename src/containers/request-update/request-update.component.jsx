@@ -6,8 +6,8 @@ import StateMachine from 'javascript-state-machine';
 import http from '../../http';
 import { calculateRequestPrice, formatMoney } from '../../utils';
 import { requestStateMachineConfig } from '../../utils/constants';
-
 import { Summary } from './request-update.styles';
+
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
 
@@ -291,7 +291,7 @@ const RequestUpdate = () => {
         </Col>
       </Row>
       <RequestServiceSelectModal
-        modelId="1"
+        modelId={1}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={addService}
