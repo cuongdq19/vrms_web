@@ -166,6 +166,7 @@ const RequestServiceSelectModal = ({
               </Col>
               <Col span={24}>
                 <PartsCollectionTable
+                  showDefaultQuantity={false}
                   showDesc={false}
                   showModels={false}
                   dataSource={selected?.serviceDetail?.parts}

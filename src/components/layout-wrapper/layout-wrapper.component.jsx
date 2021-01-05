@@ -59,7 +59,7 @@ const LayoutWrapper = ({
     {
       icon: <FontAwesomeIcon icon={faTools} />,
       key: 'packages',
-      title: 'Packages',
+      title: 'Maintenance Packages',
       onClick: () => history.push('/packages'),
     },
     {
@@ -110,7 +110,7 @@ const LayoutWrapper = ({
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider trigger={null} collapsible collapsed={collapsed} width={220}>
         <Logo />
         <Menu
           theme="dark"

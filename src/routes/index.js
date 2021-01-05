@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../components/PrivateRoute';
 import Contracts from '../containers/Contracts';
 import Dashboard from '../containers/Dashboard';
-import Packages from '../containers/Packages';
+import PackagesCollection from '../containers/packages-collection/packages-collection.component';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import ServiceForm from '../containers/service-form/service-form.component';
 import Register from '../containers/Register';
@@ -63,7 +63,7 @@ const providerRoutes = [
     key: 'packages',
     path: '/packages',
     exact: true,
-    component: Packages,
+    component: PackagesCollection,
   },
   {
     key: 'staffs',
@@ -106,12 +106,6 @@ const providerRoutes = [
     path: '/requests/:requestId/incurred',
     exact: true,
     component: RequestUpdateIncurred,
-  },
-  {
-    key: 'packages',
-    path: '/packages',
-    exact: true,
-    component: Packages,
   },
 ];
 

@@ -7,6 +7,7 @@ const PartsCollectionTable = ({
   dataSource,
   showDesc = true,
   showModels = true,
+  showDefaultQuantity = true,
 }) => {
   return (
     <Table
@@ -49,7 +50,17 @@ const PartsCollectionTable = ({
               },
             ]
           : []),
-
+        ...(showDefaultQuantity
+          ? [
+              { title: 'Quantity', dataIndex: 'quantity', align: 'center' },
+              {
+                title: 'Total Price',
+                align: 'center',
+                render: (_, record) =>
+                  formatMoney(record.price * record.quantity),
+              },
+            ]
+          : []),
         ...(columns ?? []),
       ]}
     />

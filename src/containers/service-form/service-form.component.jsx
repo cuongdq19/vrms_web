@@ -216,6 +216,7 @@ const ServiceForm = ({ providerId }) => {
           {withParts && serviceModels.length > 0 && <h1>{filterMessage}</h1>}
           {!withParts ? null : (
             <PartsCollectionTable
+              showDefaultQuantity={false}
               columns={[
                 {
                   title: 'Add',
