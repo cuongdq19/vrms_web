@@ -13,21 +13,29 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
+import { ItemContainer, NameContainer, Title } from './service-form.styles';
+import http from '../../http';
+
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import ModelsSelect from '../../components/models-select/models-select.component';
 import PartsCollectionTable from '../../components/parts-collection-table/parts-collection-table.component';
-import ServiceCascader from '../../components/service-cascader/service-cascader.component';
-import http from '../../http';
-import { ItemContainer, NameContainer, Title } from './service-form.styles';
+import ServiceSelect from '../../components/service-select/service-select.component';
 
-const ServiceForm = ({ providerId }) => {
+const ServiceForm = ({ providerId, history }) => {
+  const {
+    location: { state },
+  } = history;
+  const { item, typeId, typeDetailId } = state ?? {};
+  const { id } = item ?? {};
   const filterMessage = 'Parts will be filtered.';
   const [form] = Form.useForm();
   const [parts, setParts] = useState([]);
   const [withParts, setWithParts] = useState(false);
   const [serviceParts, setServiceParts] = useState([]);
   const [serviceModels, setServiceModels] = useState([]);
-  const [serviceType, setServiceType] = useState([]);
+  const [selectedServiceId, setSelectedServiceId] = useState(
+    typeDetailId ?? null
+  );
   const [redirect, setRedirect] = useState(false);
 
   const addServicePart = (part) => {
@@ -74,20 +82,30 @@ const ServiceForm = ({ providerId }) => {
   };
 
   const submitHandler = (values) => {
-    const { serviceType, serviceName, price } = values;
+    const { serviceName, price } = values;
+
     if (serviceParts.length === 0) {
       const requestBody = {
-        typeDetailId: serviceType[1],
+        typeDetailId: selectedServiceId,
         modelIds: serviceModels,
         serviceName,
         price,
       };
-      http
-        .post(`/services/providers/${providerId}/non-replacing`, requestBody)
-        .then(({ data }) => {
-          message.success('Service successfully created.');
-          setRedirect(true);
-        });
+      if (!id) {
+        http
+          .post(`/services/providers/${providerId}/non-replacing`, requestBody)
+          .then(({ data }) => {
+            message.success('Service successfully created.');
+            setRedirect(true);
+          });
+      } else {
+        http
+          .post(`/services/${id}/non-replacing`, requestBody)
+          .then(({ data }) => {
+            message.success('Service successfully updated.');
+            setRedirect(true);
+          });
+      }
     } else {
       const groupPriceRequest = {
         name: serviceName,
@@ -100,17 +118,25 @@ const ServiceForm = ({ providerId }) => {
         }, {}),
       };
 
-      const requestBody = {
-        typeDetailId: serviceType[1],
-        groupPriceRequest,
-      };
-
-      http
-        .post(`/services/providers/${providerId}/replacing`, requestBody)
-        .then(({ data }) => {
-          message.success('Service successfully created.');
-          setRedirect(true);
-        });
+      if (!id) {
+        const requestBody = {
+          typeDetailId: selectedServiceId,
+          groupPriceRequest,
+        };
+        http
+          .post(`/services/providers/${providerId}/replacing`, requestBody)
+          .then(({ data }) => {
+            message.success('Service successfully created.');
+            setRedirect(true);
+          });
+      } else {
+        http
+          .post(`/services/${id}/replacing`, groupPriceRequest)
+          .then(({ data }) => {
+            message.success('Service successfully updated.');
+            setRedirect(true);
+          });
+      }
     }
   };
 
@@ -123,6 +149,19 @@ const ServiceForm = ({ providerId }) => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (item) {
+      const { parts, price, name } = item;
+      setWithParts(parts.length > 0);
+      setServiceParts(parts);
+
+      form.setFieldsValue({
+        price,
+        serviceName: name,
+      });
+    }
+  }, [form, item, typeDetailId, typeId]);
 
   const filteredParts = parts.filter((part) => {
     if (serviceModels.length === 0) {
@@ -145,10 +184,11 @@ const ServiceForm = ({ providerId }) => {
       <Form form={form} layout="vertical" onFinish={submitHandler}>
         <Row wrap gutter={[16, 16]}>
           <Col span={8}>
-            <Form.Item label="Service Type" name="serviceType">
-              <ServiceCascader
-                value={serviceType}
-                onChange={(value) => setServiceType(value)}
+            <Form.Item label="Service Type">
+              <ServiceSelect
+                typeId={typeId}
+                serviceId={selectedServiceId}
+                onChange={(value) => setSelectedServiceId(value)}
               />
             </Form.Item>
           </Col>
@@ -172,22 +212,24 @@ const ServiceForm = ({ providerId }) => {
             </Form.Item>
           </Col>
 
-          <Col span={24}>
-            <Form.Item label="With Parts">
-              <Radio.Group
-                value={withParts}
-                onChange={(event) => {
-                  setWithParts(event.target.value);
-                  setServiceParts([]);
-                  setServiceModels([]);
-                }}
-              >
-                <Radio value={true}>With Parts</Radio>
-                <Radio value={false}>Without Parts</Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-          {withParts && serviceParts.length > 0 && (
+          {!id ? (
+            <Col span={24}>
+              <Form.Item label="With Parts">
+                <Radio.Group
+                  value={withParts}
+                  onChange={(event) => {
+                    setWithParts(event.target.value);
+                    setServiceParts([]);
+                    setServiceModels([]);
+                  }}
+                >
+                  <Radio value={true}>With Parts</Radio>
+                  <Radio value={false}>Without Parts</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          ) : null}
+          {withParts && serviceParts.length > 0 ? (
             <Col span={24}>
               <Form.Item label="Service Parts">
                 <List
@@ -212,7 +254,7 @@ const ServiceForm = ({ providerId }) => {
                 />
               </Form.Item>
             </Col>
-          )}
+          ) : null}
           {withParts && serviceModels.length > 0 && <h1>{filterMessage}</h1>}
           {!withParts ? null : (
             <PartsCollectionTable

@@ -61,6 +61,12 @@ const providerRoutes = [
     component: ServiceForm,
   },
   {
+    key: 'update-service',
+    path: '/services/:serviceId',
+    exact: true,
+    component: ServiceForm,
+  },
+  {
     key: 'packages',
     path: '/packages',
     exact: true,
@@ -73,7 +79,7 @@ const providerRoutes = [
     component: PackageForm,
   },
   {
-    key: 'add-package',
+    key: 'update-package',
     path: '/packages/:packageId',
     exact: true,
     component: PackageForm,

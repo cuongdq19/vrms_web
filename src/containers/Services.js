@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import ServiceRemoveButton from '../components/ServiceRemoveButton';
-import ServiceUpdateWithoutPartsButton from '../components/ServiceUpdateWithoutPartsButton';
-import ServiceUpdateWithPartsButton from '../components/ServiceUpdateWithPartsButton';
 import LayoutWrapper from '../components/layout-wrapper/layout-wrapper.component';
 import http from '../http';
 import { formatMoney } from '../utils';
@@ -16,8 +14,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-
-// const { Option } = Select;
 
 const Services = ({ history }) => {
   const providerId = useSelector((state) => state.auth.userData.providerId);
@@ -85,30 +81,19 @@ const Services = ({ history }) => {
               {
                 title: 'Update',
                 align: 'center',
-                render: (_, record) => {
-                  const { parts } = record;
-
-                  if (parts.length === 0) {
-                    return (
-                      <ServiceUpdateWithoutPartsButton
-                        onSuccess={fetchServicesData}
-                        serviceDetail={record}
-                        typeDetail={typeDetail}
-                      >
-                        Update
-                      </ServiceUpdateWithoutPartsButton>
-                    );
-                  }
-                  return (
-                    <ServiceUpdateWithPartsButton
-                      onSuccess={fetchServicesData}
-                      serviceDetail={record}
-                      typeDetail={typeDetail}
-                    >
-                      Update
-                    </ServiceUpdateWithPartsButton>
-                  );
-                },
+                render: (_, record) => (
+                  <Button
+                    onClick={() =>
+                      history.push(`/services/${record.id}`, {
+                        item: record,
+                        typeId: typeDetail.typeId,
+                        typeDetailId: typeDetail.id,
+                      })
+                    }
+                  >
+                    Update
+                  </Button>
+                ),
               },
               {
                 title: 'Remove',
