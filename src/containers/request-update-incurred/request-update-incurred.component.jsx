@@ -19,13 +19,13 @@ const RequestUpdateIncurred = () => {
   const [visible, setVisible] = useState(false);
   const [redirect, setRedirect] = useState(null);
   const [incurred, setIncurred] = useState([]);
-  const [disabled, setDisabled] = useState([]);
+  const [disables, setDisables] = useState([]);
 
   const { services } = request ?? {};
   const requestPrice = request
     ? calculateRequestPrice({
         services: request.services.filter(
-          (service) => !disabled.includes(service.id)
+          (service) => !disables.includes(service.id)
         ),
       })
     : 0;
@@ -96,7 +96,7 @@ const RequestUpdateIncurred = () => {
   };
 
   const toggleService = (id, checked) => {
-    const updatedRemovedServices = [...disabled];
+    const updatedRemovedServices = [...disables];
     const index = updatedRemovedServices.findIndex((service) => service === id);
     if (!checked) {
       updatedRemovedServices.push(id);
@@ -104,7 +104,7 @@ const RequestUpdateIncurred = () => {
       updatedRemovedServices.splice(index, 1);
     }
 
-    setDisabled(updatedRemovedServices);
+    setDisables(updatedRemovedServices);
   };
 
   const decreasePartQuantity = (incurredId, partId) => {
@@ -169,8 +169,8 @@ const RequestUpdateIncurred = () => {
         };
       }, {});
 
-    const enabled = request.services
-      .filter((reqService) => !disabled.includes(reqService.id))
+    const enables = request.services
+      .filter((reqService) => !disables.includes(reqService.id))
       .map((reqService) => reqService.id);
 
     http
@@ -178,8 +178,8 @@ const RequestUpdateIncurred = () => {
         expenses: incurredExpenses,
         servicePartMap: incurredServices,
         packageMap: {},
-        disabled: disabled,
-        enabled: enabled,
+        disables,
+        enables,
       })
       .then(({ data }) => {
         message.success('Update request success.');
@@ -191,6 +191,9 @@ const RequestUpdateIncurred = () => {
     http.get(`/requests/${requestId}`).then(({ data }) => {
       StateMachine.apply(data, requestStateMachineConfig);
       setRequest(data);
+      setDisables(
+        data.services.filter(({ isActive }) => !isActive).map(({ id }) => id)
+      );
     });
   }, [requestId]);
 
@@ -234,7 +237,7 @@ const RequestUpdateIncurred = () => {
                 render: (_, record) => {
                   return (
                     <Switch
-                      checked={!disabled.includes(record.id)}
+                      checked={!disables.includes(record.id)}
                       onChange={(checked) => toggleService(record.id, checked)}
                     />
                   );

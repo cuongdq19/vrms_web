@@ -11,7 +11,7 @@ const transformModelsDataToOptions = (data) => {
   }));
 };
 
-const ModelsSelect = ({ disabled, models, onChange }) => {
+const ModelsSelect = ({ disabled = false, models = [], onChange }) => {
   const [modelOptions, setModelOptions] = useState([]);
   const [manuOptions, setManuOptions] = useState([]);
 

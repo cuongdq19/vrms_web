@@ -60,7 +60,9 @@ const RequestsCollection = ({
       align: 'center',
       title: 'Total Price',
       render: (_, record) => {
-        const price = calculateRequestPrice(record);
+        const price = calculateRequestPrice({
+          services: record.services.filter(({ isActive }) => isActive),
+        });
         return formatMoney(price.total);
       },
     },

@@ -149,6 +149,8 @@ const RequestUpdate = () => {
         expenses: reqExpenses,
         servicePartMap: reqServices,
         packageMap: {},
+        disables: [],
+        enables: [],
       })
       .then(({ data }) => {
         message.success('Update request success.');
