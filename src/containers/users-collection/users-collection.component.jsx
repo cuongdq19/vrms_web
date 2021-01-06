@@ -45,6 +45,11 @@ const UsersCollection = ({ providerId }) => {
               align: 'center',
             },
             {
+              title: 'User Role',
+              dataIndex: 'roleName',
+              align: 'center',
+            },
+            {
               title: 'Update',
               align: 'center',
               render: (_, record) => {
