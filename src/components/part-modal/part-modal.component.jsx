@@ -8,7 +8,6 @@ import {
   message,
   Modal,
   Row,
-  Select,
   Upload,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -16,8 +15,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
 import http from '../../http';
-
-const { Option } = Select;
+import ModelsSelect from '../models-select/models-select.component';
 
 const PartModal = ({ visible, item, providerId, onClose }) => {
   const {
@@ -36,16 +34,14 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
     data: [],
     loading: false,
   });
-  const [manufacturers, setManufacturers] = useState({
-    data: [],
-    loading: false,
-  });
-  const [models, setModels] = useState({ loading: false, data: [] });
+
+  const [partModels, setPartModels] = useState([]);
 
   const submitHandler = (values) => {
     if (!item) {
       const formData = new FormData();
       formData.append('providerId', providerId);
+      partModels.forEach((modelId) => formData.append('modelIds', modelId));
       Object.keys(values).forEach((key) => {
         switch (key) {
           case 'modelIds':
@@ -68,6 +64,7 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
         .post('/parts', formData)
         .then(() => {
           form.resetFields();
+          setPartModels([]);
           onClose();
           message.success('Create success');
         })
@@ -75,6 +72,7 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
     } else {
       const reqBody = {
         ...values,
+        modelIds: partModels,
         id,
         categoryId: values.categoryId[1],
         providerId,
@@ -92,14 +90,6 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
     http
       .get('/service-type-details/sections/categories')
       .then(({ data }) => setSections({ loading: false, data }));
-
-    setManufacturers((curr) => ({ ...curr, loading: true }));
-    http
-      .get('/manufacturers')
-      .then(({ data }) => setManufacturers({ loading: false, data }));
-
-    setModels((curr) => ({ ...curr, loading: true }));
-    http.get('/models').then(({ data }) => setModels({ loading: false, data }));
   }, []);
 
   useEffect(() => {
@@ -243,7 +233,13 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
             </Upload>
           </Form.Item>
           <Row gutter={8}>
-            <Col span={8}>
+            <Col span={24}>
+              <ModelsSelect
+                models={partModels}
+                onChange={(value) => setPartModels(value)}
+              />
+            </Col>
+            {/* <Col span={8}>
               <Form.Item label="Manufacturer">
                 <Select loading={manufacturers.loading}>
                   {manufacturers.data.map((m) => (
@@ -266,15 +262,21 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
                 ]}
               >
                 <Select mode="multiple" loading={models.loading}>
-                  {models.data.map((model) => (
-                    <Option key={model.id} value={model.id}>
-                      {model.manufacturerName} {model.name} {model.fuelType}{' '}
-                      {model.gearbox} ({model.year})
-                    </Option>
-                  ))}
+                  {models.data
+                    .filter((model) =>
+                      !modelsFilter
+                        ? true
+                        : model.manufacturerId === modelsFilter
+                    )
+                    .map((model) => (
+                      <Option key={model.id} value={model.id}>
+                        {model.manufacturerName} {model.name} {model.fuelType}{' '}
+                        {model.gearbox} ({model.year})
+                      </Option>
+                    ))}
                 </Select>
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
         </Form>
       </Modal>
