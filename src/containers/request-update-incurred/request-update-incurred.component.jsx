@@ -35,13 +35,11 @@ const RequestUpdateIncurred = () => {
   });
 
   const addService = (service) => {
+    console.log(service);
     const updatedIncurred = [...incurred];
-    if (service.typeDetail && service.serviceDetail) {
-      const { serviceDetail } = service;
-      const { id, name, price, parts, ...rest } = serviceDetail;
-      const index = updatedIncurred.findIndex(
-        (service) => service.serviceId === id
-      );
+    if (service.typeDetail) {
+      const { id, name, price, parts, ...rest } = service;
+      const index = updatedIncurred.findIndex((service) => service.id === id);
       if (index >= 0) {
         message.info('Service has already been added.');
         return;
