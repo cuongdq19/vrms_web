@@ -15,7 +15,7 @@ import {
   RegisterLink,
 } from './sign-in.styles';
 import * as actions from '../../store/actions';
-import Background from '../../assets/images/auth-background.png';
+import Background from '../../assets/images/sign-in-background.png';
 
 const SignIn = ({ loading, signIn, currentUser }) => {
   const submitHandler = (values) => {

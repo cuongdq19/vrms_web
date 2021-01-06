@@ -7,7 +7,6 @@ import Dashboard from '../containers/Dashboard';
 import PackagesCollection from '../containers/packages-collection/packages-collection.component';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import ServiceForm from '../containers/service-form/service-form.component';
-import Register from '../containers/Register';
 import RequestsCollection from '../containers/requests-collection/requests-collection.component';
 import ServicesCollection from '../containers/services-collection/services-collection.component';
 import SignIn from '../containers/sign-in/sign-in.component';
@@ -18,10 +17,11 @@ import _404 from '../containers/_404';
 import RequestUpdate from '../containers/request-update/request-update.component';
 import RequestUpdateIncurred from '../containers/request-update-incurred/request-update-incurred.component';
 import PackageForm from '../containers/package-form/package-form.component';
+import SignUp from '../containers/sign-up/sign-up.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
-  { key: 'sign-up', path: '/sign-up', exact: true, component: Register },
+  { key: 'sign-up', path: '/sign-up', exact: true, component: SignUp },
 ];
 
 const adminRoutes = [
