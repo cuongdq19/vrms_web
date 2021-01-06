@@ -1,5 +1,5 @@
-import { GoogleMap, useLoadScript } from '@react-google-maps/api';
-import React, { useCallback, useRef } from 'react';
+import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
+import React, { useCallback, useRef, useState } from 'react';
 import MapSearchInput from './MapSearchInput';
 
 const libraries = ['places'];
@@ -15,6 +15,7 @@ const center = {
 };
 
 const CustomMap = ({ onSearch }) => {
+  const [marker, setMarker] = useState(null);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
@@ -26,6 +27,7 @@ const CustomMap = ({ onSearch }) => {
   }, []);
 
   const panTo = React.useCallback(({ lat, lng }) => {
+    setMarker({ lat, lng });
     mapRef.current.panTo({ lat, lng });
     mapRef.current.setZoom(18);
   }, []);
@@ -41,7 +43,11 @@ const CustomMap = ({ onSearch }) => {
         zoom={14}
         center={center}
         onLoad={onMapLoad}
-      ></GoogleMap>
+      >
+        {marker ? (
+          <Marker position={{ lat: marker.lat, lng: marker.lng }} />
+        ) : null}
+      </GoogleMap>
     </>
   );
 };
