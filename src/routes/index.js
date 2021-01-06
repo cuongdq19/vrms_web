@@ -11,7 +11,6 @@ import RequestsCollection from '../containers/requests-collection/requests-colle
 import ServicesCollection from '../containers/services-collection/services-collection.component';
 import SignIn from '../containers/sign-in/sign-in.component';
 import UsersCollection from '../containers/users-collection/users-collection.component';
-import Users from '../containers/Users';
 import _403 from '../containers/_403';
 import _404 from '../containers/_404';
 import RequestUpdate from '../containers/request-update/request-update.component';
@@ -95,13 +94,13 @@ const providerRoutes = [
     key: 'technicians',
     path: '/technicians',
     exact: true,
-    component: Users,
+    component: UsersCollection,
   },
   {
     key: 'customers',
     path: '/customers',
     exact: true,
-    component: Users,
+    component: UsersCollection,
   },
   {
     key: 'parts',

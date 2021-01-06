@@ -2,14 +2,14 @@ import firebase from 'firebase/app';
 import 'firebase/messaging';
 
 const config = {
-  apiKey: 'AIzaSyCwESM5a4Ar-fDo-PWbbec1UmBgGN-PoPU',
-  authDomain: 'vrms-290212.firebaseapp.com',
-  databaseURL: 'https://vrms-290212.firebaseio.com',
-  projectId: 'vrms-290212',
-  storageBucket: 'vrms-290212.appspot.com',
-  messagingSenderId: '887672311279',
-  appId: '1:887672311279:web:0eecd54b454c47e6b93a1a',
-  measurementId: 'G-J2W5VXZ37L',
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DOMAIN_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 firebase.initializeApp(config);
