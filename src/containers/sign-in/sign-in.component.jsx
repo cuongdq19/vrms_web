@@ -3,7 +3,7 @@ import { Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCar, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import {
   CustomButton,
@@ -12,8 +12,10 @@ import {
   CustomForm,
   Icon,
   Title,
+  RegisterLink,
 } from './sign-in.styles';
 import * as actions from '../../store/actions';
+import Background from '../../assets/images/auth-background.png';
 
 const SignIn = ({ loading, signIn, currentUser }) => {
   const submitHandler = (values) => {
@@ -26,7 +28,7 @@ const SignIn = ({ loading, signIn, currentUser }) => {
   }
 
   return (
-    <Container>
+    <Container backgroundImage={Background}>
       <CustomForm onFinish={submitHandler}>
         <Icon icon={faCar} size="4x" />
         <Title>Vehicle Repairing And Maintaining Website</Title>
@@ -35,6 +37,7 @@ const SignIn = ({ loading, signIn, currentUser }) => {
           rules={[{ required: true, message: "Username can't be blank" }]}
         >
           <Input
+            size="large"
             placeholder="Username"
             prefix={<FontAwesomeIcon icon={faUser} />}
           />
@@ -44,13 +47,22 @@ const SignIn = ({ loading, signIn, currentUser }) => {
           rules={[{ required: true, message: "Password can't be blank" }]}
         >
           <Input.Password
+            size="large"
             placeholder="Password"
             prefix={<FontAwesomeIcon icon={faLock} />}
           />
         </CustomForm.Item>
-        <CustomButton loading={loading} type="primary" htmlType="submit">
+        <CustomButton
+          size="large"
+          loading={loading}
+          type="primary"
+          htmlType="submit"
+        >
           Login
         </CustomButton>
+        <RegisterLink>
+          Want to be our partner? <Link to="/sign-up">Click here</Link>
+        </RegisterLink>
       </CustomForm>
       <Footer>VRMS ©2020 Created By FPT Students</Footer>
     </Container>
