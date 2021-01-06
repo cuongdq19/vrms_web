@@ -138,12 +138,8 @@ const UserModal = ({
   );
 };
 
-const mapStateToProps = ({
-  auth: {
-    userData: { providerId },
-  },
-}) => ({
-  providerId,
+const mapStateToProps = (state) => ({
+  providerId: state.auth.userData.providerId,
 });
 
 export default connect(mapStateToProps)(UserModal);
