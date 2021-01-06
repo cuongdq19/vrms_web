@@ -1,4 +1,4 @@
-import { Button, Col, message, Row, Table } from 'antd';
+import { Button, Col, message, Row, Switch, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import StateMachine from 'javascript-state-machine';
@@ -10,20 +10,20 @@ import { Summary } from './request-update.styles';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
+import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
 
 const RequestUpdate = () => {
   const { requestId } = useParams();
 
-  const [request, setRequest] = useState(null);
+  const [item, setItem] = useState(null);
   const [visible, setVisible] = useState(false);
   const [redirect, setRedirect] = useState(null);
 
-  const { services } = request ?? {};
-  const total = request ? calculateRequestPrice(request) : 0;
+  const { services = [], packages = [] } = item ?? {};
+  const total = item ? calculateRequestPrice({ services, packages }) : 0;
 
   const addService = (service) => {
-    console.log(service);
-    const updatedServices = [...request.services];
+    const updatedServices = [...item.services];
     if (service.typeDetail) {
       const { id, name, price, parts, ...rest } = service;
       const index = updatedServices.findIndex(
@@ -63,13 +63,13 @@ const RequestUpdate = () => {
         })),
       });
     }
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    setItem((curr) => ({ ...curr, services: updatedServices }));
     message.success('Service added.');
     setVisible(false);
   };
 
   const removeService = (id) => {
-    const updatedServices = [...request.services];
+    const updatedServices = [...item.services];
 
     const index = updatedServices.findIndex((service) => service.id === id);
     if (index < 0) {
@@ -77,12 +77,12 @@ const RequestUpdate = () => {
       return;
     }
     updatedServices.splice(index, 1);
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    setItem((curr) => ({ ...curr, services: updatedServices }));
     message.info('Service removed.');
   };
 
   const decreasePartQuantity = (id, serviceId, partId) => {
-    const updatedServices = [...request.services];
+    const updatedServices = [...item.services];
     const serviceIndex = updatedServices.findIndex(
       (service) => service.id === id
     );
@@ -102,11 +102,11 @@ const RequestUpdate = () => {
       }
     }
     updatedServices[serviceIndex].parts = updatedParts;
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    setItem((curr) => ({ ...curr, services: updatedServices }));
   };
 
   const increasePartQuantity = (id, serviceId, partId) => {
-    const updatedServices = [...request.services];
+    const updatedServices = [...item.services];
     const serviceIndex = updatedServices.findIndex(
       (service) => service.id === id
     );
@@ -115,11 +115,27 @@ const RequestUpdate = () => {
     updatedParts[index].quantity++;
 
     updatedServices[serviceIndex].parts = updatedParts;
-    setRequest((curr) => ({ ...curr, services: updatedServices }));
+    setItem((curr) => ({ ...curr, services: updatedServices }));
+  };
+
+  const packageServiceToggledHandler = (packageId, serviceId, checked) => {
+    const updatedPackages = [...packages];
+    const packageIndex = updatedPackages.findIndex(
+      (p) => p.packageId === packageId
+    );
+    if (packageIndex >= 0) {
+      const updatedServices = [...updatedPackages[packageIndex].services];
+      const serviceIndex = updatedServices.findIndex(
+        (service) => service.serviceId === serviceId
+      );
+      updatedServices[serviceIndex].isActive = checked;
+      updatedPackages[packageIndex].services = updatedServices;
+      setItem((curr) => ({ ...curr, packages: updatedPackages }));
+    }
   };
 
   const submitHandler = () => {
-    const { services } = request;
+    const { services } = item;
     const reqExpenses = services
       .filter((service) => !service.serviceId)
       .map((exp) => ({
@@ -161,7 +177,7 @@ const RequestUpdate = () => {
   useEffect(() => {
     http.get(`/requests/${requestId}`).then(({ data }) => {
       StateMachine.apply(data, requestStateMachineConfig);
-      setRequest(data);
+      setItem(data);
     });
   }, [requestId]);
 
@@ -184,8 +200,6 @@ const RequestUpdate = () => {
       ),
     },
   ];
-
-  console.log(services);
 
   if (redirect) {
     return <Redirect to="/requests" />;
@@ -269,6 +283,79 @@ const RequestUpdate = () => {
                       },
                     ]}
                     rowKey="partId"
+                  />
+                );
+              },
+            }}
+          />
+        </Col>
+        <Col span={24}>
+          <Table
+            dataSource={packages}
+            rowKey="packageId"
+            columns={[
+              { title: 'ID', dataIndex: 'packageId', align: 'center' },
+              { title: 'Name', dataIndex: 'packageName', align: 'center' },
+              {
+                title: 'Milestone',
+                dataIndex: 'milestone',
+                align: 'center',
+                render: (value) => value ?? 'N/A',
+              },
+              {
+                title: 'Section Name',
+                dataIndex: 'sectionName',
+                align: 'center',
+                render: (value) => value ?? 'N/A',
+              },
+            ]}
+            expandable={{
+              rowExpandable: ({ services = [] }) => services.length > 0,
+              expandedRowRender: ({ packageId, services = [] }) => {
+                const dataSource = services.map(
+                  ({
+                    serviceId,
+                    serviceName,
+                    servicePrice,
+                    parts,
+                    isActive = true,
+                  }) => ({
+                    packageId,
+                    id: serviceId,
+                    name: serviceName,
+                    price: servicePrice,
+                    isActive,
+                    parts: parts.map(({ partId, partName, ...rest }) => ({
+                      id: partId,
+                      name: partName,
+                      ...rest,
+                    })),
+                  })
+                );
+                return (
+                  <ServicesCollectionTable
+                    rowKey="id"
+                    dataSource={dataSource}
+                    columns={[
+                      {
+                        title: 'Active',
+                        align: 'center',
+                        render: (_, record) => {
+                          return (
+                            <Switch
+                              onChange={(checked) =>
+                                packageServiceToggledHandler(
+                                  record.packageId,
+                                  record.id,
+                                  checked
+                                )
+                              }
+                              checked={record.isActive}
+                            />
+                          );
+                        },
+                      },
+                    ]}
                   />
                 );
               },

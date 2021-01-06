@@ -19,7 +19,7 @@ const ServicesCollectionTable = ({
         {
           title: 'ID',
           align: 'center',
-          render: (_, record, index) => index + 1,
+          dataIndex: 'id',
         },
         { title: 'Service Name', dataIndex: 'name', align: 'center' },
         {

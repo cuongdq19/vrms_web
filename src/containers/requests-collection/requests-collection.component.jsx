@@ -62,6 +62,7 @@ const RequestsCollection = ({
       render: (_, record) => {
         const price = calculateRequestPrice({
           services: record.services.filter(({ isActive }) => isActive),
+          packages: record.packages,
         });
         return formatMoney(price.total);
       },
