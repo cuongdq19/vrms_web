@@ -125,11 +125,12 @@ const PackageForm = ({ history, providerId }) => {
   useEffect(() => {
     loadDetail().then((res) => {
       if (res) {
-        const { id, name, milestone, packagedServices } = res.data;
+        const { id, name, milestone, sectionId, packagedServices } = res.data;
         form.setFieldsValue({
           id: id,
           packageName: name,
-          milestoneId: milestones?.find((m) => m.milestone === milestone)?.id,
+          milestoneId: milestone,
+          sectionId,
         });
         setSelectedServiceIds(packagedServices.map((service) => service.id));
         setPackageType(
@@ -137,7 +138,7 @@ const PackageForm = ({ history, providerId }) => {
         );
       }
     });
-  }, [form, loadDetail, milestones]);
+  }, [form, loadDetail]);
 
   if (redirect) {
     return <Redirect to="/packages" />;
