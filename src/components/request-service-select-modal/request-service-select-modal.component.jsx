@@ -48,7 +48,7 @@ const RequestServiceSelectModal = ({
     resetHandler();
   };
 
-  const addPart = (part) => {
+  const addIncurredPart = (part) => {
     const { id } = part;
     const updatedParts = [...(selected?.parts ?? [])];
     const index = updatedParts.findIndex((part) => part.id === id);
@@ -60,7 +60,7 @@ const RequestServiceSelectModal = ({
     setSelected((curr) => ({ ...curr, parts: updatedParts }));
   };
 
-  const decreasePartQuantity = (partId) => {
+  const decreaseServicePartQuantity = (partId) => {
     const updatedParts = [...(selected?.parts ?? [])];
     const index = updatedParts.findIndex((part) => part.id === partId);
     if (index >= 0 && updatedParts[index].quantity > 0) {
@@ -75,7 +75,26 @@ const RequestServiceSelectModal = ({
     }));
   };
 
-  const increasePartQuantity = (partId) => {
+  const decreaseIncurredPartQuantity = (partId) => {
+    const updatedParts = [...(selected?.parts ?? [])];
+    const index = updatedParts.findIndex((part) => part.id === partId);
+    if (index >= 0) {
+      if (updatedParts[index].quantity > 1) {
+        updatedParts[index].quantity--;
+      } else {
+        updatedParts.splice(index, 1);
+      }
+    } else {
+      return;
+    }
+
+    setSelected((curr) => ({
+      ...curr,
+      parts: updatedParts,
+    }));
+  };
+
+  const increaseServicePartQuantity = (partId) => {
     const updatedParts = [...selected.parts];
     const index = updatedParts.findIndex((part) => part.id === partId);
     if (index >= 0) {
@@ -186,13 +205,17 @@ const RequestServiceSelectModal = ({
                       render: (value, record) => (
                         <Row justify="space-between" align="middle">
                           <Button
-                            onClick={() => decreasePartQuantity(record.id)}
+                            onClick={() =>
+                              decreaseServicePartQuantity(record.id)
+                            }
                           >
                             Remove
                           </Button>
                           <span>{value}</span>
                           <Button
-                            onClick={() => increasePartQuantity(record.id)}
+                            onClick={() =>
+                              increaseServicePartQuantity(record.id)
+                            }
                           >
                             Add
                           </Button>
@@ -255,7 +278,7 @@ const RequestServiceSelectModal = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <List
                   header="Service Parts"
                   size="small"
@@ -266,14 +289,23 @@ const RequestServiceSelectModal = ({
                       <ItemContainer>
                         <span style={{ flex: 1, margin: 8 }}>{item.name}</span>
                         <span>x {item.quantity}</span>
+                        <Button
+                          danger
+                          onClick={() => {
+                            decreaseIncurredPartQuantity(item.id);
+                          }}
+                        >
+                          Remove
+                        </Button>
                       </ItemContainer>
                     </List.Item>
                   )}
                 />
               </Col>
-              <Col span={18}>
+              <Col span={16}>
                 <PartsCollectionTable
                   size="small"
+                  showDesc={false}
                   showModels={false}
                   showDefaultQuantity={false}
                   dataSource={parts}
@@ -282,7 +314,7 @@ const RequestServiceSelectModal = ({
                       title: 'Add To List',
                       align: 'center',
                       render: (_, record) => (
-                        <Button onClick={() => addPart(record)}>
+                        <Button onClick={() => addIncurredPart(record)}>
                           Add To List
                         </Button>
                       ),

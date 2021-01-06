@@ -18,7 +18,9 @@ const RequestCheckoutModal = ({
 
   let total = 0;
   if (item) {
-    total = calculateRequestPrice(item);
+    total = calculateRequestPrice({
+      services: item.services.filter(({ isActive }) => isActive),
+    });
   }
 
   return (
