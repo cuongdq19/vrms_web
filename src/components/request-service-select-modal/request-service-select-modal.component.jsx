@@ -61,7 +61,7 @@ const RequestServiceSelectModal = ({
   };
 
   const decreasePartQuantity = (partId) => {
-    const updatedParts = [...selected.serviceDetail.parts];
+    const updatedParts = [...(selected?.parts ?? [])];
     const index = updatedParts.findIndex((part) => part.id === partId);
     if (index >= 0 && updatedParts[index].quantity > 0) {
       updatedParts[index].quantity--;
@@ -76,7 +76,7 @@ const RequestServiceSelectModal = ({
   };
 
   const increasePartQuantity = (partId) => {
-    const updatedParts = [...selected.serviceDetail.parts];
+    const updatedParts = [...selected.parts];
     const index = updatedParts.findIndex((part) => part.id === partId);
     if (index >= 0) {
       updatedParts[index].quantity++;
@@ -154,17 +154,21 @@ const RequestServiceSelectModal = ({
               <Col flex="1">
                 <Form.Item label="Service" name="serviceId">
                   <Select
-                    onChange={(value) => setSelected(value)}
+                    onChange={(value, option) => setSelected(option.service)}
                     options={services
                       .filter(({ typeDetail }) => {
                         return serviceFilter > 0
                           ? serviceFilter === typeDetail.id
                           : true;
                       })
-                      .map(({ name, id }) => ({
-                        label: name,
-                        value: id,
-                      }))}
+                      .map((service) => {
+                        const { id, name } = service;
+                        return {
+                          label: name,
+                          value: id,
+                          service,
+                        };
+                      })}
                   />
                 </Form.Item>
               </Col>

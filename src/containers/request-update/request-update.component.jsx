@@ -22,10 +22,10 @@ const RequestUpdate = () => {
   const total = request ? calculateRequestPrice(request) : 0;
 
   const addService = (service) => {
+    console.log(service);
     const updatedServices = [...request.services];
-    if (service.typeDetail && service.serviceDetail) {
-      const { serviceDetail } = service;
-      const { id, name, price, parts, ...rest } = serviceDetail;
+    if (service.typeDetail) {
+      const { id, name, price, parts, ...rest } = service;
       const index = updatedServices.findIndex(
         (service) => service.serviceId === id
       );
@@ -184,6 +184,8 @@ const RequestUpdate = () => {
       ),
     },
   ];
+
+  console.log(services);
 
   if (redirect) {
     return <Redirect to="/requests" />;
