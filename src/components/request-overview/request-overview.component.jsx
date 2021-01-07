@@ -1,10 +1,12 @@
-import { Col, Row, Table } from 'antd';
+import { Col, Row } from 'antd';
 import React from 'react';
 import moment from 'moment';
 
 import { calculateRequestPrice, formatMoney } from '../../utils';
 import { Summary } from './request-overview.styles';
+
 import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
+import PackagesCollectionTable from '../packages-collection-table/packages-collection-table.component';
 
 const RequestOverview = ({ item }) => {
   const { services = [], packages = [], user, bookingTime } = item;
@@ -15,26 +17,6 @@ const RequestOverview = ({ item }) => {
     total = calculateRequestPrice({ services, packages });
   }
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      align: 'center',
-      render: (value, record) => value,
-    },
-    {
-      title: 'Name',
-      dataIndex: 'serviceName',
-      align: 'center',
-      render: (value, record) => value,
-    },
-    {
-      title: 'Price',
-      dataIndex: 'servicePrice',
-      align: 'center',
-      render: (value, record) => formatMoney(value),
-    },
-  ];
   return (
     <Row gutter={[8, 8]}>
       <Col span={12}>
@@ -74,12 +56,35 @@ const RequestOverview = ({ item }) => {
       </Col>
       <Col span={24}>
         <ServicesCollectionTable
+          size="small"
           dataSource={services.map(
             ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
               id: serviceId,
               price: servicePrice,
               name: serviceName,
               parts,
+              ...rest,
+            })
+          )}
+          rowKey="id"
+        />
+      </Col>
+      <Col span={24}>
+        <PackagesCollectionTable
+          size="small"
+          dataSource={packages.map(
+            ({ packageId, packageName, services, ...rest }) => ({
+              id: packageId,
+              name: packageName,
+              services: services.map(
+                ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
+                  id: serviceId,
+                  name: serviceName,
+                  price: servicePrice,
+                  parts,
+                  ...rest,
+                })
+              ),
               ...rest,
             })
           )}

@@ -6,6 +6,7 @@ import PartsCollectionTable from '../parts-collection-table/parts-collection-tab
 import { formatMoney } from '../../utils';
 
 const ServicesCollectionTable = ({
+  size = 'middle',
   rowKey,
   dataSource,
   columns,
@@ -14,6 +15,7 @@ const ServicesCollectionTable = ({
 }) => {
   return (
     <Table
+      size={size}
       rowKey={rowKey}
       dataSource={dataSource}
       columns={[

@@ -5,12 +5,14 @@ import ServicesCollectionTable from '../services-collection-table/services-colle
 const PackagesCollectionTable = ({
   dataSource,
   rowKey,
+  size = 'middle',
   columns = [],
   servicesExpandedColumns = [],
   partsExpandedColumns = [],
 }) => {
   return (
     <Table
+      size={size}
       dataSource={dataSource}
       rowKey={rowKey}
       columns={[

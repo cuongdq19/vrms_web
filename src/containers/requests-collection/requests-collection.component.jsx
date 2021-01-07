@@ -71,35 +71,22 @@ const RequestsCollection = ({
       align: 'center',
       title: 'Update',
       render: (_, record) => (
-        <>
-          <Button
-            disabled={
-              record.is('FINISHED') ||
-              record.is('WORK COMPLETED') ||
-              record.is('CANCELED')
-            }
-            onClick={() => {
-              history.push(
-                `/requests/${record.id}${
-                  record.is('CONFIRMED') ? `/incurred` : ''
-                }`
-              );
-            }}
-          >
-            Update
-          </Button>
-          {/* <RequestUpdateButton
-            disabled={
-              record.is('FINISHED') ||
-              record.is('WORK COMPLETED') ||
-              record.is('CANCELED')
-            }
-            requestData={record}
-            onInitUpdate={() => dispatch(actions.initUpdateRequest(record))}
-          >
-            Update
-          </RequestUpdateButton> */}
-        </>
+        <Button
+          disabled={
+            record.is('FINISHED') ||
+            record.is('WORK COMPLETED') ||
+            record.is('CANCELED')
+          }
+          onClick={() => {
+            history.push(
+              `/requests/${record.id}${
+                record.is('CONFIRMED') ? `/incurred` : ''
+              }`
+            );
+          }}
+        >
+          Update
+        </Button>
       ),
     },
     {
