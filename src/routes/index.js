@@ -15,7 +15,8 @@ import _403 from '../containers/_403';
 import _404 from '../containers/_404';
 import RequestUpdate from '../containers/request-update/request-update.component';
 import RequestUpdateIncurred from '../containers/request-update-incurred/request-update-incurred.component';
-import PackageForm from '../containers/package-form/package-form.component';
+import PackageCreate from '../containers/package-create/package-create.component';
+import PackageUpdate from '../containers/package-update/package-update.component';
 import SignUp from '../containers/sign-up/sign-up.component';
 
 const publicRoutes = [
@@ -76,13 +77,13 @@ const providerRoutes = [
     key: 'add-package',
     path: '/packages/add',
     exact: true,
-    component: PackageForm,
+    component: PackageCreate,
   },
   {
     key: 'update-package',
     path: '/packages/:packageId',
     exact: true,
-    component: PackageForm,
+    component: PackageUpdate,
   },
   {
     key: 'staffs',
