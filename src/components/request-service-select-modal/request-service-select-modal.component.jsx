@@ -14,10 +14,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import PartsCollectionTable from '../parts-collection-table/parts-collection-table.component';
+import { ItemContainer } from './request-service-select-modal.styles';
 
 import http from '../../http';
 import { formatMoney } from '../../utils';
-import { ItemContainer } from './request-service-select-modal.styles';
 
 const RequestServiceSelectModal = ({
   visible,
@@ -122,10 +122,14 @@ const RequestServiceSelectModal = ({
         http.get(`/maintenance-packages/providers/${providerId}/services`),
       ]).then(([typeDetails, services]) => {
         setTypeDetails(typeDetails?.data ?? []);
-        setServices(services?.data ?? []);
+        setServices(
+          services?.data?.filter((service) =>
+            service.models.map((m) => m.id).includes(modelId)
+          ) ?? []
+        );
       });
     }
-  }, [providerId, visible]);
+  }, [modelId, providerId, visible]);
 
   return (
     <Modal

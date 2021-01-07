@@ -2,16 +2,16 @@ import { Button, Col, message, Popconfirm, Row, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import StateMachine from 'javascript-state-machine';
+import { WarningOutlined } from '@ant-design/icons';
 
 import http from '../../http';
 import { calculateRequestPrice, formatMoney } from '../../utils';
-import { requestStateMachineConfig } from '../../utils/constants';
+import { requestStateMachineConfig, ITEM_TYPES } from '../../utils/constants';
 import { Summary } from './request-update.styles';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
 import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
-import { WarningOutlined } from '@ant-design/icons';
+import RequestAddItemModal from '../../components/request-add-item-modal/request-add-item-modal.component';
 
 const RequestUpdate = () => {
   const { requestId } = useParams();
@@ -20,15 +20,69 @@ const RequestUpdate = () => {
   const [visible, setVisible] = useState(false);
   const [redirect, setRedirect] = useState(null);
 
-  const { services = [], packages = [] } = item ?? {};
+  const { services = [], packages = [], user } = item ?? {};
   const total = item ? calculateRequestPrice({ services, packages }) : 0;
 
-  const addService = (service) => {
-    const updatedServices = [...item.services];
-    if (service.typeDetail) {
-      const { id, name, price, parts, ...rest } = service;
+  const itemAddedHandler = (newItem, type) => {
+    if (type === ITEM_TYPES.package) {
+      const updatedPackages = [...item.packages];
+      const index = updatedPackages.findIndex(
+        (p) => p.packageId === newItem.id
+      );
+
+      if (index >= 0) {
+        message.info('Package is already added.');
+        return;
+      }
+
+      updatedPackages.push({
+        packageId: newItem.id,
+        packageName: newItem.name,
+        sectionId: newItem.sectionId,
+        sectionName: newItem.sectionName,
+        services: newItem.services.map(
+          ({ id, name, price, parts, ...rest }) => ({
+            serviceId: id,
+            serviceName: name,
+            servicePrice: price,
+            parts: parts.map(({ id, name, price, quantity, ...rest }) => ({
+              partId: id,
+              partName: name,
+              price,
+              quantity,
+              ...rest,
+            })),
+            ...rest,
+          })
+        ),
+      });
+      setItem((curr) => ({ ...curr, packages: updatedPackages }));
+      return true;
+    }
+    if (type === ITEM_TYPES.expense) {
+      const updatedServices = [...item.services];
+
+      updatedServices.push({
+        id: Math.random(),
+        serviceId: null,
+        serviceName: newItem.serviceName,
+        servicePrice: newItem.servicePrice,
+        note: newItem.note,
+        parts: newItem.parts.map(({ id, name, price, quantity, ...rest }) => ({
+          partId: id,
+          partName: name,
+          quantity,
+          price,
+          ...rest,
+        })),
+      });
+      setItem((curr) => ({ ...curr, services: updatedServices }));
+      return true;
+    }
+    if (type === ITEM_TYPES.existed) {
+      const updatedServices = [...item.services];
       const index = updatedServices.findIndex(
-        (service) => service.serviceId === id
+        (service) => service.serviceId === newItem.id
       );
 
       if (index >= 0) {
@@ -37,39 +91,20 @@ const RequestUpdate = () => {
       }
       updatedServices.push({
         id: Math.random(),
-        serviceId: id,
-        serviceName: name,
-        servicePrice: price,
-        parts: parts.map(({ id, name, price, quantity }) => ({
+        serviceId: newItem.id,
+        serviceName: newItem.name,
+        servicePrice: newItem.price,
+        parts: newItem.parts.map(({ id, name, price, quantity }) => ({
           partId: id,
           partName: name,
           price,
           quantity,
         })),
-        ...rest,
       });
-    } else {
-      const { serviceName, servicePrice, note, parts } = service;
-      updatedServices.push({
-        id: Math.random(),
-        serviceId: null,
-        serviceName,
-        servicePrice,
-        note,
-        parts: parts.map(({ id, name, price, quantity, ...rest }) => ({
-          partId: id,
-          partName: name,
-          quantity,
-          price,
-          ...rest,
-        })),
-      });
+      setItem((curr) => ({ ...curr, services: updatedServices }));
+      return true;
     }
-
-    setItem((curr) => ({ ...curr, services: updatedServices }));
-    message.success('Service added.');
-    setVisible(false);
-    return true;
+    return;
   };
 
   const removeService = (id) => {
@@ -391,6 +426,9 @@ const RequestUpdate = () => {
           />
         </Col>
         <Col span={24}>
+          <Col span={24}>
+            <Button onClick={() => setVisible(true)}>Add Package</Button>
+          </Col>
           <Table
             dataSource={packages}
             rowKey="packageId"
@@ -526,11 +564,19 @@ const RequestUpdate = () => {
           </Summary>
         </Col>
       </Row>
-      <RequestServiceSelectModal
-        modelId={1}
+      {/* <RequestServiceSelectModal
+        modelId={user?.vehicle?.model?.id}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={addService}
+      /> */}
+      <RequestAddItemModal
+        modelId={user?.vehicle?.model?.id}
+        visible={visible}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        onSubmit={itemAddedHandler}
       />
     </LayoutWrapper>
   );

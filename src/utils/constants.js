@@ -61,3 +61,9 @@ export const requestStateMachineConfig = {
     },
   },
 };
+
+export const ITEM_TYPES = {
+  existed: 0,
+  expense: 1,
+  package: 2,
+};
