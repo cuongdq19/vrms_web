@@ -132,6 +132,7 @@ const PackageForm = ({ history, providerId }) => {
           milestoneId: milestone,
           sectionId,
         });
+
         setSelectedServiceIds(packagedServices.map((service) => service.id));
         setPackageType(
           milestone ? packageTypes.milestone : packageTypes.section
@@ -240,12 +241,10 @@ const PackageForm = ({ history, providerId }) => {
   );
 };
 
-const mapStateToProps = ({
-  auth: {
-    userData: { providerId },
-  },
-}) => ({
-  providerId,
-});
+const mapStateToProps = (state) => {
+  return {
+    providerId: state.auth?.userData?.providerId,
+  };
+};
 
 export default connect(mapStateToProps)(PackageForm);

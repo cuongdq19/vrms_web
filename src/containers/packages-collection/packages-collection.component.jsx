@@ -1,11 +1,11 @@
-import { Button, message, Modal, Popconfirm, Table } from 'antd';
+import { Button, message, Modal, Popconfirm } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Content, Title } from './packages-collection.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
 import ModelsSelect from '../../components/models-select/models-select.component';
+import PackagesCollectionTable from '../../components/packages-collection-table/packages-collection-table.component';
 
 import http from '../../http';
 
@@ -40,24 +40,13 @@ const PackagesCollection = ({ providerId, history }) => {
         <Button onClick={() => setVisible(true)}>Create Package</Button>
       </Title>
       <Content>
-        <Table
+        <PackagesCollectionTable
           rowKey="id"
-          dataSource={packages}
+          dataSource={packages.map(({ packagedServices, ...rest }) => ({
+            services: packagedServices,
+            ...rest,
+          }))}
           columns={[
-            { title: 'ID', dataIndex: 'id', align: 'center' },
-            { title: 'Name', dataIndex: 'name', align: 'center' },
-            {
-              title: 'Milestone',
-              dataIndex: 'milestone',
-              align: 'center',
-              render: (value) => value ?? 'N/A',
-            },
-            {
-              title: 'Section Name',
-              dataIndex: 'sectionName',
-              align: 'center',
-              render: (value) => value ?? 'N/A',
-            },
             {
               title: 'Update',
               align: 'center',
@@ -81,16 +70,6 @@ const PackagesCollection = ({ providerId, history }) => {
               ),
             },
           ]}
-          expandable={{
-            rowExpandable: ({ packagedServices }) =>
-              packagedServices.length > 0,
-            expandedRowRender: (record) => (
-              <ServicesCollectionTable
-                dataSource={record.packagedServices}
-                rowKey="id"
-              />
-            ),
-          }}
         />
         <Modal
           visible={visible}
