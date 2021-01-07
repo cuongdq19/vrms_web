@@ -22,7 +22,6 @@ const ServicesCollectionTable = ({
         {
           title: 'ID',
           align: 'center',
-          dataIndex: 'id',
           render: (value, record, index) => index + 1,
         },
         { title: 'Service Name', dataIndex: 'name', align: 'center' },
@@ -40,6 +39,7 @@ const ServicesCollectionTable = ({
           const { id } = record;
           return (
             <PartsCollectionTable
+              rowKey="id"
               showDefaultQuantity={showDefaultQuantity}
               showDesc={false}
               showModels={false}

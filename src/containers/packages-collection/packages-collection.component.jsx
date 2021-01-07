@@ -43,18 +43,29 @@ const PackagesCollection = ({ providerId, history }) => {
         <PackagesCollectionTable
           rowKey="id"
           dataSource={packages.map(({ packagedServices, ...rest }) => ({
-            services: packagedServices,
+            services: packagedServices.map(({ parts, ...rest }) => ({
+              ...rest,
+              parts: parts.map(({ id, name, ...rest }) => ({
+                partId: id,
+                partName: name,
+                ...rest,
+              })),
+            })),
             ...rest,
           }))}
           columns={[
             {
               title: 'Update',
               align: 'center',
-              render: (_, record) => (
-                <Button onClick={() => history.push(`/packages/${record.id}`)}>
-                  Update
-                </Button>
-              ),
+              render: (_, record) => {
+                return (
+                  <Button
+                    onClick={() => history.push(`/packages/${record.id}`)}
+                  >
+                    Update
+                  </Button>
+                );
+              },
             },
             {
               title: 'Remove',
