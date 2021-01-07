@@ -124,7 +124,7 @@ const RequestServiceSelectModal = ({
         setTypeDetails(typeDetails?.data ?? []);
         setServices(
           services?.data?.filter((service) =>
-            service.models.map((m) => m.id).includes(modelId)
+            service.models.map((m) => m.id).includes(+modelId)
           ) ?? []
         );
       });
