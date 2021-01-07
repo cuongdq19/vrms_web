@@ -44,8 +44,14 @@ const RequestServiceSelectModal = ({
   };
 
   const submitHandler = () => {
-    onOk(selected);
-    resetHandler();
+    const success = onOk(selected);
+    if (success) {
+      form.resetFields();
+      setParts([]);
+      setSelected(null);
+      setServices([]);
+      setTypeDetails([]);
+    }
   };
 
   const addIncurredPart = (part) => {

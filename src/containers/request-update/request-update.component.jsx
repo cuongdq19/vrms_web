@@ -1,4 +1,4 @@
-import { Button, Col, message, Row, Switch, Table } from 'antd';
+import { Button, Col, message, Popconfirm, Row, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import StateMachine from 'javascript-state-machine';
@@ -11,6 +11,7 @@ import { Summary } from './request-update.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestServiceSelectModal from '../../components/request-service-select-modal/request-service-select-modal.component';
 import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
+import { WarningOutlined } from '@ant-design/icons';
 
 const RequestUpdate = () => {
   const { requestId } = useParams();
@@ -29,9 +30,10 @@ const RequestUpdate = () => {
       const index = updatedServices.findIndex(
         (service) => service.serviceId === id
       );
+
       if (index >= 0) {
         message.info('Service has already been added.');
-        return;
+        return false;
       }
       updatedServices.push({
         id: Math.random(),
@@ -63,9 +65,11 @@ const RequestUpdate = () => {
         })),
       });
     }
+
     setItem((curr) => ({ ...curr, services: updatedServices }));
     message.success('Service added.');
     setVisible(false);
+    return true;
   };
 
   const removeService = (id) => {
@@ -118,7 +122,79 @@ const RequestUpdate = () => {
     setItem((curr) => ({ ...curr, services: updatedServices }));
   };
 
-  const packageServiceToggledHandler = (packageId, serviceId, checked) => {
+  const partQuantityServicePackageIncreasedHandler = (
+    packageId,
+    serviceId,
+    partId
+  ) => {
+    const updatedPackages = [...packages];
+    const packageIndex = updatedPackages.findIndex(
+      (p) => p.packageId === packageId
+    );
+    if (packageIndex < 0) {
+      return;
+    }
+
+    const updatedServices = [...updatedPackages[packageIndex].services];
+    const serviceIndex = updatedServices.findIndex(
+      (service) => service.serviceId === serviceId
+    );
+    if (serviceIndex < 0) {
+      return;
+    }
+    const updatedParts = [...updatedServices[serviceIndex].parts];
+
+    const partIndex = updatedParts.findIndex((part) => part.partId === partId);
+    if (partIndex < 0) {
+      return;
+    }
+
+    updatedParts[partIndex].quantity++;
+    updatedServices[serviceIndex].parts = updatedParts;
+    updatedPackages[packageIndex].services = updatedServices;
+
+    setItem((curr) => ({ ...curr, packages: updatedPackages }));
+  };
+
+  const partQuantityServicePackageDecreasedHandler = (
+    packageId,
+    serviceId,
+    partId
+  ) => {
+    const updatedPackages = [...packages];
+    const packageIndex = updatedPackages.findIndex(
+      (p) => p.packageId === packageId
+    );
+    if (packageIndex < 0) {
+      return;
+    }
+
+    const updatedServices = [...updatedPackages[packageIndex].services];
+    const serviceIndex = updatedServices.findIndex(
+      (service) => service.serviceId === serviceId
+    );
+    if (serviceIndex < 0) {
+      return;
+    }
+    const updatedParts = [...updatedServices[serviceIndex].parts];
+
+    const partIndex = updatedParts.findIndex((part) => part.partId === partId);
+    if (partIndex < 0) {
+      return;
+    }
+
+    if (updatedParts[partIndex].quantity <= 0) {
+      return;
+    }
+
+    updatedParts[partIndex].quantity--;
+    updatedServices[serviceIndex].parts = updatedParts;
+    updatedPackages[packageIndex].services = updatedServices;
+
+    setItem((curr) => ({ ...curr, packages: updatedPackages }));
+  };
+
+  const serviceRemovedFromPackageHandler = (packageId, serviceId) => {
     const updatedPackages = [...packages];
     const packageIndex = updatedPackages.findIndex(
       (p) => p.packageId === packageId
@@ -128,14 +204,15 @@ const RequestUpdate = () => {
       const serviceIndex = updatedServices.findIndex(
         (service) => service.serviceId === serviceId
       );
-      updatedServices[serviceIndex].isActive = checked;
+      updatedServices.splice(serviceIndex, 1);
       updatedPackages[packageIndex].services = updatedServices;
       setItem((curr) => ({ ...curr, packages: updatedPackages }));
     }
   };
 
   const submitHandler = () => {
-    const { services } = item;
+    const { services, packages } = item;
+
     const reqExpenses = services
       .filter((service) => !service.serviceId)
       .map((exp) => ({
@@ -146,6 +223,7 @@ const RequestUpdate = () => {
         }, {}),
         price: exp.servicePrice,
       }));
+
     const reqServices = services
       .filter((service) => service.serviceId)
       .reduce((accumulatedServices, service) => {
@@ -160,11 +238,34 @@ const RequestUpdate = () => {
         };
       }, {});
 
+    const reqPackages = packages.reduce((accumulatedPackages, currPackage) => {
+      return {
+        ...accumulatedPackages,
+        [currPackage.packageId]: currPackage.services.reduce(
+          (accumulatedServices, currService) => {
+            return {
+              ...accumulatedServices,
+              [currService.serviceId]: currService.parts.reduce(
+                (accumulatedParts, currParts) => {
+                  return {
+                    ...accumulatedParts,
+                    [currParts.partId]: currParts.quantity,
+                  };
+                },
+                {}
+              ),
+            };
+          },
+          {}
+        ),
+      };
+    }, {});
+
     http
       .post(`/requests/update/${requestId}`, {
         expenses: reqExpenses,
         servicePartMap: reqServices,
-        packageMap: {},
+        packageMap: reqPackages,
         disables: [],
         enables: [],
       })
@@ -313,19 +414,13 @@ const RequestUpdate = () => {
               rowExpandable: ({ services = [] }) => services.length > 0,
               expandedRowRender: ({ packageId, services = [] }) => {
                 const dataSource = services.map(
-                  ({
-                    serviceId,
-                    serviceName,
-                    servicePrice,
-                    parts,
-                    isActive = true,
-                  }) => ({
+                  ({ serviceId, serviceName, servicePrice, parts }) => ({
                     packageId,
                     id: serviceId,
                     name: serviceName,
                     price: servicePrice,
-                    isActive,
-                    parts: parts.map(({ partId, partName, ...rest }) => ({
+                    parts: parts.map(({ id, partId, partName, ...rest }) => ({
+                      packageId,
                       id: partId,
                       name: partName,
                       ...rest,
@@ -334,26 +429,78 @@ const RequestUpdate = () => {
                 );
                 return (
                   <ServicesCollectionTable
+                    showDefaultQuantity={false}
                     rowKey="id"
                     dataSource={dataSource}
                     columns={[
                       {
-                        title: 'Active',
+                        title: 'Remove',
                         align: 'center',
                         render: (_, record) => {
                           return (
-                            <Switch
-                              onChange={(checked) =>
-                                packageServiceToggledHandler(
-                                  record.packageId,
-                                  record.id,
-                                  checked
-                                )
+                            <Popconfirm
+                              placement="top"
+                              icon={
+                                <WarningOutlined style={{ color: 'red' }} />
                               }
-                              checked={record.isActive}
-                            />
+                              title="Are you sure to remove this service? This can't be undone!"
+                              onConfirm={() => {
+                                serviceRemovedFromPackageHandler(
+                                  record.packageId,
+                                  record.id
+                                );
+                              }}
+                            >
+                              <Button danger>Remove</Button>
+                            </Popconfirm>
                           );
                         },
+                      },
+                    ]}
+                    partsExpandedColumns={[
+                      {
+                        title: 'Quantity',
+                        dataIndex: 'quantity',
+                        align: 'center',
+                        render: (value, record) => {
+                          return (
+                            <Row
+                              align="middle"
+                              justify="space-between"
+                              gutter={[8, 8]}
+                            >
+                              <Button
+                                onClick={() => {
+                                  partQuantityServicePackageDecreasedHandler(
+                                    record.packageId,
+                                    record.serviceId,
+                                    record.id
+                                  );
+                                }}
+                              >
+                                Remove
+                              </Button>
+                              <span>{value}</span>
+                              <Button
+                                onClick={() => {
+                                  partQuantityServicePackageIncreasedHandler(
+                                    record.packageId,
+                                    record.serviceId,
+                                    record.id
+                                  );
+                                }}
+                              >
+                                Add
+                              </Button>
+                            </Row>
+                          );
+                        },
+                      },
+                      {
+                        title: 'Total Price',
+                        align: 'center',
+                        render: (_, record) =>
+                          formatMoney(record.price * record.quantity),
                       },
                     ]}
                   />

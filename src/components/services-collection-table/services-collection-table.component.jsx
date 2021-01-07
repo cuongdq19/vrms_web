@@ -6,10 +6,11 @@ import PartsCollectionTable from '../parts-collection-table/parts-collection-tab
 import { formatMoney } from '../../utils';
 
 const ServicesCollectionTable = ({
-  columns,
-  partsExpandedColumns,
-  dataSource,
   rowKey,
+  dataSource,
+  columns,
+  showDefaultQuantity = true,
+  partsExpandedColumns,
 }) => {
   return (
     <Table
@@ -36,6 +37,7 @@ const ServicesCollectionTable = ({
           const { id } = record;
           return (
             <PartsCollectionTable
+              showDefaultQuantity={showDefaultQuantity}
               showDesc={false}
               showModels={false}
               dataSource={record.parts.map(
