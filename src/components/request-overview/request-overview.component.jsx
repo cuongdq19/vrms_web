@@ -4,14 +4,15 @@ import moment from 'moment';
 
 import { calculateRequestPrice, formatMoney } from '../../utils';
 import { Summary } from './request-overview.styles';
+import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
 
 const RequestOverview = ({ item }) => {
-  const { services, user, bookingTime } = item;
+  const { services = [], packages = [], user, bookingTime } = item;
 
   let total = null;
 
   if (item) {
-    total = calculateRequestPrice(item);
+    total = calculateRequestPrice({ services, packages });
   }
 
   const columns = [
@@ -72,7 +73,18 @@ const RequestOverview = ({ item }) => {
         <h3>Services</h3>
       </Col>
       <Col span={24}>
-        <Table dataSource={services} columns={columns} rowKey="id" />
+        <ServicesCollectionTable
+          dataSource={services.map(
+            ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
+              id: serviceId,
+              price: servicePrice,
+              name: serviceName,
+              parts,
+              ...rest,
+            })
+          )}
+          rowKey="id"
+        />
       </Col>
       <Col span={8} offset={16}>
         <Summary justify="end" align="middle" gutter={[8, 8]}>
@@ -81,6 +93,12 @@ const RequestOverview = ({ item }) => {
           </Col>
           <Col span={18}>
             <h3>{formatMoney(total.services)}</h3>
+          </Col>
+          <Col span={6}>
+            <span>Packages: </span>
+          </Col>
+          <Col span={18}>
+            <h3>{formatMoney(total.packages)}</h3>
           </Col>
           <Col span={6}>
             <span>Total: </span>

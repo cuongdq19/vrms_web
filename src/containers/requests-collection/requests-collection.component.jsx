@@ -140,7 +140,7 @@ const RequestsCollection = ({
           title="Are you sure to complete work for this request?"
           onConfirm={() =>
             completeRequest(record.id, () => {
-              record.cancel();
+              record.done();
               message.info('Canceled request.');
               fetchRequestsData();
             })

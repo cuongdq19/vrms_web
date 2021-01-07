@@ -16,7 +16,7 @@ const RequestConfirmModal = ({
 
   return (
     <Modal
-      width="60%"
+      width="90%"
       centered
       visible={visible}
       title={`Confirm Request #${id}`}

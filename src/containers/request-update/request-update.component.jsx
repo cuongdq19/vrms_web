@@ -426,9 +426,6 @@ const RequestUpdate = () => {
           />
         </Col>
         <Col span={24}>
-          <Col span={24}>
-            <Button onClick={() => setVisible(true)}>Add Package</Button>
-          </Col>
           <Table
             dataSource={packages}
             rowKey="packageId"
@@ -556,6 +553,12 @@ const RequestUpdate = () => {
               <h3>{formatMoney(total.services)}</h3>
             </Col>
             <Col span={6}>
+              <span>Packages: </span>
+            </Col>
+            <Col span={18}>
+              <h3>{formatMoney(total.packages)}</h3>
+            </Col>
+            <Col span={6}>
               <span>Total: </span>
             </Col>
             <Col span={18}>
@@ -564,12 +567,6 @@ const RequestUpdate = () => {
           </Summary>
         </Col>
       </Row>
-      {/* <RequestServiceSelectModal
-        modelId={user?.vehicle?.model?.id}
-        visible={visible}
-        onCancel={() => setVisible(false)}
-        onOk={addService}
-      /> */}
       <RequestAddItemModal
         modelId={user?.vehicle?.model?.id}
         visible={visible}
