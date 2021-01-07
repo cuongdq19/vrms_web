@@ -82,6 +82,30 @@ const RequestAddItemModal = ({
     setSelected((curr) => ({ ...curr, parts: updatedParts }));
   };
 
+  const servicePartRemovedHandler = (partId) => {
+    const updatedParts = [...(selected?.parts ?? [])];
+    const index = updatedParts.findIndex((p) => p.id === partId);
+    if (updatedParts[index] < 0) {
+      return;
+    }
+    if (updatedParts[index].quantity <= 0) {
+      return;
+    }
+    updatedParts[index].quantity--;
+    setSelected((curr) => ({ ...curr, parts: updatedParts }));
+  };
+
+  const servicePartAddedHandler = (partId) => {
+    const updatedParts = [...(selected?.parts ?? [])];
+    const index = updatedParts.findIndex((p) => p.id === partId);
+    if (updatedParts[index] < 0) {
+      return;
+    }
+    updatedParts[index].quantity++;
+
+    setSelected((curr) => ({ ...curr, parts: updatedParts }));
+  };
+
   useEffect(() => {
     setSelected(null);
     switch (type) {
@@ -312,9 +336,21 @@ const RequestAddItemModal = ({
                       align: 'center',
                       render: (value, record) => (
                         <Row justify="space-between" align="middle">
-                          <Button onClick={() => {}}>Remove</Button>
+                          <Button
+                            onClick={() => {
+                              servicePartRemovedHandler(record.id);
+                            }}
+                          >
+                            Remove
+                          </Button>
                           <span>{value}</span>
-                          <Button onClick={() => {}}>Add</Button>
+                          <Button
+                            onClick={() => {
+                              servicePartAddedHandler(record.id);
+                            }}
+                          >
+                            Add
+                          </Button>
                         </Row>
                       ),
                     },

@@ -17,7 +17,7 @@ const RequestCheckoutModal = ({
 
   return (
     <Modal
-      width="60%"
+      width="90%"
       centered
       visible={visible}
       title={`Checkout Request #${id}`}

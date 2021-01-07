@@ -23,6 +23,7 @@ const ServicesCollectionTable = ({
           title: 'ID',
           align: 'center',
           dataIndex: 'id',
+          render: (value, record, index) => index + 1,
         },
         { title: 'Service Name', dataIndex: 'name', align: 'center' },
         {
@@ -43,7 +44,15 @@ const ServicesCollectionTable = ({
               showDesc={false}
               showModels={false}
               dataSource={record.parts.map(
-                ({ partId, partName, price, quantity, ...rest }) => ({
+                ({
+                  partId,
+                  partName,
+                  price,
+                  quantity,
+                  id: servicePartId,
+                  ...rest
+                }) => ({
+                  servicePartId: id,
                   serviceId: id,
                   id: partId,
                   name: partName,

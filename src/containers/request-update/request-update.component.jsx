@@ -353,7 +353,6 @@ const RequestUpdate = () => {
         </Col>
         <Col span={24}>
           <Table
-            size="large"
             rowKey="id"
             dataSource={services}
             columns={columns}

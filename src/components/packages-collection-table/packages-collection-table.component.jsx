@@ -9,6 +9,7 @@ const PackagesCollectionTable = ({
   columns = [],
   servicesExpandedColumns = [],
   partsExpandedColumns = [],
+  showDefaultQuantity = true,
 }) => {
   return (
     <Table
@@ -37,6 +38,7 @@ const PackagesCollectionTable = ({
         expandedRowRender: (record) => {
           return (
             <ServicesCollectionTable
+              showDefaultQuantity={showDefaultQuantity}
               dataSource={record.services}
               rowKey="id"
               columns={servicesExpandedColumns}
