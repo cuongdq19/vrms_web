@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Form, Input, Modal, Radio, Upload } from 'antd';
+import { Button, Form, Input, Radio, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
 import { gender, providerRoles } from '../../utils/constants';
 import http from '../../http';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const UserModal = ({
   user,
@@ -44,10 +45,9 @@ const UserModal = ({
     }
   };
   return (
-    <Modal
+    <CustomModal
       title={title}
       visible={visible}
-      maskClosable={false}
       onOk={() => form.submit()}
       onCancel={onCancel}
     >
@@ -134,7 +134,7 @@ const UserModal = ({
           </Upload>
         </Form.Item>
       </Form>
-    </Modal>
+    </CustomModal>
   );
 };
 

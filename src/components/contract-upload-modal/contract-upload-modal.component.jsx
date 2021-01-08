@@ -1,6 +1,8 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Image, Input, Modal, Row, Upload } from 'antd';
+import { Button, Col, Form, Image, Input, Row, Upload } from 'antd';
 import React from 'react';
+
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
   const [form] = Form.useForm();
@@ -10,9 +12,8 @@ const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
   };
 
   return (
-    <Modal
+    <CustomModal
       title="Upload Contract"
-      width="80%"
       visible={visible}
       onCancel={onCancel}
       onOk={() => form.submit()}
@@ -47,7 +48,7 @@ const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
           </Upload>
         </Form.Item>
       </Form>
-    </Modal>
+    </CustomModal>
   );
 };
 

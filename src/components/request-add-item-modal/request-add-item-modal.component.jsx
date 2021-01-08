@@ -6,7 +6,6 @@ import {
   InputNumber,
   List,
   message,
-  Modal,
   Radio,
   Row,
   Select,
@@ -20,6 +19,7 @@ import PartsCollectionTable from '../parts-collection-table/parts-collection-tab
 import http from '../../http';
 import { formatMoney } from '../../utils';
 import { ITEM_TYPES } from '../../utils/constants';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const RequestAddItemModal = ({
   visible,
@@ -143,9 +143,7 @@ const RequestAddItemModal = ({
   }, [form, modelId, providerId, type]);
 
   return (
-    <Modal
-      centered
-      width="90%"
+    <CustomModal
       visible={visible}
       onCancel={onCancel}
       onOk={() => form.submit()}
@@ -367,7 +365,7 @@ const RequestAddItemModal = ({
           ) : null}
         </Row>
       </Form>
-    </Modal>
+    </CustomModal>
   );
 };
 
