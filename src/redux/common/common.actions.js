@@ -6,3 +6,9 @@ export const setOpenKeys = (openKeys) => {
     openKeys,
   };
 };
+
+export const toggleCollapsed = () => {
+  return {
+    type: CommonActionTypes.TOGGLE_COLLAPSED,
+  };
+};

@@ -11,7 +11,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 const logger = createLogger({
   predicate: (getState, action) =>
-    action.type !== CommonActionTypes.SIDER_SET_OPEN_KEYS,
+    !Object.values(CommonActionTypes).includes(action.type),
 });
 
 const middlewares = [sagaMiddleware, logger];
