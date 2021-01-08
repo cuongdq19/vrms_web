@@ -6,7 +6,6 @@ import {
   Input,
   InputNumber,
   message,
-  Modal,
   Row,
   Upload,
 } from 'antd';
@@ -16,6 +15,7 @@ import { connect } from 'react-redux';
 
 import http from '../../http';
 import ModelsSelect from '../models-select/models-select.component';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const PartModal = ({ visible, item, providerId, onClose }) => {
   const {
@@ -98,11 +98,8 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
 
   return (
     <>
-      <Modal
-        centered
-        width="70%"
+      <CustomModal
         title="Create Part"
-        maskClosable={false}
         visible={visible}
         onCancel={onClose}
         onOk={() => form.submit()}
@@ -279,7 +276,7 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
             </Col> */}
           </Row>
         </Form>
-      </Modal>
+      </CustomModal>
     </>
   );
 };

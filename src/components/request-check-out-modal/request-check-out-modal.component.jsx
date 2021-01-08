@@ -1,8 +1,9 @@
-import { Col, message, Modal, Row } from 'antd';
+import { Col, message, Row } from 'antd';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import * as actions from '../../store/actions';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 import RequestOverview from '../request-overview/request-overview.component';
 
@@ -16,12 +17,9 @@ const RequestCheckoutModal = ({
   const { id } = item ?? {};
 
   return (
-    <Modal
-      width="90%"
-      centered
+    <CustomModal
       visible={visible}
       title={`Checkout Request #${id}`}
-      maskClosable={false}
       onCancel={onCancel}
       onOk={() =>
         checkout(id, () => {
@@ -37,7 +35,7 @@ const RequestCheckoutModal = ({
           <RequestOverview item={item} />
         </Col>
       </Row>
-    </Modal>
+    </CustomModal>
   );
 };
 

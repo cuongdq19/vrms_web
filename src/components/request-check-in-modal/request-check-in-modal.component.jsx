@@ -1,4 +1,4 @@
-import { Button, message, Modal } from 'antd';
+import { Button, message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -6,6 +6,7 @@ import * as actions from '../../store/actions';
 import http from '../../http';
 import { UserItemContainer, Container } from './request-check-in-modal.styles';
 import UserItem from '../user-item/user-item.component';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const RequestCheckInModal = ({
   providerId,
@@ -42,12 +43,9 @@ const RequestCheckInModal = ({
   }, [loadData]);
 
   return (
-    <Modal
-      width="60%"
-      centered
+    <CustomModal
       visible={visible}
       title={`Choose Employee to handle request`}
-      maskClosable={false}
       onCancel={onCancel}
       footer={null}
     >
@@ -62,7 +60,7 @@ const RequestCheckInModal = ({
           );
         })}
       </Container>
-    </Modal>
+    </CustomModal>
   );
 };
 

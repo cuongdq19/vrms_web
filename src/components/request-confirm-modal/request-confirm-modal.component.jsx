@@ -1,9 +1,10 @@
-import { message, Modal } from 'antd';
+import { message } from 'antd';
 import React from 'react';
 
 import RequestOverview from '../request-overview/request-overview.component';
 import * as actions from '../../store/actions';
 import { connect } from 'react-redux';
+import CustomModal from '../custom-modal/custom-modal.component';
 
 const RequestConfirmModal = ({
   visible,
@@ -15,12 +16,9 @@ const RequestConfirmModal = ({
   const { id } = item ?? {};
 
   return (
-    <Modal
-      width="90%"
-      centered
+    <CustomModal
       visible={visible}
       title={`Confirm Request #${id}`}
-      maskClosable={false}
       onCancel={onCancel}
       onOk={() =>
         confirmRequest(id, () => {
@@ -32,7 +30,7 @@ const RequestConfirmModal = ({
       }
     >
       <RequestOverview item={item} />
-    </Modal>
+    </CustomModal>
   );
 };
 

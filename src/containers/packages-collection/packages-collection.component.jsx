@@ -1,4 +1,4 @@
-import { Button, message, Modal, Popconfirm } from 'antd';
+import { Button, message, Popconfirm } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -8,6 +8,7 @@ import ModelsSelect from '../../components/models-select/models-select.component
 import PackagesCollectionTable from '../../components/packages-collection-table/packages-collection-table.component';
 
 import http from '../../http';
+import CustomModal from '../../components/custom-modal/custom-modal.component';
 
 const PackagesCollection = ({ providerId, history }) => {
   const [packages, setPackages] = useState([]);
@@ -82,7 +83,7 @@ const PackagesCollection = ({ providerId, history }) => {
             },
           ]}
         />
-        <Modal
+        <CustomModal
           visible={visible}
           title="Choose New Package Models"
           onCancel={() => setVisible(false)}
@@ -92,7 +93,7 @@ const PackagesCollection = ({ providerId, history }) => {
             models={models}
             onChange={(value) => setModels(value)}
           />
-        </Modal>
+        </CustomModal>
       </Content>
     </LayoutWrapper>
   );
