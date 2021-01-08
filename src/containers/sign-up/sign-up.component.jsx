@@ -22,7 +22,7 @@ import {
 import Background from '../../assets/images/sign-up-background.png';
 import http from '../../http';
 
-import CustomMap from '../../components/CustomMap';
+import CustomMap from '../../components/custom-map/custom-map.component';
 
 const SignUp = () => {
   const [form] = Form.useForm();

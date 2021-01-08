@@ -15,8 +15,9 @@ import {
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import CustomMap from '../components/custom-map/custom-map.component';
+
 import http from '../http';
-import CustomMap from '../components/CustomMap';
 import { gender } from '../utils/constants';
 
 const { Option } = Select;
