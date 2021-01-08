@@ -82,7 +82,7 @@ export function* fetchServiceSections(action) {
 
 export function* fetchServicesByProviderAndType(action) {
   try {
-    const providerId = yield select((state) => state.auth.userData.providerId);
+    const providerId = yield select((state) => state.auth.userData?.providerId);
     const servicesData = yield http
       .get(`/services/providers/${providerId}/types/${action.typeId}`)
       .then(({ data }) => data);
