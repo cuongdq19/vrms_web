@@ -11,8 +11,8 @@ import RequestsCollection from '../containers/requests-collection/requests-colle
 import ServicesCollection from '../containers/services-collection/services-collection.component';
 import SignIn from '../containers/sign-in/sign-in.component';
 import UsersCollection from '../containers/users-collection/users-collection.component';
-import _403 from '../containers/_403';
-import _404 from '../containers/_404';
+import _403 from '../containers/_403/_403.component';
+import _404 from '../containers/_404/_404.component';
 import RequestUpdate from '../containers/request-update/request-update.component';
 import RequestUpdateIncurred from '../containers/request-update-incurred/request-update-incurred.component';
 import PackageCreate from '../containers/package-create/package-create.component';
