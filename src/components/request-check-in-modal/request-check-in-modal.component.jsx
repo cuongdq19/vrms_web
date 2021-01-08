@@ -2,7 +2,6 @@ import { Button, message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import * as actions from '../../store/actions';
 import http from '../../http';
 import { UserItemContainer, Container } from './request-check-in-modal.styles';
 import UserItem from '../user-item/user-item.component';
@@ -14,13 +13,12 @@ const RequestCheckInModal = ({
   item,
   onCancel,
   onSuccess,
-  checkIn,
 }) => {
   const { id, bookingTime } = item ?? {};
   const [technicians, setTechnicians] = useState({ loading: false, data: [] });
 
-  const submitHandler = () =>
-    checkIn(id, 1, () => {
+  const submitHandler = (techId) =>
+    http.post(`/requests/checkin/${id}/technicians/${techId}`).then(() => {
       item.checkIn();
       message.success('Check in success.');
       onSuccess();
@@ -55,7 +53,7 @@ const RequestCheckInModal = ({
           return (
             <UserItemContainer key={id}>
               <UserItem fullName={fullName} imageUrl={imageUrl} />
-              <Button onClick={submitHandler}> Select </Button>
+              <Button onClick={() => submitHandler(id)}> Select </Button>
             </UserItemContainer>
           );
         })}
@@ -68,12 +66,4 @@ const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  checkIn: (requestId, technicianId, callback) =>
-    dispatch(actions.checkInRequest(requestId, technicianId, callback)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RequestCheckInModal);
+export default connect(mapStateToProps)(RequestCheckInModal);

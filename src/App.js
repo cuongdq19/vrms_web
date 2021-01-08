@@ -9,9 +9,12 @@ import routes from './routes';
 
 const App = () => {
   onMessageListener()
-    .then((payload) => {
-      const { title, body } = payload.notification;
-      notification.info({ message: title, description: body });
+    .then(({ data, notification }) => {
+      const { title, body } = notification;
+      notification.info({
+        message: title,
+        description: body,
+      });
     })
     .catch((err) => {
       notification.error(JSON.stringify(err));

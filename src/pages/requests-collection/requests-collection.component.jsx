@@ -2,32 +2,46 @@ import { Button, message, Popconfirm, Table, Tag, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import StateMachine from 'javascript-state-machine';
 
-import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import * as actions from '../../store/actions';
+import http from '../../http';
+import { Title, Content } from './requests-collection.styles';
 import {
   calculateRequestPrice,
   formatMoney,
   generateRequestStatusColor,
 } from '../../utils';
-import { Title, Content } from './requests-collection.styles';
+
+import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
+import { requestStateMachineConfig } from '../../utils/constants';
 
-const RequestsCollection = ({
-  history,
-  loadRequests,
-  completeRequest,
-  cancelRequest,
-  requestsData,
-}) => {
+const RequestsCollection = ({ providerId, history }) => {
   const [modals, setModals] = useState({
     confirm: false,
     checkIn: false,
     checkout: false,
     item: null,
   });
+  const [requestsData, setRequestsData] = useState([]);
+
+  const requestCompletedHandler = (record) => {
+    http.get(`/requests/done/${record.id}`).then(() => {
+      record.done();
+      message.info('Canceled request.');
+      fetchRequestsData();
+    });
+  };
+
+  const requestCanceledHandler = (record) => {
+    http.delete(`/requests/${record.id}`).then(() => {
+      record.confirm();
+      message.success('Successfully complete.');
+      fetchRequestsData();
+    });
+  };
 
   const columns = [
     { title: 'ID', dataIndex: 'id', align: 'center' },
@@ -128,13 +142,7 @@ const RequestsCollection = ({
           okText="Confirm"
           placement="top"
           title="Are you sure to complete work for this request?"
-          onConfirm={() =>
-            completeRequest(record.id, () => {
-              record.done();
-              message.info('Canceled request.');
-              fetchRequestsData();
-            })
-          }
+          onConfirm={() => requestCompletedHandler(record)}
         >
           <Button disabled={record.cannot('done')}>Complete</Button>
         </Popconfirm>
@@ -163,13 +171,9 @@ const RequestsCollection = ({
           okButtonProps={{ danger: true }}
           placement="top"
           title="Are you sure to cancel this request?"
-          onConfirm={() =>
-            cancelRequest(record.id, () => {
-              record.confirm();
-              message.success('Successfully complete.');
-              fetchRequestsData();
-            })
-          }
+          onConfirm={() => {
+            requestCanceledHandler(record);
+          }}
         >
           <Button danger disabled={record.cannot('cancel')}>
             Cancel
@@ -180,8 +184,16 @@ const RequestsCollection = ({
   ];
 
   const fetchRequestsData = useCallback(() => {
-    loadRequests();
-  }, [loadRequests]);
+    http.get(`/requests/providers/${providerId}`).then(({ data }) => {
+      data.forEach((req) => {
+        StateMachine.apply(req, {
+          ...requestStateMachineConfig,
+          init: req.status,
+        });
+      });
+      setRequestsData(data);
+    });
+  }, [providerId]);
 
   useEffect(() => {
     fetchRequestsData();
@@ -225,18 +237,8 @@ const RequestsCollection = ({
 
 const mapStateToProps = (state) => {
   return {
-    requestsData: state.requests.requests,
+    providerId: state.auth?.userData?.providerId,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    loadRequests: () => dispatch(actions.fetchRequests()),
-    completeRequest: (requestId, callback) =>
-      dispatch(actions.completeRequest(requestId, callback)),
-    cancelRequest: (requestId, callback) =>
-      dispatch(actions.cancelRequest(requestId, callback)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(RequestsCollection);
+export default connect(mapStateToProps)(RequestsCollection);

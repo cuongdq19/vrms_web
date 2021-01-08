@@ -14,7 +14,7 @@ import {
   Title,
   RegisterLink,
 } from './sign-in.styles';
-import * as actions from '../../store/actions';
+import { signIn } from '../../redux/user/user.actions';
 import Background from '../../assets/images/sign-in-background.png';
 
 const SignIn = ({ loading, signIn, currentUser }) => {
@@ -78,8 +78,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signIn: (username, password) =>
-      dispatch(actions.signIn(username, password)),
+    signIn: (username, password) => dispatch(signIn(username, password)),
   };
 };
 
