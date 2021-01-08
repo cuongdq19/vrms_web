@@ -13,7 +13,7 @@ const PAGE_SIZE = 12;
 
 const PartsCollection = () => {
   const [current, setCurrent] = useState(1);
-  const providerId = useSelector((state) => state.auth.userData.providerId);
+  const providerId = useSelector((state) => state.auth.userData?.providerId);
   const [parts, setParts] = useState({ data: [], loading: false });
   const [modal, setModal] = useState({ visible: false, item: null });
 

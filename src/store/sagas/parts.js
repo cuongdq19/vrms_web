@@ -5,7 +5,7 @@ import * as actions from '../actions';
 export function* fetchParts(action) {
   try {
     const providerId = yield select((state) => {
-      return state.auth.userData.providerId;
+      return state.auth.userData?.providerId;
     });
     const partsData = yield http
       .get(`/parts/${providerId}`)

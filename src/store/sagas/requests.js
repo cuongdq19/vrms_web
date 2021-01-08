@@ -30,7 +30,7 @@ export function* updateRequest(action) {
 
 export function* fetchRequests(action) {
   try {
-    const providerId = yield select((state) => state.auth.userData.providerId);
+    const providerId = yield select((state) => state.auth.userData?.providerId);
     const data = yield http
       .get(`/requests/providers/${providerId}`)
       .then(({ data }) => {

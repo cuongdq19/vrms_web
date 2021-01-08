@@ -282,7 +282,7 @@ const ServiceForm = ({ providerId, history }) => {
 };
 
 const mapStateToProps = (state) => ({
-  providerId: state.auth.userData.providerId,
+  providerId: state.auth.userData?.providerId,
 });
 
 export default connect(mapStateToProps)(ServiceForm);

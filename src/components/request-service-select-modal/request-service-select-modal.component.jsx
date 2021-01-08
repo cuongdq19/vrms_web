@@ -341,7 +341,7 @@ const RequestServiceSelectModal = ({
 };
 
 const mapStateToProps = (state) => ({
-  providerId: state.auth.userData.providerId,
+  providerId: state.auth.userData?.providerId,
 });
 
 export default connect(mapStateToProps)(RequestServiceSelectModal);

@@ -67,7 +67,7 @@ const RequestCheckInModal = ({
 };
 
 const mapStateToProps = (state) => ({
-  providerId: state.auth.userData.providerId,
+  providerId: state.auth.userData?.providerId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
