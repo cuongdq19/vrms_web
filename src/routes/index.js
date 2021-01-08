@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-import PrivateRoute from '../components/PrivateRoute';
+import PrivateRoute from '../components/private-route/private-route.component';
 import ContractsCollection from '../containers/contracts-collection/contracts-collection.component';
 import Dashboard from '../containers/Dashboard';
 import PackagesCollection from '../containers/packages-collection/packages-collection.component';
