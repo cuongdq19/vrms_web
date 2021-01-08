@@ -1,6 +1,6 @@
 import accounting from 'accounting';
 
-import { moneyFormat, status } from './constants';
+import { contractStatus, moneyFormat, requestStatus } from './constants';
 
 export const updateObject = (oldState, newProps) => {
   return { ...oldState, ...newProps };
@@ -59,19 +59,30 @@ export const formatMoney = (money) => {
 
 export const generateRequestStatusColor = (stat) => {
   switch (stat) {
-    case status.Accepted:
+    case requestStatus.Accepted:
       return 'default';
-    case status.Arrived:
+    case requestStatus.Arrived:
       return '#0094FF';
-    case status.Confirmed:
+    case requestStatus.Confirmed:
       return '#FF6A00';
-    case status.Canceled:
+    case requestStatus.Canceled:
       return '#FF6F6F';
-    case status.InProgress:
+    case requestStatus.InProgress:
       return '#0026FF';
-    case status.WorkCompleted:
+    case requestStatus.WorkCompleted:
       return '#00FF90';
-    case status.Finished:
+    case requestStatus.Finished:
+      return '#00FF21';
+    default:
+      return 'default';
+  }
+};
+
+export const generateContractStatusColor = (stat) => {
+  switch (stat) {
+    case contractStatus.Pending:
+      return 'default';
+    case contractStatus.Resolved:
       return '#00FF21';
     default:
       return 'default';

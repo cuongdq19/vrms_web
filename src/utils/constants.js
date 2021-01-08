@@ -17,7 +17,7 @@ export const gender = {
 
 export const pageSize = 12;
 
-export const status = {
+export const requestStatus = {
   Accepted: 'ACCEPTED',
   Arrived: 'ARRIVED',
   Confirmed: 'CONFIRMED',
@@ -25,6 +25,11 @@ export const status = {
   WorkCompleted: 'WORK COMPLETED',
   Finished: 'FINISHED',
   Canceled: 'CANCELED',
+};
+
+export const contractStatus = {
+  Pending: 'PENDING',
+  Resolved: 'RESOLVED',
 };
 
 export const moneyFormat = {

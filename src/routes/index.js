@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/PrivateRoute';
-import Contracts from '../containers/Contracts';
+import ContractsCollection from '../containers/contracts-collection/contracts-collection.component';
 import Dashboard from '../containers/Dashboard';
 import PackagesCollection from '../containers/packages-collection/packages-collection.component';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
@@ -18,6 +18,7 @@ import RequestUpdateIncurred from '../containers/request-update-incurred/request
 import PackageCreate from '../containers/package-create/package-create.component';
 import PackageUpdate from '../containers/package-update/package-update.component';
 import SignUp from '../containers/sign-up/sign-up.component';
+import ContractResolve from '../containers/contract-resolve/contract-resolve.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -29,7 +30,13 @@ const adminRoutes = [
     key: 'contracts',
     path: '/contracts',
     exact: true,
-    component: Contracts,
+    component: ContractsCollection,
+  },
+  {
+    key: 'contracts',
+    path: '/contracts/:contractId',
+    exact: true,
+    component: ContractResolve,
   },
 ];
 

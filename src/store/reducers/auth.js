@@ -2,10 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../utils';
 
 const initialState = {
-  userData: {
-    userId: null,
-    providerId: null,
-  },
+  userData: null,
   loading: false,
 };
 
