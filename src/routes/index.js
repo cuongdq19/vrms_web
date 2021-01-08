@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/private-route/private-route.component';
 import ContractsCollection from '../containers/contracts-collection/contracts-collection.component';
-import Dashboard from '../containers/Dashboard';
+import Dashboard from '../containers/dashboard/dashboard.component';
 import PackagesCollection from '../containers/packages-collection/packages-collection.component';
 import PartsCollection from '../containers/parts-collection/parts-collection.component';
 import ServiceForm from '../containers/service-form/service-form.component';

@@ -18,7 +18,7 @@ const PrivateRoute = ({ component: Component, roles, ...rest }) => {
         }
 
         if (roles && roles.indexOf(currentUser.roleName) === -1) {
-          return <Redirect to={{ pathname: '/forbidden' }} />;
+          return <Redirect to={{ pathname: '/' }} />;
         }
 
         return <Component {...props} />;
