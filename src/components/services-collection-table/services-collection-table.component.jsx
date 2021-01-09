@@ -3,7 +3,7 @@ import React from 'react';
 
 import PartsCollectionTable from '../parts-collection-table/parts-collection-table.component';
 
-import { formatMoney } from '../../utils';
+import { calculateServicePrice, formatMoney } from '../../utils';
 
 const ServicesCollectionTable = ({
   size = 'middle',
@@ -26,10 +26,21 @@ const ServicesCollectionTable = ({
         },
         { title: 'Service Name', dataIndex: 'name', align: 'center' },
         {
-          title: 'Price',
+          align: 'center',
+          title: 'Service Type',
+          render: (_, { typeDetail }) =>
+            `${typeDetail.typeName} ${typeDetail.sectionName.toLowerCase()}`,
+        },
+        {
+          title: 'Wages',
           dataIndex: 'price',
           align: 'center',
           render: (value) => formatMoney(value),
+        },
+        {
+          title: 'Total Price',
+          align: 'center',
+          render: (_, record) => formatMoney(calculateServicePrice(record)),
         },
         ...(columns ?? []),
       ]}

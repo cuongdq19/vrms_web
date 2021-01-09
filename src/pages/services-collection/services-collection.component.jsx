@@ -43,14 +43,6 @@ const ServicesCollection = ({ providerId, history }) => {
           rowKey="id"
           columns={[
             {
-              align: 'center',
-              title: 'Service Type',
-              render: (_, { typeDetail }) =>
-                `${
-                  typeDetail.typeName
-                } ${typeDetail.sectionName.toLowerCase()}`,
-            },
-            {
               title: 'Update',
               align: 'center',
               render: (_, record) => (
