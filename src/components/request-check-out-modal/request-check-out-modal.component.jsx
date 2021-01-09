@@ -1,4 +1,4 @@
-import { Col, message, Row } from 'antd';
+import { message } from 'antd';
 import React, { useState } from 'react';
 
 import CustomModal from '../custom-modal/custom-modal.component';
