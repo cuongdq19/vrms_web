@@ -76,3 +76,16 @@ export const ITEM_TYPES = {
   expense: 1,
   package: 2,
 };
+
+export const notificationActions = {
+  CREATE_REQUEST: 'CREATE_REQUEST',
+};
+
+export const getRouteOnNotificationClicked = (action, data) => {
+  switch (action) {
+    case notificationActions.CREATE_REQUEST:
+      return '/requests';
+    default:
+      return '/';
+  }
+};
