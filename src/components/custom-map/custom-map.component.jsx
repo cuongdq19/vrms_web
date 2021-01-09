@@ -1,5 +1,5 @@
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Select } from 'antd';
 import usePlacesAutocomplete, {
   getGeocode,
@@ -66,7 +66,7 @@ const center = {
   lng: 106.8030719,
 };
 
-const CustomMap = ({ onSearch }) => {
+const CustomMap = ({ onSearch, position = center, address }) => {
   const [marker, setMarker] = useState(center);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_API_KEY,
@@ -84,16 +84,24 @@ const CustomMap = ({ onSearch }) => {
     mapRef.current.setZoom(18);
   }, []);
 
+  useEffect(() => {
+    setMarker(position);
+  }, [position]);
+
   if (loadError) return 'Error Loading Maps';
   if (!isLoaded) return 'Loading Maps';
 
   return (
     <>
-      <MapSearchInput panTo={panTo} onSearch={onSearch} />
+      <MapSearchInput
+        panTo={panTo}
+        onSearch={onSearch}
+        defaultValue={address}
+      />
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={14}
-        center={center}
+        center={position}
         onLoad={onMapLoad}
       >
         {marker ? (

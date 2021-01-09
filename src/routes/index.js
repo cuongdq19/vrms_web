@@ -19,6 +19,7 @@ import PackageCreate from '../pages/package-create/package-create.component';
 import PackageUpdate from '../pages/package-update/package-update.component';
 import SignUp from '../pages/sign-up/sign-up.component';
 import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
+import ProvidersCollection from '../pages/providers-collection/providers-collection.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -37,6 +38,12 @@ const adminRoutes = [
     path: '/contracts/:contractId',
     exact: true,
     component: ContractResolve,
+  },
+  {
+    key: 'providers',
+    path: '/providers',
+    exact: true,
+    component: ProvidersCollection,
   },
 ];
 
