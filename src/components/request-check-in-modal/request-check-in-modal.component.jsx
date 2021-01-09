@@ -6,6 +6,7 @@ import http from '../../http';
 import { UserItemContainer, Container } from './request-check-in-modal.styles';
 import UserItem from '../user-item/user-item.component';
 import CustomModal from '../custom-modal/custom-modal.component';
+import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 const RequestCheckInModal = ({
   providerId,
@@ -16,14 +17,18 @@ const RequestCheckInModal = ({
 }) => {
   const { id, bookingTime } = item ?? {};
   const [technicians, setTechnicians] = useState({ loading: false, data: [] });
+  const [submitting, setSubmitting] = useState(false);
 
-  const submitHandler = (techId) =>
+  const submitHandler = (techId) => {
+    setSubmitting(true);
     http.post(`/requests/checkin/${id}/technicians/${techId}`).then(() => {
       item.checkIn();
       message.success('Check in success.');
       onSuccess();
       onCancel();
+      setSubmitting(false);
     });
+  };
 
   const loadData = useCallback(() => {
     if (visible && item) {
@@ -48,15 +53,25 @@ const RequestCheckInModal = ({
       footer={null}
     >
       <Container>
-        {technicians.data.map((technician) => {
-          const { fullName, imageUrl, id } = technician;
-          return (
-            <UserItemContainer key={id}>
-              <UserItem fullName={fullName} imageUrl={imageUrl} />
-              <Button onClick={() => submitHandler(id)}> Select </Button>
-            </UserItemContainer>
-          );
-        })}
+        {technicians.loading || submitting ? (
+          <LoadingSpinner
+            title={
+              technicians.loading
+                ? 'Loading Technicians ...'
+                : 'Checking in ...'
+            }
+          />
+        ) : (
+          technicians.data.map((technician) => {
+            const { fullName, imageUrl, id } = technician;
+            return (
+              <UserItemContainer key={id}>
+                <UserItem fullName={fullName} imageUrl={imageUrl} />
+                <Button onClick={() => submitHandler(id)}> Select </Button>
+              </UserItemContainer>
+            );
+          })
+        )}
       </Container>
     </CustomModal>
   );

@@ -11,9 +11,11 @@ const PackagesCollectionTable = ({
   servicesExpandedColumns = [],
   partsExpandedColumns = [],
   showDefaultQuantity = true,
+  loading = false,
 }) => {
   return (
     <Table
+      loading={loading}
       size={size}
       dataSource={dataSource}
       rowKey={rowKey}

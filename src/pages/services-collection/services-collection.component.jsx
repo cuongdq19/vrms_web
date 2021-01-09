@@ -9,6 +9,7 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import ServicesCollectionTable from '../../components/services-collection-table/services-collection-table.component';
 
 const ServicesCollection = ({ providerId, history }) => {
+  const [loading, setLoading] = useState(false);
   const [services, setServices] = useState([]);
 
   const removedHandler = (serviceId) => {
@@ -18,10 +19,12 @@ const ServicesCollection = ({ providerId, history }) => {
     });
   };
   const loadData = useCallback(() => {
+    setLoading(true);
     http
       .get(`/maintenance-packages/providers/${providerId}/services`)
       .then(({ data }) => {
         setServices(data);
+        setLoading(false);
       });
   }, [providerId]);
 
@@ -39,6 +42,7 @@ const ServicesCollection = ({ providerId, history }) => {
       </Title>
       <Content>
         <ServicesCollectionTable
+          loading={loading}
           dataSource={services}
           rowKey="id"
           columns={[

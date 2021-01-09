@@ -1,5 +1,5 @@
 import { Col, message, Row } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 import CustomModal from '../custom-modal/custom-modal.component';
 import RequestOverview from '../request-overview/request-overview.component';
@@ -7,13 +7,16 @@ import http from '../../http';
 
 const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
   const { id } = item ?? {};
+  const [submitting, setSubmitting] = useState(false);
 
   const submitHandler = (item) => {
+    setSubmitting(true);
     http.get(`/requests/checkout/${item.id}`).then(() => {
       item.checkOut();
       message.success('Checkout success.');
       onSuccess();
       onCancel();
+      setSubmitting(false);
     });
   };
 
@@ -22,15 +25,12 @@ const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
       visible={visible}
       title={`Checkout Request #${id}`}
       onCancel={onCancel}
+      loading={submitting}
       onOk={() => {
         submitHandler(item);
       }}
     >
-      <Row>
-        <Col span={24}>
-          <RequestOverview item={item} />
-        </Col>
-      </Row>
+      <RequestOverview item={item} />
     </CustomModal>
   );
 };

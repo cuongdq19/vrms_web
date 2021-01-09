@@ -25,9 +25,11 @@ const RequestsCollection = ({ providerId, history }) => {
     checkout: false,
     item: null,
   });
+  const [loading, setLoading] = useState(false);
   const [requestsData, setRequestsData] = useState([]);
 
   const requestCompletedHandler = (record) => {
+    setLoading(true);
     http.get(`/requests/done/${record.id}`).then(() => {
       record.done();
       message.info('Canceled request.');
@@ -36,8 +38,9 @@ const RequestsCollection = ({ providerId, history }) => {
   };
 
   const requestCanceledHandler = (record) => {
+    setLoading(true);
     http.delete(`/requests/${record.id}`).then(() => {
-      record.confirm();
+      record.cancel();
       message.success('Successfully complete.');
       fetchRequestsData();
     });
@@ -184,15 +187,22 @@ const RequestsCollection = ({ providerId, history }) => {
   ];
 
   const fetchRequestsData = useCallback(() => {
-    http.get(`/requests/providers/${providerId}`).then(({ data }) => {
-      data.forEach((req) => {
-        StateMachine.apply(req, {
-          ...requestStateMachineConfig,
-          init: req.status,
+    setLoading(true);
+    http
+      .get(`/requests/providers/${providerId}`)
+      .then(({ data }) => {
+        data.forEach((req) => {
+          StateMachine.apply(req, {
+            ...requestStateMachineConfig,
+            init: req.status,
+          });
         });
+        setRequestsData(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
       });
-      setRequestsData(data);
-    });
   }, [providerId]);
 
   useEffect(() => {
@@ -205,7 +215,12 @@ const RequestsCollection = ({ providerId, history }) => {
         <Typography.Title level={4}>Requests</Typography.Title>
       </Title>
       <Content>
-        <Table dataSource={requestsData} columns={columns} rowKey="id" />
+        <Table
+          loading={loading}
+          dataSource={requestsData}
+          columns={columns}
+          rowKey="id"
+        />
       </Content>
       <RequestConfirmModal
         onCancel={() =>

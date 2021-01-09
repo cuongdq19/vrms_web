@@ -12,6 +12,7 @@ import CustomModal from '../../components/custom-modal/custom-modal.component';
 
 const PackagesCollection = ({ providerId, history }) => {
   const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [models, setModels] = useState([]);
 
@@ -23,10 +24,13 @@ const PackagesCollection = ({ providerId, history }) => {
   };
 
   const loadData = useCallback(() => {
+    setLoading(true);
+
     http
       .get(`/maintenance-packages/providers/${providerId}`)
       .then(({ data }) => {
         setPackages(data);
+        setLoading(false);
       });
   }, [providerId]);
 
@@ -42,6 +46,7 @@ const PackagesCollection = ({ providerId, history }) => {
       </Title>
       <Content>
         <PackagesCollectionTable
+          loading={loading}
           rowKey="id"
           dataSource={packages.map(({ packagedServices, ...rest }) => ({
             services: packagedServices.map(({ parts, ...rest }) => ({

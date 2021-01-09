@@ -6,6 +6,7 @@ import PartsCollectionTable from '../parts-collection-table/parts-collection-tab
 import { calculateServicePrice, formatMoney } from '../../utils';
 
 const ServicesCollectionTable = ({
+  loading = false,
   size = 'middle',
   rowKey,
   dataSource,
@@ -15,6 +16,7 @@ const ServicesCollectionTable = ({
 }) => {
   return (
     <Table
+      loading={loading}
       size={size}
       rowKey={rowKey}
       dataSource={dataSource}
@@ -25,12 +27,16 @@ const ServicesCollectionTable = ({
           render: (value, record, index) => index + 1,
         },
         { title: 'Service Name', dataIndex: 'name', align: 'center' },
-        {
-          align: 'center',
-          title: 'Service Type',
-          render: (_, { typeDetail }) =>
-            `${typeDetail.typeName} ${typeDetail.sectionName.toLowerCase()}`,
-        },
+        // {
+        //   align: 'center',
+        //   title: 'Service Type',
+        //   render: (_, record) => {
+        //     console.log(record);
+        //     return `${
+        //       record.typeDetail.typeName
+        //     } ${record.typeDetail.sectionName.toLowerCase()}`;
+        //   },
+        // },
         {
           title: 'Wages',
           dataIndex: 'price',

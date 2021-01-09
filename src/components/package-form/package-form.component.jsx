@@ -1,11 +1,12 @@
 import { Button, Checkbox, Col, Form, Input, Radio, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 
 import { Content, Title } from './package-form.styles';
 import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
+import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 import http from '../../http';
-import { connect } from 'react-redux';
 
 const INIT_PACKAGE = {
   id: 0,
@@ -22,6 +23,7 @@ const milestoneTypes = { milestone: 0, section: 1 };
 const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
   const [form] = Form.useForm();
   const [milestoneType, setMilestoneType] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [item, setItem] = useState(INIT_PACKAGE);
   const [milestones, setMilestones] = useState([]);
@@ -78,11 +80,13 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
   }, [modelIds, providerId]);
 
   useEffect(() => {
+    setLoading(true);
     switch (milestoneType) {
       case milestoneTypes.milestone:
         setItem((curr) => ({ ...curr, sectionId: null, sectionName: null }));
         http.get('/maintenance-packages/milestones').then(({ data }) => {
           setMilestones(data);
+          setLoading(false);
         });
         break;
       case milestoneTypes.section:
@@ -93,14 +97,18 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
         }));
         http.get('/service-type-details/sections/plain').then(({ data }) => {
           setSections(data);
+          setLoading(false);
         });
         break;
       default:
+        setLoading(false);
         return;
     }
   }, [milestoneType]);
 
-  return (
+  return loading ? (
+    <LoadingSpinner />
+  ) : (
     <>
       <Title>
         <h1>Create Maintenance Package</h1>
