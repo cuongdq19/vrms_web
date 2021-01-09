@@ -1,47 +1,38 @@
-import { Col, message, Row } from 'antd';
-import React from 'react';
-import { connect } from 'react-redux';
+import { message } from 'antd';
+import React, { useState } from 'react';
 
-import * as actions from '../../store/actions';
 import CustomModal from '../custom-modal/custom-modal.component';
-
 import RequestOverview from '../request-overview/request-overview.component';
+import http from '../../http';
 
-const RequestCheckoutModal = ({
-  visible,
-  item,
-  checkout,
-  onSuccess,
-  onCancel,
-}) => {
+const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
   const { id } = item ?? {};
+  const [submitting, setSubmitting] = useState(false);
+
+  const submitHandler = (item) => {
+    setSubmitting(true);
+    http.get(`/requests/checkout/${item.id}`).then(() => {
+      item.checkOut();
+      message.success('Checkout success.');
+      onSuccess();
+      onCancel();
+      setSubmitting(false);
+    });
+  };
 
   return (
     <CustomModal
       visible={visible}
       title={`Checkout Request #${id}`}
       onCancel={onCancel}
-      onOk={() =>
-        checkout(id, () => {
-          item.checkOut();
-          message.success('Checkout success.');
-          onSuccess();
-          onCancel();
-        })
-      }
+      loading={submitting}
+      onOk={() => {
+        submitHandler(item);
+      }}
     >
-      <Row>
-        <Col span={24}>
-          <RequestOverview item={item} />
-        </Col>
-      </Row>
+      <RequestOverview item={item} />
     </CustomModal>
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  checkout: (requestId, callback) =>
-    dispatch(actions.checkoutRequest(requestId, callback)),
-});
-
-export default connect(null, mapDispatchToProps)(RequestCheckoutModal);
+export default RequestCheckoutModal;

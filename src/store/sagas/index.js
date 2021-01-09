@@ -2,98 +2,11 @@ import { all, takeEvery } from 'redux-saga/effects';
 
 import * as actionTypes from '../actions/actionTypes';
 import { signIn } from './auth';
-import { createServicePackage, fetchServicePackages } from './packages';
-import { fetchParts, fetchPartSectionsWithCategories } from './parts';
-import {
-  cancelRequest,
-  checkInRequest,
-  checkoutRequest,
-  completeRequest,
-  confirmRequest,
-  fetchRequests,
-  initUpdateRequest,
-  updateRequest,
-} from './requests';
-import {
-  fetchServicesByProviderAndType,
-  fetchServiceSections,
-  fetchServiceTypes,
-  initModifyService,
-  initModifyServiceWithParts,
-  initUpdateService,
-  initUpdateServiceWithParts,
-} from './services';
-import { fetchManufacturers, fetchModels } from './vehicles';
 
 function* watchAuth() {
   yield all([takeEvery(actionTypes.SIGN_IN, signIn)]);
 }
 
-function* watchVehicles() {
-  yield all([
-    takeEvery(actionTypes.FETCH_MANUFACTURERS, fetchManufacturers),
-    takeEvery(actionTypes.FETCH_MODELS, fetchModels),
-  ]);
-}
-
-function* watchServices() {
-  yield all([
-    takeEvery(actionTypes.FETCH_SERVICE_TYPES, fetchServiceTypes),
-    takeEvery(actionTypes.INIT_MODIFY_SERVICE, initModifyService),
-    takeEvery(
-      actionTypes.INIT_MODIFY_SERVICE_WITH_PARTS,
-      initModifyServiceWithParts
-    ),
-    takeEvery(actionTypes.FETCH_SERVICE_SECTIONS, fetchServiceSections),
-    takeEvery(actionTypes.INIT_UPDATE_SERVICE, initUpdateService),
-    takeEvery(
-      actionTypes.INIT_UPDATE_SERVICE_WITH_PARTS,
-      initUpdateServiceWithParts
-    ),
-    takeEvery(
-      actionTypes.FETCH_SERVICES_BY_PROVIDER_AND_TYPE,
-      fetchServicesByProviderAndType
-    ),
-  ]);
-}
-
-function* watchParts() {
-  yield all([
-    takeEvery(actionTypes.FETCH_PARTS, fetchParts),
-    takeEvery(
-      actionTypes.FETCH_PART_SECTIONS_WITH_CATEGORIES,
-      fetchPartSectionsWithCategories
-    ),
-  ]);
-}
-
-function* watchRequests() {
-  yield all([
-    takeEvery(actionTypes.INIT_UPDATE_REQUEST, initUpdateRequest),
-    takeEvery(actionTypes.UPDATE_REQUEST, updateRequest),
-    takeEvery(actionTypes.FETCH_REQUESTS, fetchRequests),
-    takeEvery(actionTypes.CHECK_IN_REQUEST, checkInRequest),
-    takeEvery(actionTypes.CONFIRM_REQUEST, confirmRequest),
-    takeEvery(actionTypes.COMPLETE_REQUEST, completeRequest),
-    takeEvery(actionTypes.CHECK_OUT_REQUEST, checkoutRequest),
-    takeEvery(actionTypes.CANCEL_REQUEST, cancelRequest),
-  ]);
-}
-
-function* watchPackages() {
-  yield all([
-    takeEvery(actionTypes.FETCH_SERVICE_PACKAGES, fetchServicePackages),
-    takeEvery(actionTypes.CREATE_SERVICE_PACKAGE, createServicePackage),
-  ]);
-}
-
 export default function* watchAll() {
-  yield all([
-    watchAuth(),
-    watchVehicles(),
-    watchServices(),
-    watchParts(),
-    watchRequests(),
-    watchPackages(),
-  ]);
+  yield all([watchAuth()]);
 }

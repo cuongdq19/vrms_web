@@ -2,11 +2,11 @@ import { Button, message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import * as actions from '../../store/actions';
 import http from '../../http';
 import { UserItemContainer, Container } from './request-check-in-modal.styles';
 import UserItem from '../user-item/user-item.component';
 import CustomModal from '../custom-modal/custom-modal.component';
+import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 const RequestCheckInModal = ({
   providerId,
@@ -14,18 +14,21 @@ const RequestCheckInModal = ({
   item,
   onCancel,
   onSuccess,
-  checkIn,
 }) => {
   const { id, bookingTime } = item ?? {};
   const [technicians, setTechnicians] = useState({ loading: false, data: [] });
+  const [submitting, setSubmitting] = useState(false);
 
-  const submitHandler = () =>
-    checkIn(id, 1, () => {
+  const submitHandler = (techId) => {
+    setSubmitting(true);
+    http.post(`/requests/checkin/${id}/technicians/${techId}`).then(() => {
       item.checkIn();
       message.success('Check in success.');
       onSuccess();
       onCancel();
+      setSubmitting(false);
     });
+  };
 
   const loadData = useCallback(() => {
     if (visible && item) {
@@ -50,15 +53,25 @@ const RequestCheckInModal = ({
       footer={null}
     >
       <Container>
-        {technicians.data.map((technician) => {
-          const { fullName, imageUrl, id } = technician;
-          return (
-            <UserItemContainer key={id}>
-              <UserItem fullName={fullName} imageUrl={imageUrl} />
-              <Button onClick={submitHandler}> Select </Button>
-            </UserItemContainer>
-          );
-        })}
+        {technicians.loading || submitting ? (
+          <LoadingSpinner
+            title={
+              technicians.loading
+                ? 'Loading Technicians ...'
+                : 'Checking in ...'
+            }
+          />
+        ) : (
+          technicians.data.map((technician) => {
+            const { fullName, imageUrl, id } = technician;
+            return (
+              <UserItemContainer key={id}>
+                <UserItem fullName={fullName} imageUrl={imageUrl} />
+                <Button onClick={() => submitHandler(id)}> Select </Button>
+              </UserItemContainer>
+            );
+          })
+        )}
       </Container>
     </CustomModal>
   );
@@ -68,12 +81,4 @@ const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  checkIn: (requestId, technicianId, callback) =>
-    dispatch(actions.checkInRequest(requestId, technicianId, callback)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RequestCheckInModal);
+export default connect(mapStateToProps)(RequestCheckInModal);

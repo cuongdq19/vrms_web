@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dropdown, Layout, Menu } from 'antd';
 import {
   MenuUnfoldOutlined,
@@ -24,24 +24,25 @@ import {
   Logo,
   Profile,
 } from './layout-wrapper.styles';
-import * as actions from '../../store/actions';
+import {
+  setOpenKeys,
+  toggleCollapsed,
+} from '../../redux/common/common.actions';
+import { signOut } from '../../redux/user/user.actions';
 import { roles } from '../../utils/constants';
 
 const { Sider } = Layout;
 
 const LayoutWrapper = ({
   children,
+  collapsed,
   currentUser,
   openKeys,
   setOpenKeys,
+  toggleCollapsed,
   signOut,
 }) => {
   const history = useHistory();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const toggle = () => {
-    setCollapsed(!collapsed);
-  };
 
   const SIDER_MENU = [
     {
@@ -116,7 +117,7 @@ const LayoutWrapper = ({
           theme="dark"
           mode="inline"
           openKeys={openKeys}
-          onOpenChange={(keys) => console.log(keys) || setOpenKeys(keys)}
+          onOpenChange={(keys) => setOpenKeys(keys)}
         >
           {SIDER_MENU.map((submenu) =>
             Array.isArray(submenu.children) ? (
@@ -154,7 +155,7 @@ const LayoutWrapper = ({
       </Sider>
       <Layout>
         <CustomHeader>
-          <CollapsedIcon onClick={toggle}>
+          <CollapsedIcon onClick={toggleCollapsed}>
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </CollapsedIcon>
           <div style={{ flex: 1 }} />
@@ -187,14 +188,16 @@ const LayoutWrapper = ({
 const mapStateToProps = (state) => {
   return {
     currentUser: state.auth.userData,
+    collapsed: state.common.collapsed,
     openKeys: state.common.openKeys,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setOpenKeys: (keys) => dispatch(actions.setOpenKeys(keys)),
-    signOut: () => dispatch(actions.signOut()),
+    setOpenKeys: (keys) => dispatch(setOpenKeys(keys)),
+    toggleCollapsed: () => dispatch(toggleCollapsed()),
+    signOut: () => dispatch(signOut()),
   };
 };
 

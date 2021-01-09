@@ -89,6 +89,21 @@ export const generateContractStatusColor = (stat) => {
   }
 };
 
+export const calculateServicePrice = (service) => {
+  const { parts, price } = service;
+  const partsPrice = parts.reduce(
+    (accumulatedPrice, part) => accumulatedPrice + part.price * part.quantity,
+    0
+  );
+  return price + partsPrice;
+};
+
+export const calculatePackagePrice = (item) => {
+  return item.services.reduce((accumulatedPrice, item) => {
+    return accumulatedPrice + calculateServicePrice(item);
+  }, 0);
+};
+
 export const modelToString = (model) => {
   return `${model.manufacturerName} ${model.name} ${model.fuelType} ${model.gearbox} (${model.year})`;
 };

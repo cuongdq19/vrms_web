@@ -2,23 +2,23 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/private-route/private-route.component';
-import ContractsCollection from '../containers/contracts-collection/contracts-collection.component';
-import Dashboard from '../containers/dashboard/dashboard.component';
-import PackagesCollection from '../containers/packages-collection/packages-collection.component';
-import PartsCollection from '../containers/parts-collection/parts-collection.component';
-import ServiceForm from '../containers/service-form/service-form.component';
-import RequestsCollection from '../containers/requests-collection/requests-collection.component';
-import ServicesCollection from '../containers/services-collection/services-collection.component';
-import SignIn from '../containers/sign-in/sign-in.component';
-import UsersCollection from '../containers/users-collection/users-collection.component';
-import _403 from '../containers/_403/_403.component';
-import _404 from '../containers/_404/_404.component';
-import RequestUpdate from '../containers/request-update/request-update.component';
-import RequestUpdateIncurred from '../containers/request-update-incurred/request-update-incurred.component';
-import PackageCreate from '../containers/package-create/package-create.component';
-import PackageUpdate from '../containers/package-update/package-update.component';
-import SignUp from '../containers/sign-up/sign-up.component';
-import ContractResolve from '../containers/contract-resolve/contract-resolve.component';
+import ContractsCollection from '../pages/contracts-collection/contracts-collection.component';
+import Dashboard from '../pages/dashboard/dashboard.component';
+import PackagesCollection from '../pages/packages-collection/packages-collection.component';
+import PartsCollection from '../pages/parts-collection/parts-collection.component';
+import ServiceForm from '../pages/service-form/service-form.component';
+import RequestsCollection from '../pages/requests-collection/requests-collection.component';
+import ServicesCollection from '../pages/services-collection/services-collection.component';
+import SignIn from '../pages/sign-in/sign-in.component';
+import UsersCollection from '../pages/users-collection/users-collection.component';
+import _403 from '../pages/_403/_403.component';
+import _404 from '../pages/_404/_404.component';
+import RequestUpdate from '../pages/request-update/request-update.component';
+import RequestUpdateIncurred from '../pages/request-update-incurred/request-update-incurred.component';
+import PackageCreate from '../pages/package-create/package-create.component';
+import PackageUpdate from '../pages/package-update/package-update.component';
+import SignUp from '../pages/sign-up/sign-up.component';
+import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },

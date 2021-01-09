@@ -9,9 +9,11 @@ const PartsCollectionTable = ({
   showDesc = true,
   showModels = true,
   showDefaultQuantity = true,
+  loading = false,
 }) => {
   return (
     <Table
+      loading={loading}
       size={size}
       rowKey="id"
       pagination={{ pageSize: 5 }}

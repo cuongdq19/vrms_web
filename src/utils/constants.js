@@ -42,7 +42,11 @@ export const moneyFormat = {
 
 export const requestStateMachineConfig = {
   transitions: [
-    { name: 'cancel', from: ['ACCEPTED', 'ARRIVED'], to: 'CANCELED' },
+    {
+      name: 'cancel',
+      from: ['ACCEPTED', 'ARRIVED', 'CONFIRMED'],
+      to: 'CANCELED',
+    },
     { name: 'checkIn', from: 'ACCEPTED', to: 'ARRIVED' },
     { name: 'confirm', from: 'ARRIVED', to: 'CONFIRMED' },
     { name: 'done', from: 'CONFIRMED', to: 'WORK COMPLETED' },

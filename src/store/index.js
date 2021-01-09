@@ -7,11 +7,7 @@ import createSagaMiddleware from 'redux-saga';
 
 import commonReducer from './reducers/common';
 import authReducer from './reducers/auth';
-import vehiclesReducer from './reducers/vehicles';
-import servicesReducer from './reducers/services';
-import partsReducer from './reducers/parts';
-import requestsReducer from './reducers/requests';
-import packagesReducer from './reducers/packages';
+
 import watchAll from './sagas';
 
 const composeEnhancers = composeWithDevTools({});
@@ -30,11 +26,6 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   common: persistReducer(commonPersistConfig, commonReducer),
   auth: persistReducer(authPersistConfig, authReducer),
-  vehicles: vehiclesReducer,
-  services: servicesReducer,
-  parts: partsReducer,
-  requests: requestsReducer,
-  packages: packagesReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

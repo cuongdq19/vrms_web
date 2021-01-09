@@ -281,13 +281,9 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
   );
 };
 
-const mapStateToProps = ({
-  auth: {
-    userData: { providerId },
-  },
-}) => {
+const mapStateToProps = (state) => {
   return {
-    providerId,
+    providerId: state.auth?.userData?.providerId,
   };
 };
 

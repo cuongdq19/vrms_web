@@ -1,5 +1,6 @@
 import { Table } from 'antd';
 import React from 'react';
+import { calculatePackagePrice, formatMoney } from '../../utils';
 import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
 
 const PackagesCollectionTable = ({
@@ -10,9 +11,11 @@ const PackagesCollectionTable = ({
   servicesExpandedColumns = [],
   partsExpandedColumns = [],
   showDefaultQuantity = true,
+  loading = false,
 }) => {
   return (
     <Table
+      loading={loading}
       size={size}
       dataSource={dataSource}
       rowKey={rowKey}
@@ -30,6 +33,11 @@ const PackagesCollectionTable = ({
           dataIndex: 'sectionName',
           align: 'center',
           render: (value) => value ?? 'N/A',
+        },
+        {
+          title: 'Total Price',
+          align: 'center',
+          render: (_, record) => formatMoney(calculatePackagePrice(record)),
         },
         ...columns,
       ]}
