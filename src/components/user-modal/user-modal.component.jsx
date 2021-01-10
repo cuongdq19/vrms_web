@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Input, Radio, Upload } from 'antd';
+import { Button, Form, Input, message, Radio, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
@@ -32,12 +32,17 @@ const UserModal = ({
     if (!values.id) {
       http
         .post(`/users/provider/${providerId}`, formData)
-        .then((res) => {})
+        .then((res) => {
+          message.success('Successfully create.');
+          form.resetFields();
+          onSuccess();
+        })
         .catch((err) => console.log(err));
     } else {
       http
         .post(`/users/${values.id}/provider`, formData)
         .then((res) => {
+          message.success('Update successfully.');
           form.resetFields();
           onSuccess();
         })
@@ -66,21 +71,6 @@ const UserModal = ({
       >
         <Form.Item name="id" hidden>
           <Input />
-        </Form.Item>
-        <Form.Item
-          name="username"
-          label="Username"
-          hidden={!user?.id}
-          rules={[{ message: "Username can't be blank!", required: true }]}
-        >
-          <Input placeholder="Enter username" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ message: "Password can't be blank!", required: true }]}
-        >
-          <Input.Password placeholder="Enter password" />
         </Form.Item>
         <Form.Item
           name="fullName"
