@@ -71,7 +71,7 @@ const UsersCollection = ({ providerId }) => {
       <UserModal
         user={updated}
         visible={visible}
-        title="Create User"
+        title={updated ? `Update User` : 'Create User'}
         onCancel={() => setVisible(false)}
         onSuccess={() => {
           loadData();
