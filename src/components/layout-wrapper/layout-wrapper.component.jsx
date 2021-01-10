@@ -15,6 +15,7 @@ import {
   faFileContract,
   faTools,
   faCalendar,
+  faHome,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -52,12 +53,18 @@ const LayoutWrapper = ({
       onClick: () => history.push('/dashboard'),
     },
     {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
       icon: <FontAwesomeIcon icon={faTools} />,
       key: 'services',
       title: 'Services',
       onClick: () => history.push('/services'),
     },
     {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
       icon: <FontAwesomeIcon icon={faTools} />,
       key: 'packages',
       title: 'Maintenance Packages',
@@ -69,18 +76,25 @@ const LayoutWrapper = ({
       title: 'User Management',
       children: [
         {
+          hidden:
+            currentUser.roleName !== roles.Manager &&
+            currentUser.roleName !== roles.Staff,
           title: 'Staffs',
           icon: <UserOutlined />,
           key: 'staffs',
           onClick: () => history.push('/staffs'),
         },
         {
+          hidden:
+            currentUser.roleName !== roles.Manager &&
+            currentUser.roleName !== roles.Staff,
           title: 'Technicians',
           icon: <UserOutlined />,
           key: 'technicians',
           onClick: () => history.push('/technicians'),
         },
         {
+          hidden: currentUser.roleName !== roles.Admin,
           title: 'Customers',
           icon: <UserOutlined />,
           key: 'customers',
@@ -89,6 +103,9 @@ const LayoutWrapper = ({
       ],
     },
     {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
       icon: <FontAwesomeIcon icon={faCar} />,
       key: 'parts',
       title: 'Vehicle Parts',
@@ -102,6 +119,16 @@ const LayoutWrapper = ({
       onClick: () => history.push('/contracts'),
     },
     {
+      hidden: currentUser.roleName !== roles.Admin,
+      icon: <FontAwesomeIcon icon={faHome} />,
+      key: 'providers',
+      title: 'Providers',
+      onClick: () => history.push('/providers'),
+    },
+    {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
       icon: <FontAwesomeIcon icon={faCalendar} />,
       key: 'requests',
       title: 'Booking Requests',
