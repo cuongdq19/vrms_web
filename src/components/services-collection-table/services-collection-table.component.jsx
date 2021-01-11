@@ -15,6 +15,7 @@ const ServicesCollectionTable = ({
   columns,
   showDefaultQuantity = true,
   partsExpandedColumns,
+  ...rest
 }) => {
   const [search, setSearch] = useState({
     searchText: '',
@@ -98,6 +99,7 @@ const ServicesCollectionTable = ({
           );
         },
       }}
+      {...rest}
     />
   );
 };

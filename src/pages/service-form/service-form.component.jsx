@@ -260,7 +260,13 @@ const ServiceForm = ({ providerId, history }) => {
                   <Form.Item label="Service Parts">
                     <List
                       bordered
-                      dataSource={serviceParts}
+                      dataSource={serviceParts.map(
+                        ({ partId, partName, ...rest }) => ({
+                          id: partId,
+                          name: partName,
+                          ...rest,
+                        })
+                      )}
                       renderItem={(item) => (
                         <List.Item>
                           <ItemContainer>
