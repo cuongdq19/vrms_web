@@ -1,6 +1,8 @@
 import { Table } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
+
 import { calculatePackagePrice, formatMoney } from '../../utils';
+import { getColumnSearchProps } from '../../utils/antd';
 import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
 
 const PackagesCollectionTable = ({
@@ -13,6 +15,24 @@ const PackagesCollectionTable = ({
   showDefaultQuantity = true,
   loading = false,
 }) => {
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
+
   return (
     <Table
       loading={loading}
@@ -21,7 +41,12 @@ const PackagesCollectionTable = ({
       rowKey={rowKey}
       columns={[
         { title: 'ID', dataIndex: 'id', align: 'center' },
-        { title: 'Name', dataIndex: 'name', align: 'center' },
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          align: 'center',
+          ...getColumnSearchProps('name', handleSearch, handleReset, search),
+        },
         {
           title: 'Milestone',
           dataIndex: 'milestone',

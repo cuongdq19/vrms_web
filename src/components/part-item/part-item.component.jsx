@@ -21,7 +21,9 @@ const PartItem = ({ item, onInitUpdate }) => {
         <PriceContainer>{formatMoney(price)}</PriceContainer>
       </Footer>
       <ButtonContainer className="buttons">
-        <Button onClick={onInitUpdate}>Update</Button>
+        <Button type="primary" onClick={onInitUpdate}>
+          Update
+        </Button>
         <Button danger>Remove</Button>
       </ButtonContainer>
     </Container>

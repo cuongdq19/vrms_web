@@ -27,6 +27,7 @@ export const BackgroundImage = styled.img`
   background-size: cover;
   background-position: center;
   margin-bottom: 5px;
+  border-radius: 5px;
   background-image: ${({ imageUrl }) => `url(${imageUrl})`};
 `;
 
@@ -46,6 +47,7 @@ export const NameContainer = styled.span`
 
 export const PriceContainer = styled.span`
   text-align: center;
+  font-size: 18px;
 `;
 
 export const ButtonContainer = styled.div`
