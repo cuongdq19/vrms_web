@@ -1,6 +1,7 @@
 import { Select, Table } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { formatMoney, modelToString } from '../../utils';
+import { getColumnSearchProps } from '../../utils/antd';
 
 const PartsCollectionTable = ({
   size = 'middle',
@@ -11,6 +12,24 @@ const PartsCollectionTable = ({
   showDefaultQuantity = true,
   loading = false,
 }) => {
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
+
   return (
     <Table
       loading={loading}
@@ -20,7 +39,12 @@ const PartsCollectionTable = ({
       dataSource={dataSource}
       columns={[
         { title: 'ID', dataIndex: 'id', align: 'center' },
-        { title: 'Name', dataIndex: 'name', align: 'center' },
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          align: 'center',
+          ...getColumnSearchProps('name', handleSearch, handleReset, search),
+        },
         { title: 'Category', dataIndex: 'categoryName', align: 'center' },
         ...(showDesc
           ? [
