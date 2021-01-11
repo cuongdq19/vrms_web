@@ -1,9 +1,11 @@
 import { Table } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 import PartsCollectionTable from '../parts-collection-table/parts-collection-table.component';
 
 import { calculateServicePrice, formatMoney } from '../../utils';
+
+import { getColumnSearchProps } from '../../utils/antd';
 
 const ServicesCollectionTable = ({
   loading = false,
@@ -14,6 +16,24 @@ const ServicesCollectionTable = ({
   showDefaultQuantity = true,
   partsExpandedColumns,
 }) => {
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
+
   return (
     <Table
       loading={loading}
@@ -26,17 +46,12 @@ const ServicesCollectionTable = ({
           align: 'center',
           render: (value, record, index) => index + 1,
         },
-        { title: 'Service Name', dataIndex: 'name', align: 'center' },
-        // {
-        //   align: 'center',
-        //   title: 'Service Type',
-        //   render: (_, record) => {
-        //     console.log(record);
-        //     return `${
-        //       record.typeDetail.typeName
-        //     } ${record.typeDetail.sectionName.toLowerCase()}`;
-        //   },
-        // },
+        {
+          title: 'Service Name',
+          dataIndex: 'name',
+          align: 'center',
+          ...getColumnSearchProps('name', handleSearch, handleReset, search),
+        },
         {
           title: 'Wages',
           dataIndex: 'price',

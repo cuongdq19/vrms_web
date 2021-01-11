@@ -43,7 +43,14 @@ const ServicesCollection = ({ providerId, history }) => {
       <Content>
         <ServicesCollectionTable
           loading={loading}
-          dataSource={services}
+          dataSource={services.map(({ parts, ...rest }) => ({
+            parts: parts.map(({ id, name, ...rest }) => ({
+              partId: id,
+              partName: name,
+              ...rest,
+            })),
+            ...rest,
+          }))}
           rowKey="id"
           columns={[
             {
