@@ -16,7 +16,11 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
-import { requestStateMachineConfig } from '../../utils/constants';
+import {
+  requestStateMachineConfig,
+  requestStatus,
+} from '../../utils/constants';
+import { getColumnSearchProps } from '../../utils/antd';
 
 const RequestsCollection = ({ providerId, history }) => {
   const [modals, setModals] = useState({
@@ -27,6 +31,23 @@ const RequestsCollection = ({ providerId, history }) => {
   });
   const [loading, setLoading] = useState(false);
   const [requestsData, setRequestsData] = useState([]);
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
 
   const requestCompletedHandler = (record) => {
     setLoading(true);
@@ -50,13 +71,15 @@ const RequestsCollection = ({ providerId, history }) => {
     { title: 'ID', dataIndex: 'id', align: 'center' },
     {
       title: 'User Full Name',
-      dataIndex: ['user', 'fullName'],
+      dataIndex: 'fullName',
       align: 'center',
+      ...getColumnSearchProps('fullName', handleSearch, handleReset, search),
     },
     {
       title: 'Phone Number',
-      dataIndex: ['user', 'phoneNumber'],
+      dataIndex: 'phoneNumber',
       align: 'center',
+      ...getColumnSearchProps('phoneNumber', handleSearch, handleReset, search),
     },
     {
       align: 'center',
@@ -68,6 +91,14 @@ const RequestsCollection = ({ providerId, history }) => {
       title: 'Status',
       dataIndex: 'status',
       align: 'center',
+      defaultFilteredValue: Object.keys(requestStatus)
+        .filter((key) => requestStatus[key] !== requestStatus.Canceled)
+        .map((key) => requestStatus[key]),
+      filters: Object.keys(requestStatus).map((key) => ({
+        text: requestStatus[key],
+        value: requestStatus[key],
+      })),
+      onFilter: (value, record) => record.status === value,
       render: (value) => {
         const color = generateRequestStatusColor(value);
         return <Tag color={color}>{value}</Tag>;
@@ -197,7 +228,12 @@ const RequestsCollection = ({ providerId, history }) => {
             init: req.status,
           });
         });
-        setRequestsData(data);
+        setRequestsData(
+          data.map(({ user, ...rest }) => {
+            const { fullName, phoneNumber, ...userProps } = user;
+            return { fullName, phoneNumber, ...userProps, ...rest };
+          })
+        );
         setLoading(false);
       })
       .catch((err) => {
