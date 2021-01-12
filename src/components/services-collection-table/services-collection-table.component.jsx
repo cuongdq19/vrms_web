@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import PartsCollectionTable from '../parts-collection-table/parts-collection-table.component';
 
 import { calculateServicePrice, formatMoney } from '../../utils';
-
 import { getColumnSearchProps } from '../../utils/antd';
 
 const ServicesCollectionTable = ({

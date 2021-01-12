@@ -1,4 +1,4 @@
-import { Button, Col, Input, Pagination, Row, Typography } from 'antd';
+import { Button, Col, Input, message, Pagination, Row, Typography } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -33,10 +33,19 @@ const PartsCollection = () => {
     return http
       .get(`/parts/${providerId}`)
       .then(({ data }) => {
-        setParts({ data, loading: false });
+        setParts({ data: data.filter((p) => !p.isDeleted), loading: false });
       })
       .catch((err) => console.log(err));
   }, [providerId]);
+
+  const removedHandler = (id) => {
+    http.delete(`/parts/${id}`).then(() => {
+      message.info(
+        'Any services and packages contains this part will be disabled. You can remove this part out of these services to continue using.'
+      );
+      loadData();
+    });
+  };
 
   useEffect(() => {
     loadData();
@@ -84,6 +93,7 @@ const PartsCollection = () => {
                 <Col span={6} key={item.id}>
                   <PartItem
                     item={item}
+                    onRemove={removedHandler}
                     onInitUpdate={() =>
                       setModal({ item, visible: true, title: 'Update Part' })
                     }
