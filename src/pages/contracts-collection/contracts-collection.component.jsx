@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, message, Table, Tag } from 'antd';
+import { Button, Dropdown, Menu, message, Popconfirm, Table, Tag } from 'antd';
 
 import { Content, Title } from './contracts-collection.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
@@ -7,10 +7,12 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import http from '../../http';
 import { generateContractStatusColor } from '../../utils';
 import ContractUploadModal from '../../components/contract-upload-modal/contract-upload-modal.component';
+import { contractStatus } from '../../utils/constants';
 
 const ContractsCollection = ({ history }) => {
   const [contracts, setContracts] = useState([]);
   const [confirming, setConfirming] = useState({ visible: false, item: null });
+  const [denying, setDenying] = useState(false);
 
   const confirmedHandler = (item) => {
     const { images, contractId } = item;
@@ -22,6 +24,14 @@ const ContractsCollection = ({ history }) => {
       message.success('Confirm contract success.');
       loadContracts();
       setConfirming({ visible: false, item: null });
+    });
+  };
+
+  const deniedHandler = (contractId) => {
+    http.get(`/contracts/deny/${contractId}`).then(({ data }) => {
+      setDenying(false);
+      message.info('Successfully.');
+      loadContracts();
     });
   };
 
@@ -40,17 +50,43 @@ const ContractsCollection = ({ history }) => {
       ),
     },
     {
-      title: 'Confirm',
+      title: 'Verify',
       align: 'center',
       render: (_, record) => {
         return (
-          <Button
-            onClick={() => {
-              setConfirming({ visible: true, item: record });
-            }}
+          <Dropdown
+            disabled={[
+              contractStatus.Confirmed,
+              contractStatus.Denied,
+              contractStatus.Resolved,
+            ].includes(record.status)}
+            trigger="click"
+            arrow
+            overlay={
+              <Menu>
+                <Menu.Item
+                  onClick={() => {
+                    setConfirming({ visible: true, item: record });
+                  }}
+                >
+                  <Button type="link">Confirm</Button>
+                </Menu.Item>
+                <Menu.Item onClick={() => setDenying(true)}>
+                  <Popconfirm
+                    visible={denying}
+                    title="Are you sure to deny this contract?"
+                    onConfirm={() => deniedHandler(record.id)}
+                  >
+                    <Button type="link" danger>
+                      Deny
+                    </Button>
+                  </Popconfirm>
+                </Menu.Item>
+              </Menu>
+            }
           >
-            Confirm
-          </Button>
+            <Button>Verify</Button>
+          </Dropdown>
         );
       },
     },
@@ -59,7 +95,15 @@ const ContractsCollection = ({ history }) => {
       align: 'center',
       render: (_, record) => {
         return (
-          <Button onClick={() => history.push(`/contracts/${record.id}`)}>
+          <Button
+            disabled={[
+              contractStatus.Pending,
+              contractStatus.Denied,
+              contractStatus.Resolved,
+            ].includes(record.status)}
+            type="primary"
+            onClick={() => history.push(`/contracts/${record.id}`)}
+          >
             Resolve
           </Button>
         );
