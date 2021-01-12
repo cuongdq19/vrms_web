@@ -18,7 +18,6 @@ const UserModal = ({
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
-    console.log(values);
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       switch (key) {
