@@ -7,7 +7,6 @@ import {
   message,
   Radio,
   TimePicker,
-  Typography,
   Upload,
 } from 'antd';
 import React, { useState } from 'react';
@@ -15,6 +14,7 @@ import { Redirect, useParams } from 'react-router-dom';
 
 import CustomMap from '../../components/custom-map/custom-map.component';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
+import { Title } from './contract-resolve.styles';
 
 import { gender } from '../../utils/constants';
 import http from '../../http';
@@ -66,9 +66,12 @@ const ContractResolve = () => {
 
   return (
     <LayoutWrapper>
-      <Button onClick={() => form.submit()}>Submit</Button>
+      <Title>
+        <h1>Resolve Contract #{contractId}</h1>
+        <Button onClick={() => form.submit()}>Submit</Button>
+      </Title>
       <Form layout="vertical" form={form} onFinish={submitHandler}>
-        <Typography.Title level={3}>Manager Account</Typography.Title>
+        <h2>Manager Account</h2>
         <Form.Item name="username" label="Username">
           <Input />
         </Form.Item>
@@ -84,7 +87,7 @@ const ContractResolve = () => {
             ))}
           </Radio.Group>
         </Form.Item>
-        <Typography.Title level={3}>Provider Information</Typography.Title>
+        <h2>Provider Information</h2>
         <Form.Item initialValue={contractId} name="contractId" hidden>
           <Input />
         </Form.Item>
