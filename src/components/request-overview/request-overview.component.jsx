@@ -9,7 +9,13 @@ import ServicesCollectionTable from '../services-collection-table/services-colle
 import PackagesCollectionTable from '../packages-collection-table/packages-collection-table.component';
 
 const RequestOverview = ({ item }) => {
-  const { services = [], packages = [], user, bookingTime } = item;
+  const {
+    services = [],
+    packages = [],
+    fullName,
+    phoneNumber,
+    bookingTime,
+  } = item;
 
   let total = null;
 
@@ -28,13 +34,13 @@ const RequestOverview = ({ item }) => {
             <span>Full Name: </span>
           </Col>
           <Col span={16}>
-            <h4>{user.fullName}</h4>
+            <h4>{fullName}</h4>
           </Col>
           <Col span={8}>
             <span>Phone Number: </span>
           </Col>
           <Col span={16}>
-            <h4>{user.phoneNumber}</h4>
+            <h4>{phoneNumber}</h4>
           </Col>
           <Col span={8}>
             <span>Booking Date: </span>
