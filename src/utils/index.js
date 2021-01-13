@@ -108,6 +108,8 @@ export const calculatePackagePrice = (item) => {
   }, 0);
 };
 
+export const roundNumberToHalf = (number) => Math.round(number * 2) / 2;
+
 export const modelToString = (model) => {
   return `${model.manufacturerName} ${model.name} ${model.fuelType} ${model.gearbox} (${model.year})`;
 };

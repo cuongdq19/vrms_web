@@ -34,8 +34,8 @@ const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
     data: [],
     loading: false,
   });
-
   const [partModels, setPartModels] = useState([]);
+  const [images, setImages] = useState([]);
 
   const submitHandler = (values) => {
     if (!item) {
@@ -224,10 +224,41 @@ const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
               if (Array.isArray(e)) {
                 return e;
               }
+              setImages(e.fileList);
               return e && e.fileList;
             }}
+            help="You can upload images first to detect the category of this item."
           >
-            <Upload name="logo" beforeUpload={() => false} listType="picture">
+            <Upload
+              name="logo"
+              beforeUpload={(file, fileList) => {
+                if (!images.length) {
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  http
+                    .post('/detections/parts/categories', formData)
+                    .then(({ data }) => {
+                      if (data.length > 0) {
+                        const sectionId = sections.data.find(
+                          (sect) =>
+                            sect.categories.findIndex(
+                              (cate) => cate.id === data[0]
+                            ) >= 0
+                        ).sectionId;
+                        form.setFieldsValue({
+                          categoryId: [sectionId, data[0]],
+                        });
+                      } else {
+                        message.info(
+                          'Cannot detect the category of this image.'
+                        );
+                      }
+                    });
+                }
+                return false;
+              }}
+              listType="picture"
+            >
               <Button icon={<UploadOutlined />}>Click to upload</Button>
             </Upload>
           </Form.Item>
@@ -238,44 +269,6 @@ const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
                 onChange={(value) => setPartModels(value)}
               />
             </Col>
-            {/* <Col span={8}>
-              <Form.Item label="Manufacturer">
-                <Select loading={manufacturers.loading}>
-                  {manufacturers.data.map((m) => (
-                    <Option key={m.id} value={m.id}>
-                      {m.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name="modelIds"
-                label="Models"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select models',
-                  },
-                ]}
-              >
-                <Select mode="multiple" loading={models.loading}>
-                  {models.data
-                    .filter((model) =>
-                      !modelsFilter
-                        ? true
-                        : model.manufacturerId === modelsFilter
-                    )
-                    .map((model) => (
-                      <Option key={model.id} value={model.id}>
-                        {model.manufacturerName} {model.name} {model.fuelType}{' '}
-                        {model.gearbox} ({model.year})
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col> */}
           </Row>
         </Form>
       </CustomModal>
