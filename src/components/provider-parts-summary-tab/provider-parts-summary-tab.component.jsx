@@ -2,7 +2,7 @@ import { Table, Tabs } from 'antd';
 import React from 'react';
 import moment from 'moment';
 
-const PartsSummaryTab = ({ data }) => {
+const ProviderPartsSummaryTab = ({ data }) => {
   return (
     <>
       <h1>Parts summary report</h1>
@@ -40,4 +40,4 @@ const PartsSummaryTab = ({ data }) => {
   );
 };
 
-export default PartsSummaryTab;
+export default ProviderPartsSummaryTab;

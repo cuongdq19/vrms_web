@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Col, Row, Statistic } from 'antd';
 import moment from 'moment';
+import { StarFilled } from '@ant-design/icons';
 
 import http from '../../http';
 import { Container } from './provider-dashboard.styles';
 import { formatMoney } from '../../utils';
-import { StarFilled } from '@ant-design/icons';
-import RevenueChart from '../revenue-chart/revenue-chart.component';
-import RequestChart from '../request-chart/request-chart.component';
-import PartsSummaryTab from '../parts-summary-tab/parts-summary-tab.component';
+import ProviderRevenueChart from '../provider-revenue-chart/provider-revenue-chart.component';
+import ProviderRequestChart from '../provider-request-chart/provider-request-chart.component';
+import ProviderPartsSummaryTab from '../provider-parts-summary-tab/provider-parts-summary-tab.component';
 
 const ProviderDashboard = ({ providerId }) => {
   const currentYear = moment().format('YYYY');
@@ -75,17 +75,17 @@ const ProviderDashboard = ({ providerId }) => {
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Container>
-            <RevenueChart data={revenue} />
+            <ProviderRevenueChart data={revenue} />
           </Container>
         </Col>
         <Col span={12}>
           <Container>
-            <RequestChart data={requests} />
+            <ProviderRequestChart data={requests} />
           </Container>
         </Col>
         <Col span={24}>
           <Container>
-            <PartsSummaryTab data={parts} />
+            <ProviderPartsSummaryTab data={parts} />
           </Container>
         </Col>
       </Row>

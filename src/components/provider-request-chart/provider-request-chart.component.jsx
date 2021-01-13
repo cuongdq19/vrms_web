@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import moment from 'moment';
 
-const RequestChart = ({ data }) => {
+const ProviderRequestChart = ({ data }) => {
   return (
     <>
       <h1>Booking report</h1>
@@ -47,4 +47,4 @@ const RequestChart = ({ data }) => {
   );
 };
 
-export default RequestChart;
+export default ProviderRequestChart;
