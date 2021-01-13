@@ -213,7 +213,14 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
               </Form.Item>
             </Col>
             <Col span={16}>
-              <Form.Item label="Package Name">
+              <Form.Item
+                label="Package Name"
+                name="packageName"
+                initialValue={item?.packageName}
+                rules={[
+                  { required: true, message: "Package name can't be blank" },
+                ]}
+              >
                 <Input
                   value={item.packageName}
                   onChange={(event) =>
@@ -228,6 +235,21 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
             <Col span={8}>
               <Form.Item
                 label="Milestone"
+                name="milestoneId"
+                initialValue={item?.milestoneId}
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator() {
+                      if (
+                        milestoneType === milestoneTypes.milestone &&
+                        item.milestoneId > 0
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Milestone can't be blank");
+                    },
+                  }),
+                ]}
                 hidden={milestoneType !== milestoneTypes.milestone}
               >
                 <Select
@@ -250,6 +272,21 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
               </Form.Item>
               <Form.Item
                 label="Section"
+                initialValue={item?.sectionId}
+                name="sectionId"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator() {
+                      if (
+                        milestoneType === milestoneTypes.section &&
+                        item.sectionId > 0
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Milestone can't be blank");
+                    },
+                  }),
+                ]}
                 hidden={milestoneType !== milestoneTypes.section}
               >
                 <Select
@@ -265,7 +302,23 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="Services">
+              <Form.Item
+                label="Services"
+                name="serviceIds"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator() {
+                      if (
+                        item.services.filter((service) => service.checked)
+                          .length > 0
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Services can't be empty");
+                    },
+                  }),
+                ]}
+              >
                 <Table
                   rowClassName={(record) =>
                     !record.parts.every((part) => !part.isDeleted)
@@ -345,53 +398,6 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
                     },
                   }}
                 />
-                {/* <ServicesCollectionTable
-                  dataSource={services.map(({ parts, ...rest }) => ({
-                    checked:
-                      item.services.findIndex(
-                        (service) => service.id === rest.id
-                      ) >= 0,
-                    ...rest,
-                    parts: parts.map(
-                      ({ id, name, price, quantity, ...rest }) => ({
-                        partId: id,
-                        partName: name,
-                        price,
-                        quantity,
-                        ...rest,
-                      })
-                    ),
-                  }))}
-                  rowKey="id"
-                  columns={[
-                    {
-                      align: 'center',
-                      title: 'Add To List',
-                      render: (_, record) => (
-                        <Checkbox
-                          checked={record.checked}
-                          onChange={() => {
-                            const { checked, ...rest } = record;
-
-                            const updatedServices = [...item.services];
-                            const index = item.services.findIndex(
-                              (service) => service.id === rest.id
-                            );
-                            if (index >= 0) {
-                              updatedServices.splice(index, 1);
-                            } else {
-                              updatedServices.push(rest);
-                            }
-                            setItem((curr) => ({
-                              ...curr,
-                              services: updatedServices,
-                            }));
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                /> */}
               </Form.Item>
             </Col>
           </Row>
