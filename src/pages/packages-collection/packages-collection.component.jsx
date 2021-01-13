@@ -250,7 +250,12 @@ const PackagesCollection = ({ providerId, history }) => {
           visible={visible}
           title="Choose New Package Models"
           onCancel={() => setVisible(false)}
-          onOk={() => history.push('/packages/add', { models })}
+          onOk={() => {
+            if (models.length === 0) {
+              return;
+            }
+            history.push('/packages/add', { models });
+          }}
         >
           <ModelsSelect
             models={models}
