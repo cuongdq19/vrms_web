@@ -209,7 +209,20 @@ const ServiceForm = ({ providerId, history }) => {
         <Form form={form} layout="vertical" onFinish={submitHandler}>
           <Row wrap gutter={[16, 16]}>
             <Col span={8}>
-              <Form.Item label="Service Type">
+              <Form.Item
+                label="Service Type"
+                name="typeDetailId"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator() {
+                      if (selectedServiceId > 0) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Service type can't be blank");
+                    },
+                  }),
+                ]}
+              >
                 <ServiceSelect
                   typeId={typeId}
                   serviceId={selectedServiceId}
@@ -218,12 +231,31 @@ const ServiceForm = ({ providerId, history }) => {
               </Form.Item>
             </Col>
             <Col flex="1">
-              <Form.Item label="Service Name" name="serviceName">
+              <Form.Item
+                label="Service Name"
+                name="serviceName"
+                rules={[
+                  { required: true, message: "Service name can't be blank" },
+                ]}
+              >
                 <Input placeholder="Service Name" />
               </Form.Item>
             </Col>
             <Col span={18}>
-              <Form.Item label="Models">
+              <Form.Item
+                label="Models"
+                name="modelIds"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator() {
+                      if (serviceModels.length > 0) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Models can't be blank");
+                    },
+                  }),
+                ]}
+              >
                 <ModelsSelect
                   disabled={withParts}
                   models={serviceModels}
@@ -232,14 +264,33 @@ const ServiceForm = ({ providerId, history }) => {
               </Form.Item>
             </Col>
             <Col flex="1">
-              <Form.Item name="price" label="Price">
+              <Form.Item
+                name="price"
+                label="Price"
+                rules={[{ required: true, message: "Price can't be blank" }]}
+              >
                 <InputNumber type="number" min={0} />
               </Form.Item>
             </Col>
 
             {!id ? (
               <Col span={24}>
-                <Form.Item label="With Parts">
+                <Form.Item
+                  label="With Parts"
+                  name="withParts"
+                  initialValue={withParts}
+                  validateTrigger={[]}
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator() {
+                        if (withParts && serviceParts.length > 0) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject("Parts can't be blank");
+                      },
+                    }),
+                  ]}
+                >
                   <Radio.Group
                     value={withParts}
                     onChange={(event) => {
@@ -257,6 +308,7 @@ const ServiceForm = ({ providerId, history }) => {
             {withParts && serviceParts.length > 0 ? (
               <Col span={24}>
                 <Form.Item label="Service Parts">
+                  <Input hidden />
                   <List
                     bordered
                     dataSource={serviceParts}
