@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Table } from 'antd';
+import { Button, message, Switch, Table } from 'antd';
+import { connect } from 'react-redux';
 
 import { Title, Content } from './users-collection.styles';
 import http from '../../http';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import { connect } from 'react-redux';
 import UserModal from '../../components/user-modal/user-modal.component';
 
 const UsersCollection = ({ providerId }) => {
@@ -19,6 +19,13 @@ const UsersCollection = ({ providerId }) => {
       .then(({ data }) => setUsers(data));
   }, [providerId]);
 
+  const toggleActiveHandler = (checked, userId) => {
+    http.get(`/users/${userId}/provider`).then(() => {
+      message.info('Successfully deleted.');
+      loadData();
+    });
+  };
+
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -27,7 +34,9 @@ const UsersCollection = ({ providerId }) => {
     <LayoutWrapper>
       <Title>
         <h1>USERS</h1>
-        <Button onClick={() => setVisible(true)}>Create User</Button>
+        <Button type="primary" onClick={() => setVisible(true)}>
+          Create User
+        </Button>
       </Title>
       <Content>
         <Table
@@ -48,6 +57,20 @@ const UsersCollection = ({ providerId }) => {
               title: 'User Role',
               dataIndex: 'roleName',
               align: 'center',
+            },
+            {
+              title: 'Active',
+              align: 'center',
+              render: (_, record) => {
+                return (
+                  <Switch
+                    checked={record.isActive}
+                    onChange={(checked) =>
+                      toggleActiveHandler(checked, record.id)
+                    }
+                  />
+                );
+              },
             },
             {
               title: 'Update',

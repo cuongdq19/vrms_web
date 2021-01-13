@@ -21,7 +21,6 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import ModelsSelect from '../../components/models-select/models-select.component';
 import PartsCollectionTable from '../../components/parts-collection-table/parts-collection-table.component';
 import ServiceSelect from '../../components/service-select/service-select.component';
-import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
 
 const partFilteredMessage = {
   description:
@@ -48,7 +47,6 @@ const ServiceForm = ({ providerId, history }) => {
     typeDetailId ?? null
   );
   const [redirect, setRedirect] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const addServicePart = (part) => {
     if (serviceParts.length === 0) {
@@ -94,7 +92,6 @@ const ServiceForm = ({ providerId, history }) => {
   };
 
   const submitHandler = (values) => {
-    setSubmitting(true);
     const { serviceName, price } = values;
 
     if (serviceParts.length === 0) {
@@ -110,7 +107,6 @@ const ServiceForm = ({ providerId, history }) => {
           .then(({ data }) => {
             message.success('Service successfully created.');
             setRedirect(true);
-            setSubmitting(false);
           });
       } else {
         http
@@ -118,10 +114,12 @@ const ServiceForm = ({ providerId, history }) => {
           .then(({ data }) => {
             message.success('Service successfully updated.');
             setRedirect(true);
-            setSubmitting(false);
           });
       }
     } else {
+      if (!serviceParts.every((part) => !part.isDeleted)) {
+        return;
+      }
       const groupPriceRequest = {
         name: serviceName,
         price,
@@ -143,7 +141,6 @@ const ServiceForm = ({ providerId, history }) => {
           .then(({ data }) => {
             message.success('Service successfully created.');
             setRedirect(true);
-            setSubmitting(false);
           });
       } else {
         http
@@ -151,7 +148,6 @@ const ServiceForm = ({ providerId, history }) => {
           .then(({ data }) => {
             message.success('Service successfully updated.');
             setRedirect(true);
-            setSubmitting(false);
           });
       }
     }
@@ -175,7 +171,13 @@ const ServiceForm = ({ providerId, history }) => {
     if (item) {
       const { parts, price, name, models } = item;
       setWithParts(parts.length > 0);
-      setServiceParts(parts);
+      setServiceParts(
+        parts.map(({ partId, partName, ...rest }) => ({
+          id: partId,
+          name: partName,
+          ...rest,
+        }))
+      );
       setServiceModels(models.map((m) => m.id));
 
       form.setFieldsValue({
@@ -199,120 +201,122 @@ const ServiceForm = ({ providerId, history }) => {
 
   return (
     <LayoutWrapper>
-      {submitting ? (
-        <LoadingSpinner title="Saving your changes ..." />
-      ) : (
-        <>
-          <Title>
-            <h1>New Service</h1>
-            <Button onClick={() => form.submit()}>Submit</Button>
-          </Title>
-          <Form form={form} layout="vertical" onFinish={submitHandler}>
-            <Row wrap gutter={[16, 16]}>
-              <Col span={8}>
-                <Form.Item label="Service Type">
-                  <ServiceSelect
-                    typeId={typeId}
-                    serviceId={selectedServiceId}
-                    onChange={(value) => setSelectedServiceId(value)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex="1">
-                <Form.Item label="Service Name" name="serviceName">
-                  <Input placeholder="Service Name" />
-                </Form.Item>
-              </Col>
-              <Col span={18}>
-                <Form.Item label="Models">
-                  <ModelsSelect
-                    disabled={withParts}
-                    models={serviceModels}
-                    onChange={(modelIds) => setServiceModels(modelIds)}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex="1">
-                <Form.Item name="price" label="Price">
-                  <InputNumber type="number" min={0} />
-                </Form.Item>
-              </Col>
+      <>
+        <Title>
+          <h1>New Service</h1>
+          <Button onClick={() => form.submit()}>Submit</Button>
+        </Title>
+        <Form form={form} layout="vertical" onFinish={submitHandler}>
+          <Row wrap gutter={[16, 16]}>
+            <Col span={8}>
+              <Form.Item label="Service Type">
+                <ServiceSelect
+                  typeId={typeId}
+                  serviceId={selectedServiceId}
+                  onChange={(value) => setSelectedServiceId(value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col flex="1">
+              <Form.Item label="Service Name" name="serviceName">
+                <Input placeholder="Service Name" />
+              </Form.Item>
+            </Col>
+            <Col span={18}>
+              <Form.Item label="Models">
+                <ModelsSelect
+                  disabled={withParts}
+                  models={serviceModels}
+                  onChange={(modelIds) => setServiceModels(modelIds)}
+                />
+              </Form.Item>
+            </Col>
+            <Col flex="1">
+              <Form.Item name="price" label="Price">
+                <InputNumber type="number" min={0} />
+              </Form.Item>
+            </Col>
 
-              {!id ? (
-                <Col span={24}>
-                  <Form.Item label="With Parts">
-                    <Radio.Group
-                      value={withParts}
-                      onChange={(event) => {
-                        setWithParts(event.target.value);
-                        setServiceParts([]);
-                        setServiceModels([]);
-                      }}
-                    >
-                      <Radio value={true}>With Parts</Radio>
-                      <Radio value={false}>Without Parts</Radio>
-                    </Radio.Group>
-                  </Form.Item>
-                </Col>
-              ) : null}
-              {withParts && serviceParts.length > 0 ? (
-                <Col span={24}>
-                  <Form.Item label="Service Parts">
-                    <List
-                      bordered
-                      dataSource={serviceParts}
-                      renderItem={(item) => (
-                        <List.Item>
-                          <ItemContainer>
-                            <NameContainer>
-                              <span>{item.name}</span>
-                            </NameContainer>
-                            <NameContainer>x {item.quantity}</NameContainer>
-                            <Button
-                              danger
-                              onClick={() => removeServicePart(item.id)}
-                            >
-                              Remove
-                            </Button>
-                          </ItemContainer>
-                        </List.Item>
-                      )}
-                    />
-                  </Form.Item>
-                </Col>
-              ) : null}
-              {withParts && serviceModels.length > 0 && (
-                <Alert
-                  type="info"
-                  showIcon
-                  {...partFilteredMessage}
-                  style={{ width: '100%' }}
-                />
-              )}
-              {!withParts ? null : (
-                <PartsCollectionTable
-                  loading={loading}
-                  showDefaultQuantity={false}
-                  columns={[
-                    {
-                      title: 'Add',
-                      align: 'center',
-                      render: (_, record) => {
-                        return (
-                          <Button onClick={() => addServicePart(record)}>
-                            Add To List
+            {!id ? (
+              <Col span={24}>
+                <Form.Item label="With Parts">
+                  <Radio.Group
+                    value={withParts}
+                    onChange={(event) => {
+                      setWithParts(event.target.value);
+                      setServiceParts([]);
+                      setServiceModels([]);
+                    }}
+                  >
+                    <Radio value={true}>With Parts</Radio>
+                    <Radio value={false}>Without Parts</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+            ) : null}
+            {withParts && serviceParts.length > 0 ? (
+              <Col span={24}>
+                <Form.Item label="Service Parts">
+                  <List
+                    bordered
+                    dataSource={serviceParts}
+                    renderItem={(item) => (
+                      <List.Item
+                        style={{
+                          ...(item.isDeleted
+                            ? { backgroundColor: 'salmon' }
+                            : {}),
+                        }}
+                      >
+                        <ItemContainer>
+                          <NameContainer>
+                            <span>{item.name}</span>
+                          </NameContainer>
+                          <NameContainer>x {item.quantity}</NameContainer>
+                          <Button
+                            danger
+                            onClick={() => removeServicePart(item.id)}
+                          >
+                            Remove
                           </Button>
-                        );
-                      },
+                        </ItemContainer>
+                      </List.Item>
+                    )}
+                  />
+                </Form.Item>
+              </Col>
+            ) : null}
+            {withParts && serviceModels.length > 0 && (
+              <Alert
+                type="info"
+                showIcon
+                {...partFilteredMessage}
+                style={{ width: '100%' }}
+              />
+            )}
+            {!withParts ? null : (
+              <PartsCollectionTable
+                loading={loading}
+                showDefaultQuantity={false}
+                columns={[
+                  {
+                    title: 'Add',
+                    align: 'center',
+                    render: (_, record) => {
+                      return (
+                        <Button onClick={() => addServicePart(record)}>
+                          Add To List
+                        </Button>
+                      );
                     },
-                  ]}
-                  dataSource={filteredParts}
-                />
-              )}
-            </Row>
-          </Form>
-        </>
-      )}
+                  },
+                ]}
+                dataSource={filteredParts}
+              />
+            )}
+          </Row>
+        </Form>
+      </>
     </LayoutWrapper>
   );
 };

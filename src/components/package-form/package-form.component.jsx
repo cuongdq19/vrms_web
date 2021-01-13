@@ -1,12 +1,24 @@
-import { Button, Checkbox, Col, Form, Input, Radio, Row, Select } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Radio,
+  Row,
+  Select,
+  Table,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Content, Title } from './package-form.styles';
-import ServicesCollectionTable from '../services-collection-table/services-collection-table.component';
+import './package-form.styles.scss';
 import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 import http from '../../http';
+import { getColumnSearchProps } from '../../utils/antd';
+import { calculateServicePrice, formatMoney } from '../../utils';
 
 const INIT_PACKAGE = {
   id: 0,
@@ -29,6 +41,23 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
   const [milestones, setMilestones] = useState([]);
   const [sections, setSections] = useState([]);
   const [services, setServices] = useState([]);
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
 
   const submitHandler = (values) => {
     const reqBody = {
@@ -40,6 +69,57 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
     };
     onSubmit(reqBody);
   };
+
+  const servicesColumns = [
+    {
+      title: 'ID',
+      align: 'center',
+      dataIndex: 'id',
+    },
+    {
+      title: 'Service Name',
+      dataIndex: 'name',
+      align: 'center',
+      ...getColumnSearchProps('name', handleSearch, handleReset, search),
+    },
+    {
+      title: 'Wages',
+      dataIndex: 'price',
+      align: 'center',
+      render: (value) => formatMoney(value),
+    },
+    {
+      title: 'Total Price',
+      align: 'center',
+      render: (_, record) => formatMoney(calculateServicePrice(record)),
+    },
+    {
+      align: 'center',
+      title: 'Add To List',
+      render: (_, record) => (
+        <Checkbox
+          checked={record.checked}
+          onChange={() => {
+            const { checked, ...rest } = record;
+
+            const updatedServices = [...item.services];
+            const index = item.services.findIndex(
+              (service) => service.id === rest.id
+            );
+            if (index >= 0) {
+              updatedServices.splice(index, 1);
+            } else {
+              updatedServices.push(rest);
+            }
+            setItem((curr) => ({
+              ...curr,
+              services: updatedServices,
+            }));
+          }}
+        />
+      ),
+    },
+  ];
 
   useEffect(() => {
     if (packageItem) {
@@ -186,7 +266,86 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
             </Col>
             <Col span={24}>
               <Form.Item label="Services">
-                <ServicesCollectionTable
+                <Table
+                  rowClassName={(record) =>
+                    !record.parts.every((part) => !part.isDeleted)
+                      ? 'row-warning'
+                      : ''
+                  }
+                  dataSource={services.map((service) => ({
+                    checked:
+                      item.services.findIndex(
+                        (item) => item.id === service.id
+                      ) >= 0,
+                    ...service,
+                  }))}
+                  rowKey="id"
+                  columns={servicesColumns}
+                  expandable={{
+                    rowExpandable: (record) => {
+                      return record.parts.length > 0;
+                    },
+                    expandedRowRender: (record) => {
+                      const partsColumns = [
+                        { title: 'ID', dataIndex: 'id', align: 'center' },
+                        {
+                          title: 'Name',
+                          dataIndex: 'name',
+                          align: 'center',
+                          ...getColumnSearchProps(
+                            'name',
+                            handleSearch,
+                            handleReset,
+                            search
+                          ),
+                        },
+                        {
+                          title: 'Category',
+                          dataIndex: 'categoryName',
+                          align: 'center',
+                        },
+
+                        {
+                          title: 'Description',
+                          dataIndex: 'description',
+                          align: 'center',
+                          ellipsis: true,
+                        },
+
+                        {
+                          title: 'Price',
+                          dataIndex: 'price',
+                          render: (value) => formatMoney(value),
+                          align: 'center',
+                        },
+                        {
+                          title: 'Quantity',
+                          dataIndex: 'quantity',
+                          align: 'center',
+                        },
+                        {
+                          title: 'Total Price',
+                          align: 'center',
+                          render: (_, record) =>
+                            formatMoney(record.price * record.quantity),
+                        },
+                      ];
+                      return (
+                        <Table
+                          loading={loading}
+                          rowKey="id"
+                          rowClassName={(record) =>
+                            record.isDeleted ? 'row-warning' : ''
+                          }
+                          pagination={{ pageSize: 5 }}
+                          dataSource={record.parts}
+                          columns={partsColumns}
+                        />
+                      );
+                    },
+                  }}
+                />
+                {/* <ServicesCollectionTable
                   dataSource={services.map(({ parts, ...rest }) => ({
                     checked:
                       item.services.findIndex(
@@ -232,7 +391,7 @@ const PackageForm = ({ item: packageItem, onSubmit, modelIds, providerId }) => {
                       ),
                     },
                   ]}
-                />
+                /> */}
               </Form.Item>
             </Col>
           </Row>

@@ -84,6 +84,10 @@ export const generateContractStatusColor = (stat) => {
       return 'default';
     case contractStatus.Resolved:
       return '#00FF21';
+    case contractStatus.Denied:
+      return '#FF6F6F';
+    case contractStatus.Confirmed:
+      return '#345FFF';
     default:
       return 'default';
   }

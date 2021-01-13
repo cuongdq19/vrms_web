@@ -17,7 +17,7 @@ import http from '../../http';
 import ModelsSelect from '../models-select/models-select.component';
 import CustomModal from '../custom-modal/custom-modal.component';
 
-const PartModal = ({ visible, item, providerId, onClose }) => {
+const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
   const {
     id,
     name,
@@ -86,11 +86,13 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
   };
 
   const loadOptions = useCallback(() => {
-    setSections((curr) => ({ ...curr, loading: true }));
-    http
-      .get('/service-type-details/sections/categories')
-      .then(({ data }) => setSections({ loading: false, data }));
-  }, []);
+    if (visible) {
+      setSections((curr) => ({ ...curr, loading: true }));
+      http.get('/service-type-details/sections/categories').then(({ data }) => {
+        setSections({ loading: false, data });
+      });
+    }
+  }, [visible]);
 
   useEffect(() => {
     loadOptions();
@@ -99,7 +101,7 @@ const PartModal = ({ visible, item, providerId, onClose }) => {
   return (
     <>
       <CustomModal
-        title="Create Part"
+        title={title}
         visible={visible}
         onCancel={onClose}
         onOk={() => form.submit()}

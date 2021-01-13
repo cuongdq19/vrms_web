@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, Layout, Menu } from 'antd';
+import { Avatar, Dropdown, Layout, Menu } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -186,7 +186,6 @@ const LayoutWrapper = ({
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </CollapsedIcon>
           <div style={{ flex: 1 }} />
-          <div>{currentUser.fullName}</div>
           <Dropdown
             overlay={
               <Menu>
@@ -200,6 +199,10 @@ const LayoutWrapper = ({
             placement="bottomRight"
           >
             <Profile>
+              <div style={{ marginRight: '0.5rem' }}>
+                {currentUser.fullName}
+              </div>
+              <Avatar src={currentUser.imgUrl} shape="square" />
               <DownOutlined
                 style={{ marginLeft: '0.5rem', fontSize: '0.6rem' }}
               />

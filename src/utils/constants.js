@@ -29,7 +29,9 @@ export const requestStatus = {
 
 export const contractStatus = {
   Pending: 'PENDING',
+  Confirmed: 'CONFIRMED',
   Resolved: 'RESOLVED',
+  Denied: 'DENIED',
 };
 
 export const moneyFormat = {

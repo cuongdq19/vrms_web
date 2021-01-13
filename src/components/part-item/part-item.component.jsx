@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import React from 'react';
 
 import { formatMoney } from '../../utils';
@@ -11,8 +11,9 @@ import {
   ButtonContainer,
 } from './part-item.styles';
 
-const PartItem = ({ item, onInitUpdate }) => {
-  const { name, price, imageUrls } = item;
+const PartItem = ({ item, onInitUpdate, onRemove }) => {
+  const { id, name, price, imageUrls } = item;
+
   return (
     <Container>
       <NameContainer level={5}>{name}</NameContainer>
@@ -21,8 +22,15 @@ const PartItem = ({ item, onInitUpdate }) => {
         <PriceContainer>{formatMoney(price)}</PriceContainer>
       </Footer>
       <ButtonContainer className="buttons">
-        <Button onClick={onInitUpdate}>Update</Button>
-        <Button danger>Remove</Button>
+        <Button type="primary" onClick={onInitUpdate}>
+          Update
+        </Button>
+        <Popconfirm
+          title="Are you sure to remove this part?"
+          onConfirm={() => onRemove(id)}
+        >
+          <Button danger>Remove</Button>
+        </Popconfirm>
       </ButtonContainer>
     </Container>
   );
