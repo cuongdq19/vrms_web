@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { put, all, call, takeLatest, select } from 'redux-saga/effects';
 import StateMachine from 'javascript-state-machine';
 
@@ -18,7 +19,6 @@ import {
 } from './request.actions';
 import http from '../../http';
 import { requestStateMachineConfig } from '../../utils/constants';
-import { message } from 'antd';
 
 export function* fetchRequests() {
   try {

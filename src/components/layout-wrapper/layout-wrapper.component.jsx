@@ -29,7 +29,7 @@ import {
   setOpenKeys,
   toggleCollapsed,
 } from '../../redux/common/common.actions';
-import { signOut } from '../../redux/user/user.actions';
+import { signOut } from '../../redux/auth/auth.actions';
 import { roles } from '../../utils/constants';
 
 const { Sider } = Layout;

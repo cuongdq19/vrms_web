@@ -23,6 +23,6 @@ export function* onFetchManufacturersStart() {
   );
 }
 
-export default function* userSagas() {
+export default function* manufacturerSagas() {
   yield all([call(onFetchManufacturersStart)]);
 }

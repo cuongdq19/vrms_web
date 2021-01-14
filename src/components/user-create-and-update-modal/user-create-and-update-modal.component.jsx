@@ -1,53 +1,46 @@
-import React from 'react';
-import { Button, Form, Input, message, Radio, Upload } from 'antd';
+import React, { useEffect } from 'react';
+import { Button, Form, Input, Radio, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
 import { gender, providerRoles } from '../../utils/constants';
-import http from '../../http';
 import CustomModal from '../custom-modal/custom-modal.component';
+import {
+  createUserStart,
+  updateUserStart,
+} from '../../redux/user/user.actions';
 
 const UserModal = ({
   user,
-  providerId,
   visible,
   title,
-  onSuccess,
   onCancel,
+  onCreateUser,
+  onUpdateUser,
 }) => {
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
-    const formData = new FormData();
-    Object.keys(values).forEach((key) => {
-      switch (key) {
-        case 'image':
-          values[key].forEach((obj) => formData.append(key, obj.originFileObj));
-          break;
-        default:
-          formData.append(key, values[key]);
-      }
-    });
     if (!values.id) {
-      http
-        .post(`/users/provider/${providerId}`, formData)
-        .then((res) => {
-          message.success('Successfully create.');
-          form.resetFields();
-          onSuccess();
-        })
-        .catch((err) => console.log(err));
+      onCreateUser(values);
     } else {
-      http
-        .post(`/users/${values.id}/provider`, formData)
-        .then((res) => {
-          message.success('Update successfully.');
-          form.resetFields();
-          onSuccess();
-        })
-        .catch((err) => console.log(err));
+      onUpdateUser(values);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      form.setFieldsValue({
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        fullName: user.fullName,
+        roleName: user.roleName,
+        gender: user.gender,
+      });
+    }
+  }, [form, user]);
+
   return (
     <CustomModal
       title={title}
@@ -55,19 +48,7 @@ const UserModal = ({
       onOk={() => form.submit()}
       onCancel={onCancel}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={submitHandler}
-        initialValues={{
-          id: user?.id,
-          username: user?.username,
-          password: user?.password,
-          fullName: user?.fullName,
-          roleName: user?.roleName,
-          gender: user?.gender,
-        }}
-      >
+      <Form form={form} layout="vertical" onFinish={submitHandler}>
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
@@ -131,4 +112,9 @@ const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
 });
 
-export default connect(mapStateToProps)(UserModal);
+const mapDispatchToProps = (dispatch) => ({
+  onCreateUser: (newUser) => dispatch(createUserStart(newUser)),
+  onUpdateUser: (updatedUser) => dispatch(updateUserStart(updatedUser)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserModal);
