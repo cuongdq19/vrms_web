@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Avatar, Dropdown, Layout, Menu } from 'antd';
 import {
   MenuUnfoldOutlined,
@@ -7,7 +7,7 @@ import {
   BarChartOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -27,6 +27,7 @@ import {
 } from './layout-wrapper.styles';
 import {
   setOpenKeys,
+  setSelectedMenu,
   toggleCollapsed,
 } from '../../redux/common/common.actions';
 import { signOut } from '../../redux/auth/auth.actions';
@@ -39,12 +40,13 @@ const LayoutWrapper = ({
   collapsed,
   currentUser,
   openKeys,
+  selected,
   setOpenKeys,
   toggleCollapsed,
   signOut,
+  setSelectedMenu,
+  history,
 }) => {
-  const history = useHistory();
-
   const SIDER_MENU = [
     {
       icon: <BarChartOutlined />,
@@ -136,6 +138,11 @@ const LayoutWrapper = ({
     },
   ];
 
+  useEffect(() => {
+    const pathname = history.location.pathname.substr(1);
+    setSelectedMenu(pathname);
+  }, [history, setSelectedMenu]);
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed} width={220}>
@@ -145,6 +152,7 @@ const LayoutWrapper = ({
           mode="inline"
           openKeys={openKeys}
           onOpenChange={(keys) => setOpenKeys(keys)}
+          selectedKeys={[selected]}
         >
           {SIDER_MENU.map((submenu) =>
             Array.isArray(submenu.children) ? (
@@ -220,6 +228,7 @@ const mapStateToProps = (state) => {
     currentUser: state.auth.userData,
     collapsed: state.common.collapsed,
     openKeys: state.common.openKeys,
+    selected: state.common.selected,
   };
 };
 
@@ -228,7 +237,10 @@ const mapDispatchToProps = (dispatch) => {
     setOpenKeys: (keys) => dispatch(setOpenKeys(keys)),
     toggleCollapsed: () => dispatch(toggleCollapsed()),
     signOut: () => dispatch(signOut()),
+    setSelectedMenu: (menu) => dispatch(setSelectedMenu(menu)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LayoutWrapper);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(LayoutWrapper)
+);
