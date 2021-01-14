@@ -15,11 +15,10 @@ import _403 from '../pages/_403/_403.component';
 import _404 from '../pages/_404/_404.component';
 import RequestUpdate from '../pages/request-update/request-update.component';
 import RequestUpdateIncurred from '../pages/request-update-incurred/request-update-incurred.component';
-import PackageCreate from '../pages/package-create/package-create.component';
-import PackageUpdate from '../pages/package-update/package-update.component';
 import SignUp from '../pages/sign-up/sign-up.component';
 import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
 import ProvidersCollection from '../pages/providers-collection/providers-collection.component';
+import PackageCreateAndUpdate from '../pages/package-create-and-update/package-create-and-update.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -91,13 +90,13 @@ const providerRoutes = [
     key: 'add-package',
     path: '/packages/add',
     exact: true,
-    component: PackageCreate,
+    component: PackageCreateAndUpdate,
   },
   {
     key: 'update-package',
     path: '/packages/:packageId',
     exact: true,
-    component: PackageUpdate,
+    component: PackageCreateAndUpdate,
   },
   {
     key: 'staffs',

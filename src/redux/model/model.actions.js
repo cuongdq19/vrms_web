@@ -13,3 +13,7 @@ export const fetchModelsFailure = (error) => ({
   type: ModelActionTypes.FETCH_MODELS_FAILURE,
   payload: error,
 });
+
+export const fetchManufacturersAndModels = () => ({
+  type: ModelActionTypes.FETCH_MANUFACTURERS_AND_MODELS,
+});

@@ -1,29 +1,43 @@
-import { Button, message, Popconfirm, Table } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Col, Form, Popconfirm, Row, Select, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Content, Title } from './packages-collection.styles';
-import './packages-collection.styles.scss';
-import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import ModelsSelect from '../../components/models-select/models-select.component';
 import CustomModal from '../../components/custom-modal/custom-modal.component';
-
-import http from '../../http';
+import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
+import './packages-collection.styles.scss';
 import {
   calculatePackagePrice,
   formatMoney,
   calculateServicePrice,
+  modelToString,
 } from '../../utils';
 import { getColumnSearchProps } from '../../utils/antd';
+import {
+  fetchPackagesStart,
+  removePackageStart,
+} from '../../redux/package/package.actions';
+import { fetchManufacturersAndModels } from '../../redux/model/model.actions';
 
-const PackagesCollection = ({ providerId, history }) => {
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(false);
+const PackagesCollection = ({
+  providerId,
+  packages,
+  isFetching,
+  history,
+  manufacturers,
+  models,
+  onFetchManufacturersAndModels,
+  onFetchPackages,
+  onRemovePackage,
+}) => {
+  const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
-  const [models, setModels] = useState([]);
   const [search, setSearch] = useState({
     searchText: '',
     searchedColumn: '',
+  });
+  const [filters, setFilters] = useState({
+    manufacturerId: 0,
   });
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -40,27 +54,24 @@ const PackagesCollection = ({ providerId, history }) => {
   };
 
   const removedHandler = (id) => {
-    http.delete(`/maintenance-packages/packages/${id}`).then(() => {
-      message.success('Successfully removed package.');
-      loadData();
-    });
+    onRemovePackage(id);
   };
 
-  const loadData = useCallback(() => {
-    setLoading(true);
+  useEffect(() => {
+    onFetchPackages(providerId);
+  }, [onFetchPackages, providerId]);
 
-    http
-      .get(`/maintenance-packages/providers/${providerId}`)
-      .then(({ data }) => {
-        setPackages(
-          data.map(({ packagedServices, ...rest }) => ({
-            services: packagedServices,
-            ...rest,
-          }))
-        );
-        setLoading(false);
-      });
-  }, [providerId]);
+  useEffect(() => {
+    if (visible) {
+      onFetchManufacturersAndModels();
+    }
+  }, [onFetchManufacturersAndModels, visible]);
+
+  const filteredModels = models.filter((m) =>
+    filters.manufacturerId <= 0
+      ? true
+      : filters.manufacturerId === m.manufacturerId
+  );
 
   const servicesColumns = [
     {
@@ -87,10 +98,6 @@ const PackagesCollection = ({ providerId, history }) => {
     },
   ];
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
   return (
     <LayoutWrapper>
       <Title>
@@ -100,6 +107,7 @@ const PackagesCollection = ({ providerId, history }) => {
       <Content>
         <Table
           rowKey="id"
+          loading={isFetching}
           dataSource={packages}
           rowClassName={(record) =>
             !record.services.every((service) =>
@@ -146,7 +154,9 @@ const PackagesCollection = ({ providerId, history }) => {
               render: (_, record) => {
                 return (
                   <Button
-                    onClick={() => history.push(`/packages/${record.id}`)}
+                    onClick={() =>
+                      history.push(`/packages/${record.id}`, { item: record })
+                    }
                   >
                     Update
                   </Button>
@@ -229,7 +239,6 @@ const PackagesCollection = ({ providerId, history }) => {
                       ];
                       return (
                         <Table
-                          loading={loading}
                           rowKey="id"
                           rowClassName={(record) =>
                             record.isDeleted ? 'row-warning' : ''
@@ -246,29 +255,99 @@ const PackagesCollection = ({ providerId, history }) => {
             },
           }}
         />
-        <CustomModal
-          visible={visible}
-          title="Choose New Package Models"
-          onCancel={() => setVisible(false)}
-          onOk={() => {
-            if (models.length === 0) {
-              return;
-            }
-            history.push('/packages/add', { models });
+      </Content>
+      <CustomModal
+        visible={visible}
+        title="Choose New Package Models"
+        onCancel={() => setVisible(false)}
+        onOk={() => form.submit()}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={(values) => {
+            history.push('/packages/add', values);
           }}
         >
-          <ModelsSelect
-            models={models}
-            onChange={(value) => setModels(value)}
-          />
-        </CustomModal>
-      </Content>
+          <Row gutter={[16, 16]}>
+            <Col span={6}>
+              <Form.Item label="Manufacturers">
+                <Select
+                  allowClear
+                  onClear={() => {
+                    setFilters((curr) => ({ ...curr, manufacturerId: 0 }));
+                  }}
+                  onSelect={(value) => {
+                    setFilters((curr) => ({
+                      ...curr,
+                      manufacturerId: value,
+                    }));
+                  }}
+                  options={manufacturers.map((m) => ({
+                    label: m.name,
+                    value: m.id,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={18}>
+              <Form.Item
+                label="Models"
+                name="modelIds"
+                rules={[
+                  {
+                    required: true,
+                    message: "Models can't be blank.",
+                    type: 'array',
+                    min: 1,
+                  },
+                ]}
+              >
+                <Select
+                  allowClear
+                  showSearch
+                  filterOption={(input, option) => {
+                    return (
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    );
+                  }}
+                  mode="multiple"
+                  onClear={() =>
+                    setFilters((curr) => ({ ...curr, serviceModelIds: [] }))
+                  }
+                  onChange={(value) =>
+                    setFilters((curr) => ({
+                      ...curr,
+                      serviceModelIds: value,
+                    }))
+                  }
+                  options={filteredModels.map((m) => ({
+                    label: modelToString(m),
+                    value: m.id,
+                  }))}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </CustomModal>
     </LayoutWrapper>
   );
 };
 
 const mapStateToProps = (state) => ({
+  packages: state.packages.packages,
+  isFetching: state.packages.isFetching,
   providerId: state.auth.userData?.providerId,
+  models: state.models.models,
+  manufacturers: state.manufacturers.manufacturers,
 });
 
-export default connect(mapStateToProps)(PackagesCollection);
+const mapDispatchToProps = (dispatch) => ({
+  onFetchPackages: (providerId) => dispatch(fetchPackagesStart(providerId)),
+  onFetchManufacturersAndModels: () => dispatch(fetchManufacturersAndModels()),
+  onRemovePackage: (id) => dispatch(removePackageStart(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PackagesCollection);

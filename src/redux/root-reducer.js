@@ -8,6 +8,8 @@ import manufacturerReducer from './manufacturer/manufacturer.reducer';
 import modelReducer from './model/model.reducer';
 import serviceReducer from './service/service.reducer';
 import partReducer from './part/part.reducer';
+import packageReducer from './package/package.reducer';
+import sectionReducer from './section/section.reducer';
 
 // const commonPersistConfig = {
 //   key: 'common',
@@ -27,6 +29,8 @@ const rootReducer = combineReducers({
   models: modelReducer,
   services: serviceReducer,
   parts: partReducer,
+  packages: packageReducer,
+  sections: sectionReducer,
 });
 
 export default rootReducer;

@@ -5,6 +5,8 @@ import manufacturerSagas from './manufacturer/manufacturer.sagas';
 import serviceSagas from './service/service.sagas';
 import modelSagas from './model/model.sagas';
 import partSagas from './part/part.sagas';
+import packageSagas from './package/package.sagas';
+import sectionSagas from './section/section.sagas';
 
 export default function* rootSaga() {
   yield all([
@@ -13,5 +15,7 @@ export default function* rootSaga() {
     call(serviceSagas),
     call(modelSagas),
     call(partSagas),
+    call(packageSagas),
+    call(sectionSagas),
   ]);
 }
