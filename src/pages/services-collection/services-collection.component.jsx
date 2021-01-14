@@ -1,18 +1,26 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button, message, Popconfirm, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Popconfirm, Table } from 'antd';
 import { connect } from 'react-redux';
 
 import { Content, Title } from './services-collection.styles';
-import http from '../../http';
 import './services-collection.styles.scss';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import { calculateServicePrice, formatMoney } from '../../utils';
 import { getColumnSearchProps } from '../../utils/antd';
+import {
+  fetchProviderServicesStart,
+  removeServiceStart,
+} from '../../redux/service/service.actions';
 
-const ServicesCollection = ({ providerId, history }) => {
-  const [loading, setLoading] = useState(false);
-  const [services, setServices] = useState([]);
+const ServicesCollection = ({
+  providerId,
+  isFetching,
+  services,
+  onFetchProviderServices,
+  onRemoveService,
+  history,
+}) => {
   const [search, setSearch] = useState({
     searchText: '',
     searchedColumn: '',
@@ -32,20 +40,12 @@ const ServicesCollection = ({ providerId, history }) => {
   };
 
   const removedHandler = (serviceId) => {
-    http.delete(`/services/${serviceId}`).then(({ data }) => {
-      message.info('Remove service success.');
-      loadData();
-    });
+    onRemoveService({ serviceId, providerId });
   };
-  const loadData = useCallback(() => {
-    setLoading(true);
-    http
-      .get(`/maintenance-packages/providers/${providerId}/services`)
-      .then(({ data }) => {
-        setServices(data);
-        setLoading(false);
-      });
-  }, [providerId]);
+
+  useEffect(() => {
+    onFetchProviderServices(providerId);
+  }, [onFetchProviderServices, providerId]);
 
   const servicesColumns = [
     {
@@ -78,8 +78,6 @@ const ServicesCollection = ({ providerId, history }) => {
           onClick={() =>
             history.push(`/services/${record.id}`, {
               item: record,
-              typeId: record.typeDetail.typeId,
-              typeDetailId: record.typeDetail.id,
             })
           }
         >
@@ -104,10 +102,6 @@ const ServicesCollection = ({ providerId, history }) => {
     },
   ];
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
   return (
     <LayoutWrapper>
       <Title>
@@ -119,6 +113,7 @@ const ServicesCollection = ({ providerId, history }) => {
       <Content>
         <Table
           rowKey="id"
+          loading={isFetching}
           dataSource={services}
           rowClassName={(record) =>
             !record.parts.every((part) => !part.isDeleted) ? 'row-warning' : ''
@@ -173,7 +168,6 @@ const ServicesCollection = ({ providerId, history }) => {
               ];
               return (
                 <Table
-                  loading={loading}
                   rowKey="id"
                   rowClassName={(record) =>
                     record.isDeleted ? 'row-warning' : ''
@@ -193,6 +187,14 @@ const ServicesCollection = ({ providerId, history }) => {
 
 const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
+  services: state.services.services,
+  isFetching: state.services.isFetching,
 });
 
-export default connect(mapStateToProps)(ServicesCollection);
+const mapDispatchToProps = (dispatch) => ({
+  onFetchProviderServices: (providerId) =>
+    dispatch(fetchProviderServicesStart(providerId)),
+  onRemoveService: (id) => dispatch(removeServiceStart(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ServicesCollection);

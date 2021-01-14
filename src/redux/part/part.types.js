@@ -1,0 +1,7 @@
+const PartActionTypes = {
+  FETCH_PARTS_START: 'FETCH_PARTS_START',
+  FETCH_PARTS_SUCCESS: 'FETCH_PARTS_SUCCESS',
+  FETCH_PARTS_FAILURE: 'FETCH_PARTS_FAILURE',
+};
+
+export default PartActionTypes;

@@ -4,11 +4,15 @@ import persistReducer from 'redux-persist/es/persistReducer';
 
 import commonReducer from './common/common.reducer';
 import userReducer from './user/user.reducer';
+import manufacturerReducer from './manufacturer/manufacturer.reducer';
+import modelReducer from './model/model.reducer';
+import serviceReducer from './service/service.reducer';
+import partReducer from './part/part.reducer';
 
-const commonPersistConfig = {
-  key: 'common',
-  storage,
-};
+// const commonPersistConfig = {
+//   key: 'common',
+//   storage,
+// };
 
 const userPersistConfig = {
   key: 'user',
@@ -17,8 +21,12 @@ const userPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  common: persistReducer(commonPersistConfig, commonReducer),
+  common: commonReducer,
   auth: persistReducer(userPersistConfig, userReducer),
+  manufacturers: manufacturerReducer,
+  models: modelReducer,
+  services: serviceReducer,
+  parts: partReducer,
 });
 
 export default rootReducer;

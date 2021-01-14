@@ -6,7 +6,7 @@ import ContractsCollection from '../pages/contracts-collection/contracts-collect
 import Dashboard from '../pages/dashboard/dashboard.component';
 import PackagesCollection from '../pages/packages-collection/packages-collection.component';
 import PartsCollection from '../pages/parts-collection/parts-collection.component';
-import ServiceForm from '../pages/service-form/service-form.component';
+import ServiceCreateAndUpdate from '../pages/service-create-and-update/service-create-and-update.component';
 import RequestsCollection from '../pages/requests-collection/requests-collection.component';
 import ServicesCollection from '../pages/services-collection/services-collection.component';
 import SignIn from '../pages/sign-in/sign-in.component';
@@ -73,13 +73,13 @@ const providerRoutes = [
     key: 'add-service',
     path: '/services/add',
     exact: true,
-    component: ServiceForm,
+    component: ServiceCreateAndUpdate,
   },
   {
     key: 'update-service',
     path: '/services/:serviceId',
     exact: true,
-    component: ServiceForm,
+    component: ServiceCreateAndUpdate,
   },
   {
     key: 'packages',
