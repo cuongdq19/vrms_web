@@ -1,49 +1,37 @@
-import { Button, message } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from 'antd';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import http from '../../http';
 import { UserItemContainer, Container } from './request-check-in-modal.styles';
 import UserItem from '../user-item/user-item.component';
 import CustomModal from '../custom-modal/custom-modal.component';
 import LoadingSpinner from '../loading-spinner/loading-spinner.component';
+import {
+  fetchAvailableTechniciansStart,
+  checkInRequestsStart,
+} from '../../redux/request/request.actions';
 
 const RequestCheckInModal = ({
-  providerId,
   visible,
   item,
+  technicians,
+  isFetching,
   onCancel,
-  onSuccess,
+  onCheckInRequest,
+  onFetchAvailableTechnicians,
 }) => {
   const { id, bookingTime } = item ?? {};
-  const [technicians, setTechnicians] = useState({ loading: false, data: [] });
-  const [submitting, setSubmitting] = useState(false);
 
-  const submitHandler = (techId) => {
-    setSubmitting(true);
-    http.post(`/requests/checkin/${id}/technicians/${techId}`).then(() => {
-      item.checkIn();
-      message.success('Check in success.');
-      onSuccess();
-      onCancel();
-      setSubmitting(false);
-    });
+  const submitHandler = (technicianId) => {
+    onCheckInRequest({ requestId: id, technicianId });
   };
 
-  const loadData = useCallback(() => {
-    if (visible && item) {
-      setTechnicians((curr) => ({ ...curr, loading: true }));
-      http
-        .get(`/providers/${providerId}/timestamp/${bookingTime}`)
-        .then(({ data }) => {
-          setTechnicians({ loading: false, data });
-        });
-    }
-  }, [bookingTime, item, providerId, visible]);
-
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (visible && item) {
+      console.log('hello');
+      onFetchAvailableTechnicians(bookingTime);
+    }
+  }, [bookingTime, item, onFetchAvailableTechnicians, visible]);
 
   return (
     <CustomModal
@@ -53,16 +41,10 @@ const RequestCheckInModal = ({
       footer={null}
     >
       <Container>
-        {technicians.loading || submitting ? (
-          <LoadingSpinner
-            title={
-              technicians.loading
-                ? 'Loading Technicians ...'
-                : 'Checking in ...'
-            }
-          />
+        {isFetching ? (
+          <LoadingSpinner title="Loading ..." />
         ) : (
-          technicians.data.map((technician) => {
+          technicians.map((technician) => {
             const { fullName, imageUrl, id } = technician;
             return (
               <UserItemContainer key={id}>
@@ -79,6 +61,18 @@ const RequestCheckInModal = ({
 
 const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
+  isFetching: state.requests.isFetching,
+  technicians: state.requests.technicians,
 });
 
-export default connect(mapStateToProps)(RequestCheckInModal);
+const mapDispatchToProps = (dispatch) => ({
+  onFetchAvailableTechnicians: (bookingTime) =>
+    dispatch(fetchAvailableTechniciansStart(bookingTime)),
+  onCheckInRequest: ({ requestId, technicianId }) =>
+    dispatch(checkInRequestsStart({ requestId, technicianId })),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RequestCheckInModal);

@@ -72,7 +72,7 @@ export const generateRequestStatusColor = (stat) => {
     case requestStatus.WorkCompleted:
       return '#00FF90';
     case requestStatus.Finished:
-      return '#00FF21';
+      return '#41C197';
     default:
       return 'default';
   }
@@ -83,7 +83,7 @@ export const generateContractStatusColor = (stat) => {
     case contractStatus.Pending:
       return 'default';
     case contractStatus.Resolved:
-      return '#00FF21';
+      return '#41C197';
     case contractStatus.Denied:
       return '#FF6F6F';
     case contractStatus.Confirmed:

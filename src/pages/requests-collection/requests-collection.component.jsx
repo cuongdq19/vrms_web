@@ -1,8 +1,7 @@
 import { Button, message, Popconfirm, Table, Tag, Typography } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import StateMachine from 'javascript-state-machine';
 
 import http from '../../http';
 import { Title, Content } from './requests-collection.styles';
@@ -16,21 +15,26 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import RequestConfirmModal from '../../components/request-confirm-modal/request-confirm-modal.component';
 import RequestCheckInModal from '../../components/request-check-in-modal/request-check-in-modal.component';
 import RequestCheckoutModal from '../../components/request-check-out-modal/request-check-out-modal.component';
-import {
-  requestStateMachineConfig,
-  requestStatus,
-} from '../../utils/constants';
+import { requestModals, requestStatus } from '../../utils/constants';
 import { getColumnSearchProps } from '../../utils/antd';
+import {
+  fetchRequestsStart,
+  showModal,
+  hideModal,
+  completeRequestStart,
+} from '../../redux/request/request.actions';
 
-const RequestsCollection = ({ providerId, history }) => {
-  const [modals, setModals] = useState({
-    confirm: false,
-    checkIn: false,
-    checkout: false,
-    item: null,
-  });
-  const [loading, setLoading] = useState(false);
-  const [requestsData, setRequestsData] = useState([]);
+const RequestsCollection = ({
+  requests,
+  visible,
+  isFetching,
+  onShowModal,
+  onHideModal,
+  onFetchRequests,
+  onCompleteRequest,
+  history,
+}) => {
+  const [item, setItem] = useState(null);
   const [search, setSearch] = useState({
     searchText: '',
     searchedColumn: '',
@@ -49,22 +53,21 @@ const RequestsCollection = ({ providerId, history }) => {
     setSearch({ searchText: '' });
   };
 
-  const requestCompletedHandler = (record) => {
-    setLoading(true);
-    http.get(`/requests/done/${record.id}`).then(() => {
-      record.done();
-      message.info('Canceled request.');
-      fetchRequestsData();
-    });
+  const requestCompletedHandler = (id) => {
+    onCompleteRequest(id);
   };
 
   const requestCanceledHandler = (record) => {
-    setLoading(true);
     http.delete(`/requests/${record.id}`).then(() => {
       record.cancel();
       message.success('Successfully complete.');
-      fetchRequestsData();
+      onFetchRequests();
     });
+  };
+
+  const closedHandler = (modalType) => {
+    setItem(null);
+    onHideModal(modalType);
   };
 
   const columns = [
@@ -92,7 +95,11 @@ const RequestsCollection = ({ providerId, history }) => {
       dataIndex: 'status',
       align: 'center',
       defaultFilteredValue: Object.keys(requestStatus)
-        .filter((key) => requestStatus[key] !== requestStatus.Canceled)
+        .filter(
+          (key) =>
+            requestStatus[key] !== requestStatus.Canceled &&
+            requestStatus[key] !== requestStatus.Finished
+        )
         .map((key) => requestStatus[key]),
       filters: Object.keys(requestStatus).map((key) => ({
         text: requestStatus[key],
@@ -147,7 +154,8 @@ const RequestsCollection = ({ providerId, history }) => {
         <Button
           disabled={record.cannot('checkIn')}
           onClick={() => {
-            setModals((curr) => ({ ...curr, checkIn: true, item: record }));
+            setItem(record);
+            onShowModal(requestModals.checkIn);
           }}
         >
           Check in
@@ -161,7 +169,8 @@ const RequestsCollection = ({ providerId, history }) => {
         <Button
           disabled={record.cannot('confirm')}
           onClick={() => {
-            setModals((curr) => ({ ...curr, confirm: true, item: record }));
+            setItem(record);
+            onShowModal(requestModals.confirm);
           }}
         >
           Confirm
@@ -176,7 +185,7 @@ const RequestsCollection = ({ providerId, history }) => {
           okText="Confirm"
           placement="top"
           title="Are you sure to complete work for this request?"
-          onConfirm={() => requestCompletedHandler(record)}
+          onConfirm={() => requestCompletedHandler(record.id)}
         >
           <Button disabled={record.cannot('done')}>Complete</Button>
         </Popconfirm>
@@ -189,7 +198,8 @@ const RequestsCollection = ({ providerId, history }) => {
         <Button
           disabled={record.cannot('checkOut')}
           onClick={() => {
-            setModals((curr) => ({ ...curr, checkout: true, item: record }));
+            setItem(record);
+            onShowModal(requestModals.checkout);
           }}
         >
           Checkout
@@ -217,33 +227,9 @@ const RequestsCollection = ({ providerId, history }) => {
     },
   ];
 
-  const fetchRequestsData = useCallback(() => {
-    setLoading(true);
-    http
-      .get(`/requests/providers/${providerId}`)
-      .then(({ data }) => {
-        data.forEach((req) => {
-          StateMachine.apply(req, {
-            ...requestStateMachineConfig,
-            init: req.status,
-          });
-        });
-        setRequestsData(
-          data.map(({ user, ...rest }) => {
-            const { fullName, phoneNumber, ...userProps } = user;
-            return { fullName, phoneNumber, ...userProps, ...rest };
-          })
-        );
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
-  }, [providerId]);
-
   useEffect(() => {
-    fetchRequestsData();
-  }, [fetchRequestsData]);
+    onFetchRequests();
+  }, [onFetchRequests]);
 
   return (
     <LayoutWrapper>
@@ -252,35 +238,29 @@ const RequestsCollection = ({ providerId, history }) => {
       </Title>
       <Content>
         <Table
-          loading={loading}
-          dataSource={requestsData}
+          loading={isFetching}
+          dataSource={requests}
           columns={columns}
           rowKey="id"
         />
       </Content>
       <RequestConfirmModal
-        onCancel={() =>
-          setModals((curr) => ({ ...curr, confirm: false, item: null }))
-        }
-        onSuccess={fetchRequestsData}
-        visible={modals.confirm}
-        item={modals.item}
+        onCancel={() => {
+          closedHandler(requestModals.confirm);
+        }}
+        visible={visible.confirm}
+        item={item}
       />
       <RequestCheckInModal
-        onSuccess={fetchRequestsData}
-        visible={modals.checkIn}
-        item={modals.item}
-        onCancel={() =>
-          setModals((curr) => ({ ...curr, checkIn: false, item: null }))
-        }
+        visible={visible.checkIn}
+        item={item}
+        onCancel={() => closedHandler(requestModals.checkIn)}
       />
       <RequestCheckoutModal
-        onSuccess={fetchRequestsData}
-        visible={modals.checkout}
-        item={modals.item}
-        onCancel={() =>
-          setModals((curr) => ({ ...curr, checkout: false, item: null }))
-        }
+        onSuccess={onFetchRequests}
+        visible={visible.checkout}
+        item={item}
+        onCancel={() => closedHandler(requestModals.checkout)}
       />
     </LayoutWrapper>
   );
@@ -288,8 +268,18 @@ const RequestsCollection = ({ providerId, history }) => {
 
 const mapStateToProps = (state) => {
   return {
-    providerId: state.auth?.userData?.providerId,
+    requests: state.requests.requests,
+    isFetching: state.requests.isFetching,
+    providerId: state.auth.userData?.providerId,
+    visible: state.requests.visible,
   };
 };
 
-export default connect(mapStateToProps)(RequestsCollection);
+const mapDispatchToProps = (dispatch) => ({
+  onFetchRequests: () => dispatch(fetchRequestsStart()),
+  onCompleteRequest: (id) => dispatch(completeRequestStart(id)),
+  onShowModal: (modalType) => dispatch(showModal(modalType)),
+  onHideModal: (modalType) => dispatch(hideModal(modalType)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RequestsCollection);

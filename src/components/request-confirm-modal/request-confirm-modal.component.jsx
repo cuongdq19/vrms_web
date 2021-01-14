@@ -1,33 +1,31 @@
-import { message } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 
 import RequestOverview from '../request-overview/request-overview.component';
 import CustomModal from '../custom-modal/custom-modal.component';
-import http from '../../http';
+import { confirmRequestStart } from '../../redux/request/request.actions';
+import { connect } from 'react-redux';
 
-const RequestConfirmModal = ({ visible, item, onSuccess, onCancel }) => {
+const RequestConfirmModal = ({
+  visible,
+  item,
+  isUpdating,
+  onCancel,
+  onConfirmRequest,
+}) => {
   const { id } = item ?? {};
-  const [loading, setLoading] = useState(false);
 
-  const submitHandler = (item) => {
-    setLoading(true);
-    http.get(`/requests/confirm/${item.id}`).then(() => {
-      item.confirm();
-      message.success('Confirm success.');
-      onSuccess();
-      onCancel();
-      setLoading(true);
-    });
+  const submitHandler = (id) => {
+    onConfirmRequest(id);
   };
 
   return (
     <CustomModal
-      confirmLoading={loading}
+      confirmLoading={isUpdating}
       visible={visible}
       title={`Confirm Request #${id}`}
       onCancel={onCancel}
       onOk={() => {
-        submitHandler(item);
+        submitHandler(id);
       }}
     >
       <RequestOverview item={item} />
@@ -35,4 +33,15 @@ const RequestConfirmModal = ({ visible, item, onSuccess, onCancel }) => {
   );
 };
 
-export default RequestConfirmModal;
+const mapStateToProps = (state) => ({
+  isUpdating: state.requests.isUpdating,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onConfirmRequest: (id) => dispatch(confirmRequestStart(id)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RequestConfirmModal);

@@ -11,6 +11,7 @@ import partReducer from './part/part.reducer';
 import packageReducer from './package/package.reducer';
 import sectionReducer from './section/section.reducer';
 import categoryReducer from './category/category.reducer';
+import requestReducer from './request/request.reducer';
 
 // const commonPersistConfig = {
 //   key: 'common',
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   packages: packageReducer,
   sections: sectionReducer,
   categories: categoryReducer,
+  requests: requestReducer,
 });
 
 export default rootReducer;

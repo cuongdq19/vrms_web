@@ -91,3 +91,9 @@ export const getRouteOnNotificationClicked = (action, data) => {
       return '/';
   }
 };
+
+export const requestModals = {
+  checkIn: 'checkIn',
+  confirm: 'confirm',
+  checkout: 'checkout',
+};
