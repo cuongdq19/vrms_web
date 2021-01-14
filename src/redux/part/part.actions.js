@@ -62,3 +62,17 @@ export const updatePartFailure = (error) => ({
   type: PartActionTypes.UPDATE_PART_FAILURE,
   payload: error,
 });
+
+export const removePartStart = (id) => ({
+  type: PartActionTypes.REMOVE_PART_START,
+  payload: id,
+});
+
+export const removePartSuccess = () => ({
+  type: PartActionTypes.REMOVE_PART_SUCCESS,
+});
+
+export const removePartFailure = (error) => ({
+  type: PartActionTypes.REMOVE_PART_FAILURE,
+  payload: error,
+});

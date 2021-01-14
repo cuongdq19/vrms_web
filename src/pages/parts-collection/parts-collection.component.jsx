@@ -14,11 +14,21 @@ import PartCreateAndUpdateModal from '../../components/part-create-and-update-mo
 
 import http from '../../http';
 import { nonAccentVietnamese } from '../../utils';
-import { fetchPartsStart, showPartModal } from '../../redux/part/part.actions';
+import {
+  fetchPartsStart,
+  showPartModal,
+  removePartStart,
+} from '../../redux/part/part.actions';
 
 const PAGE_SIZE = 12;
 
-const PartsCollection = ({ isFetching, parts, onFetchParts, onShowModal }) => {
+const PartsCollection = ({
+  isFetching,
+  parts,
+  onFetchParts,
+  onShowModal,
+  onRemovePart,
+}) => {
   const [current, setCurrent] = useState(1);
 
   const [search, setSearch] = useState('');
@@ -29,11 +39,7 @@ const PartsCollection = ({ isFetching, parts, onFetchParts, onShowModal }) => {
   };
 
   const removedHandler = (id) => {
-    http.delete(`/parts/${id}`).then(() => {
-      message.info(
-        'Any services and packages contains this part will be disabled. You can remove this part out of these services to continue using.'
-      );
-    });
+    onRemovePart(id);
   };
 
   useEffect(() => {
@@ -114,6 +120,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onFetchParts: () => dispatch(fetchPartsStart()),
   onShowModal: () => dispatch(showPartModal()),
+  onRemovePart: (id) => dispatch(removePartStart(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PartsCollection);

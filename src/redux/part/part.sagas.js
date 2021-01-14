@@ -10,6 +10,8 @@ import {
   createPartFailure,
   updatePartSuccess,
   updatePartFailure,
+  removePartSuccess,
+  removePartFailure,
 } from './part.actions';
 import { fetchSectionsWithCategories } from '../category/category.sagas';
 import { fetchManufacturersAndModels } from '../model/model.sagas';
@@ -101,10 +103,23 @@ export function* updatePart({ payload }) {
   }
 }
 
+export function* removePart({ payload }) {
+  try {
+    yield http.delete(`/parts/${payload}`).then(({ data }) => data);
+    yield put(removePartSuccess());
+    message.info(
+      'Any services and packages contains this part will be disabled. You can remove this part out of these services to continue using.'
+    );
+  } catch (error) {
+    yield put(removePartFailure(error));
+  }
+}
+
 export function* onFetchParts() {
   yield takeLatest(PartActionTypes.FETCH_PARTS_START, fetchParts);
   yield takeLatest(PartActionTypes.UPDATE_PART_SUCCESS, fetchParts);
   yield takeLatest(PartActionTypes.CREATE_PART_SUCCESS, fetchParts);
+  yield takeLatest(PartActionTypes.REMOVE_PART_SUCCESS, fetchParts);
 }
 
 export function* onLoadPartForm() {
@@ -119,11 +134,16 @@ export function* onUpdatePart() {
   yield takeLatest(PartActionTypes.UPDATE_PART_START, updatePart);
 }
 
+export function* onRemovePart() {
+  yield takeLatest(PartActionTypes.REMOVE_PART_START, removePart);
+}
+
 export default function* partSagas() {
   yield all([
     call(onFetchParts),
     call(onLoadPartForm),
     call(onCreatePart),
     call(onUpdatePart),
+    call(onRemovePart),
   ]);
 }
