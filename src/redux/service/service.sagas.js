@@ -1,4 +1,4 @@
-import { call, all, takeLatest, put } from 'redux-saga/effects';
+import { call, all, takeLatest, put, select } from 'redux-saga/effects';
 import { message } from 'antd';
 
 import ServiceActionTypes from './service.types';
@@ -17,14 +17,14 @@ import {
   removeServiceFailure,
   fetchProviderServicesSuccess,
   fetchProviderServicesFailure,
-  fetchProviderServicesStart,
   loadFormSuccess,
   loadFormFailure,
 } from './service.actions';
 import http from '../../http';
 
-export function* fetchProviderServices({ payload: { providerId } }) {
+export function* fetchProviderServices() {
   try {
+    const providerId = yield select((state) => state.auth.userData.providerId);
     const data = yield http
       .get(`/maintenance-packages/providers/${providerId}/services`)
       .then(({ data }) => data);
@@ -182,7 +182,7 @@ export function* removeService({ payload: { serviceId, providerId } }) {
     yield http.delete(`/services/${serviceId}`).then(({ data }) => data);
     message.success('Service removed.');
     yield put(removeServiceSuccess());
-    yield put(fetchProviderServicesStart(providerId));
+    yield call(fetchProviderServices);
   } catch (error) {
     yield put(removeServiceFailure(error));
   }

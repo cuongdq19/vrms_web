@@ -7,6 +7,7 @@ import modelSagas from './model/model.sagas';
 import partSagas from './part/part.sagas';
 import packageSagas from './package/package.sagas';
 import sectionSagas from './section/section.sagas';
+import categorySagas from './category/category.sagas';
 
 export default function* rootSaga() {
   yield all([
@@ -17,5 +18,6 @@ export default function* rootSaga() {
     call(partSagas),
     call(packageSagas),
     call(sectionSagas),
+    call(categorySagas),
   ]);
 }

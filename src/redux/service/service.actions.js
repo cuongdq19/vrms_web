@@ -1,8 +1,7 @@
 import ServiceActionTypes from './service.types';
 
-export const fetchProviderServicesStart = (providerId) => ({
+export const fetchProviderServicesStart = () => ({
   type: ServiceActionTypes.FETCH_PROVIDER_SERVICES_START,
-  payload: { providerId },
 });
 
 export const fetchProviderServicesSuccess = (servicesData) => ({

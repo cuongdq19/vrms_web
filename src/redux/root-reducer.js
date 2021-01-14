@@ -10,6 +10,7 @@ import serviceReducer from './service/service.reducer';
 import partReducer from './part/part.reducer';
 import packageReducer from './package/package.reducer';
 import sectionReducer from './section/section.reducer';
+import categoryReducer from './category/category.reducer';
 
 // const commonPersistConfig = {
 //   key: 'common',
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   parts: partReducer,
   packages: packageReducer,
   sections: sectionReducer,
+  categories: categoryReducer,
 });
 
 export default rootReducer;

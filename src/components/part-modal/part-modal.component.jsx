@@ -16,8 +16,17 @@ import { connect } from 'react-redux';
 import http from '../../http';
 import ModelsSelect from '../models-select/models-select.component';
 import CustomModal from '../custom-modal/custom-modal.component';
+import { fetchSectionsWithCategoriesStart } from '../../redux/category/category.actions';
 
-const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
+const PartModal = ({
+  sectionsWithCategories,
+  visible = false,
+  item,
+  providerId,
+  title,
+  onFetchSectionsWithCategories,
+  onClose,
+}) => {
   const {
     id,
     name,
@@ -279,7 +288,13 @@ const PartModal = ({ visible = false, item, providerId, title, onClose }) => {
 const mapStateToProps = (state) => {
   return {
     providerId: state.auth?.userData?.providerId,
+    sectionsWithCategories: state.categories.categories,
   };
 };
 
-export default connect(mapStateToProps)(PartModal);
+const mapDispatchToProps = (dispatch) => ({
+  onFetchSectionsWithCategories: () =>
+    dispatch(fetchSectionsWithCategoriesStart()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PartModal);
