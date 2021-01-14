@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Title, Content } from './users-collection.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import UserModal from '../../components/user-create-and-update-modal/user-create-and-update-modal.component';
-import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
 import {
   fetchUsersStart,
   toggleUserActiveStart,
@@ -38,77 +37,74 @@ const UsersCollection = ({
 
   return (
     <LayoutWrapper>
-      {isFetching ? (
-        <LoadingSpinner title="Loading..." />
-      ) : (
-        <>
-          <Title>
-            <h1>USERS</h1>
-            <Button type="primary" onClick={onShowModal}>
-              Create User
-            </Button>
-          </Title>
-          <Content>
-            <Table
-              rowKey="id"
-              dataSource={users}
-              columns={[
-                {
-                  title: 'ID',
-                  dataIndex: 'id',
-                  align: 'center',
+      <>
+        <Title>
+          <h1>USERS</h1>
+          <Button type="primary" onClick={onShowModal}>
+            Create User
+          </Button>
+        </Title>
+        <Content>
+          <Table
+            loading={isFetching}
+            rowKey="id"
+            dataSource={users}
+            columns={[
+              {
+                title: 'ID',
+                dataIndex: 'id',
+                align: 'center',
+              },
+              {
+                title: 'Full Name',
+                dataIndex: 'fullName',
+                align: 'center',
+              },
+              {
+                title: 'User Role',
+                dataIndex: 'roleName',
+                align: 'center',
+              },
+              {
+                title: 'Active',
+                align: 'center',
+                render: (_, record) => {
+                  return (
+                    <Switch
+                      checked={record.isActive}
+                      onChange={(checked) =>
+                        toggleActiveHandler(checked, record.id)
+                      }
+                    />
+                  );
                 },
-                {
-                  title: 'Full Name',
-                  dataIndex: 'fullName',
-                  align: 'center',
+              },
+              {
+                title: 'Update',
+                align: 'center',
+                render: (_, record) => {
+                  return (
+                    <Button
+                      onClick={() => {
+                        setItem(record);
+                        onShowModal();
+                      }}
+                    >
+                      Update
+                    </Button>
+                  );
                 },
-                {
-                  title: 'User Role',
-                  dataIndex: 'roleName',
-                  align: 'center',
-                },
-                {
-                  title: 'Active',
-                  align: 'center',
-                  render: (_, record) => {
-                    return (
-                      <Switch
-                        checked={record.isActive}
-                        onChange={(checked) =>
-                          toggleActiveHandler(checked, record.id)
-                        }
-                      />
-                    );
-                  },
-                },
-                {
-                  title: 'Update',
-                  align: 'center',
-                  render: (_, record) => {
-                    return (
-                      <Button
-                        onClick={() => {
-                          setItem(record);
-                          onShowModal();
-                        }}
-                      >
-                        Update
-                      </Button>
-                    );
-                  },
-                },
-              ]}
-            />
-          </Content>
-          <UserModal
-            user={item}
-            visible={visible}
-            title={item ? `Update User` : 'Create User'}
-            onCancel={closedHandler}
+              },
+            ]}
           />
-        </>
-      )}
+        </Content>
+        <UserModal
+          user={item}
+          visible={visible}
+          title={item ? `Update User` : 'Create User'}
+          onCancel={closedHandler}
+        />
+      </>
     </LayoutWrapper>
   );
 };
