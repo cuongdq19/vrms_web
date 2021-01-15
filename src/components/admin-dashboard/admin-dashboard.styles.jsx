@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   background-color: whitesmoke;
+  min-width: ${({ isChart }) => (isChart ? `400px` : '0px')};
   padding: 8px;
   border-radius: 0.125rem;
 

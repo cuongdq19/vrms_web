@@ -51,7 +51,7 @@ const ProviderDashboard = ({ providerId }) => {
     <>
       <Row gutter={[16, 16]}>
         <Col span={6}>
-          <Container isChart={false}>
+          <Container>
             <Statistic
               title="Revenue"
               value={formatMoney(
@@ -64,7 +64,7 @@ const ProviderDashboard = ({ providerId }) => {
           </Container>
         </Col>
         <Col span={6}>
-          <Container isChart={false}>
+          <Container>
             <Statistic
               title="Requests"
               value={
@@ -76,7 +76,7 @@ const ProviderDashboard = ({ providerId }) => {
             />
           </Container>
         </Col>
-        <Col span={6} isChart={false}>
+        <Col span={6}>
           <Container>
             <Statistic
               title="Rating"
@@ -88,22 +88,22 @@ const ProviderDashboard = ({ providerId }) => {
       </Row>
       <Row gutter={[16, 16]}>
         <Col span={12}>
-          <Container isChart={true}>
+          <Container chart>
             <ProviderRevenueChart data={revenue} />
           </Container>
         </Col>
         <Col span={12}>
-          <Container isChart={true}>
+          <Container chart>
             <ProviderRequestChart data={requests} />
           </Container>
         </Col>
         <Col span={12}>
-          <Container isChart={true}>
+          <Container chart>
             <ProviderPartsSummaryTab data={parts} />
           </Container>
         </Col>
         <Col span={12}>
-          <Container isChart={true}>
+          <Container chart>
             <ProviderRatingSummaryChart data={ratingSummary} />
           </Container>
         </Col>
