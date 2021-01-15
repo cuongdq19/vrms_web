@@ -10,6 +10,7 @@ import { formatMoney } from '../../utils';
 import ProviderRevenueChart from '../provider-revenue-chart/provider-revenue-chart.component';
 import ProviderRequestChart from '../provider-request-chart/provider-request-chart.component';
 import ProviderPartsSummaryTab from '../provider-parts-summary-tab/provider-parts-summary-tab.component';
+import ProviderRatingSummaryChart from '../provider-rating-summary-chart/provider-rating-summary-chart.component';
 
 const ProviderDashboard = ({ providerId }) => {
   const currentYear = moment().format('YYYY');
@@ -18,6 +19,7 @@ const ProviderDashboard = ({ providerId }) => {
   const [revenue, setRevenue] = useState([]);
   const [requests, setRequests] = useState([]);
   const [parts, setParts] = useState([]);
+  const [ratingSummary, setRatingSummary] = useState([]);
   const [rating, setRating] = useState(-1);
 
   useEffect(() => {
@@ -26,18 +28,30 @@ const ProviderDashboard = ({ providerId }) => {
       http.get(`/providers/${providerId}/charts/request/${currentYear}`),
       http.get(`/providers/${providerId}`),
       http.get(`/providers/${providerId}/charts/parts/${currentYear}`),
-    ]).then(([revenueRes, requestRes, ratingRes, partsRes]) => {
-      setRevenue(revenueRes.data);
-      setRequests(requestRes.data);
-      setRating(ratingRes.data);
-      setParts(partsRes.data);
-    });
+      http.get(`/providers/${providerId}/rating-summary`),
+    ]).then(
+      ([revenueRes, requestRes, ratingRes, partsRes, ratingSummaryRes]) => {
+        setRevenue(revenueRes.data);
+        setRequests(requestRes.data);
+        setRating(ratingRes.data);
+        setParts(partsRes.data);
+        setRatingSummary(
+          Object.keys(ratingSummaryRes.data).map((key) => ({
+            name: +key,
+            value: ratingSummaryRes.data[key],
+          }))
+        );
+      }
+    );
   }, [providerId, currentYear]);
+
+  console.log(ratingSummary);
+
   return (
     <>
-      <Row justify="space-between" gutter={[16, 16]}>
+      <Row gutter={[16, 16]}>
         <Col span={6}>
-          <Container>
+          <Container isChart={false}>
             <Statistic
               title="Revenue"
               value={formatMoney(
@@ -50,7 +64,7 @@ const ProviderDashboard = ({ providerId }) => {
           </Container>
         </Col>
         <Col span={6}>
-          <Container>
+          <Container isChart={false}>
             <Statistic
               title="Requests"
               value={
@@ -62,7 +76,7 @@ const ProviderDashboard = ({ providerId }) => {
             />
           </Container>
         </Col>
-        <Col span={6}>
+        <Col span={6} isChart={false}>
           <Container>
             <Statistic
               title="Rating"
@@ -74,18 +88,23 @@ const ProviderDashboard = ({ providerId }) => {
       </Row>
       <Row gutter={[16, 16]}>
         <Col span={12}>
-          <Container>
+          <Container isChart={true}>
             <ProviderRevenueChart data={revenue} />
           </Container>
         </Col>
         <Col span={12}>
-          <Container>
+          <Container isChart={true}>
             <ProviderRequestChart data={requests} />
           </Container>
         </Col>
-        <Col span={24}>
-          <Container>
+        <Col span={12}>
+          <Container isChart={true}>
             <ProviderPartsSummaryTab data={parts} />
+          </Container>
+        </Col>
+        <Col span={12}>
+          <Container isChart={true}>
+            <ProviderRatingSummaryChart data={ratingSummary} />
           </Container>
         </Col>
       </Row>
