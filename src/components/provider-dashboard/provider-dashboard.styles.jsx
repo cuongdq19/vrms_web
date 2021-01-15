@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   background-color: whitesmoke;
   padding: 8px;
+  min-height: ${({ chart }) => (chart ? `400px` : 0)};
   border-radius: 0.125rem;
 
   --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
