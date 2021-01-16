@@ -199,7 +199,6 @@ const ServiceCreateAndUpdate = ({
               >
                 <Cascader
                   options={types.map((type) => {
-                    console.log();
                     return {
                       label: type.name,
                       value: type.id,
@@ -298,10 +297,10 @@ const ServiceCreateAndUpdate = ({
                     ({ getFieldValue }) => ({
                       required: true,
                       validator(_, value) {
-                        if (isWithParts && selectedParts.length > 0) {
-                          return Promise.resolve();
+                        if (isWithParts && selectedParts.length === 0) {
+                          return Promise.reject("Parts can't be blank.");
                         }
-                        return Promise.reject("Parts can't be blank.");
+                        return Promise.resolve();
                       },
                     }),
                   ]}
