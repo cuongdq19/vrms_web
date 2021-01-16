@@ -108,7 +108,12 @@ const SignUp = () => {
             return e && e.fileList;
           }}
         >
-          <Upload name="logo" beforeUpload={() => false} listType="picture">
+          <Upload
+            multiple
+            name="logo"
+            beforeUpload={() => false}
+            listType="picture"
+          >
             <Button icon={<FontAwesomeIcon icon={faFileUpload} />}>
               Upload
             </Button>

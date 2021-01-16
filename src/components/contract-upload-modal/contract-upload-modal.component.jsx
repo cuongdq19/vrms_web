@@ -3,6 +3,7 @@ import { Button, Col, Form, Image, Input, Row, Upload } from 'antd';
 import React from 'react';
 
 import CustomModal from '../custom-modal/custom-modal.component';
+import { Text } from './contract-upload-modal.styles';
 
 const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
   const [form] = Form.useForm();
@@ -18,15 +19,32 @@ const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
       onCancel={onCancel}
       onOk={() => form.submit()}
     >
-      <Form form={form} onFinish={submitHandler} layout="vertical">
+      <Form
+        form={form}
+        onFinish={submitHandler}
+        labelCol={{ span: 2 }}
+        wrapperCol={{ span: 22 }}
+      >
         <Form.Item initialValue={item?.id} name="contractId" hidden>
           <Input />
+        </Form.Item>
+        <Form.Item label="Fullname" labelAlign="right">
+          <Text>{item?.fullName}</Text>
+        </Form.Item>
+        <Form.Item label="Address">
+          <Text>{item?.address}</Text>
+        </Form.Item>
+        <Form.Item label="Phone Number">
+          <Text>{item?.phoneNumber}</Text>
+        </Form.Item>
+        <Form.Item label="Email">
+          <Text>{item?.email}</Text>
         </Form.Item>
         <Form.Item label="Provider Image">
           <Row gutter={[8, 8]}>
             {item?.proofImageUrls.map((imageUrl, index) => (
-              <Col key={index} span={8}>
-                <Image height={200} src={imageUrl} />
+              <Col key={index} span={6}>
+                <Image height={250} src={imageUrl} />
               </Col>
             ))}
           </Row>
