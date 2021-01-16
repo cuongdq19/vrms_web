@@ -2,7 +2,7 @@ import { StarFilled } from '@ant-design/icons';
 import React from 'react';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#003f5c', '#58508d', '#bc5090', '#ff6361', '#ffa600'];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -32,7 +32,8 @@ const renderCustomizedLabel = ({
 };
 
 const ProviderRatingSummaryChart = ({ data }) => {
-  const isValidValue = data.every((item) => item.value > 0);
+  const isValidValue = data.findIndex((item) => item.value > 0) >= 0;
+
   return (
     <>
       <h1>Rating Summary</h1>

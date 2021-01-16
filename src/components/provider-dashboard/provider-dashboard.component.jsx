@@ -45,8 +45,6 @@ const ProviderDashboard = ({ providerId }) => {
     );
   }, [providerId, currentYear]);
 
-  console.log(ratingSummary);
-
   return (
     <>
       <Row gutter={[16, 16]}>
@@ -87,12 +85,12 @@ const ProviderDashboard = ({ providerId }) => {
         </Col>
       </Row>
       <Row gutter={[16, 16]}>
-        <Col span={12}>
+        <Col span={24}>
           <Container chart>
             <ProviderRevenueChart data={revenue} />
           </Container>
         </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Container chart>
             <ProviderRequestChart data={requests} />
           </Container>
