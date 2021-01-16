@@ -20,6 +20,7 @@ import PackageUpdate from '../pages/package-update/package-update.component';
 import SignUp from '../pages/sign-up/sign-up.component';
 import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
 import ProvidersCollection from '../pages/providers-collection/providers-collection.component';
+import Feedbacks from '../pages/feedbacks/feedbacks.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -128,6 +129,12 @@ const providerRoutes = [
     path: '/requests',
     exact: true,
     component: RequestsCollection,
+  },
+  {
+    key: 'feedbacks',
+    path: '/feedbacks',
+    exact: true,
+    component: Feedbacks,
   },
   {
     key: 'update-request',
