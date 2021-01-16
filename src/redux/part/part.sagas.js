@@ -12,6 +12,8 @@ import {
   updatePartFailure,
   removePartSuccess,
   removePartFailure,
+  fetchSectionsSuccess,
+  fetchSectionsFailure,
 } from './part.actions';
 import { fetchSectionsWithCategories } from '../category/category.sagas';
 import { fetchManufacturersAndModels } from '../model/model.sagas';
@@ -115,6 +117,17 @@ export function* removePart({ payload }) {
   }
 }
 
+export function* fetchSections() {
+  try {
+    const data = yield http
+      .get('/service-type-details/sections/plain')
+      .then(({ data }) => data);
+    yield put(fetchSectionsSuccess(data));
+  } catch (error) {
+    yield put(fetchSectionsFailure(error));
+  }
+}
+
 export function* onFetchParts() {
   yield takeLatest(PartActionTypes.FETCH_PARTS_START, fetchParts);
   yield takeLatest(PartActionTypes.UPDATE_PART_SUCCESS, fetchParts);
@@ -138,6 +151,10 @@ export function* onRemovePart() {
   yield takeLatest(PartActionTypes.REMOVE_PART_START, removePart);
 }
 
+export function* onFetchSectionsStart() {
+  yield takeLatest(PartActionTypes.FETCH_SECTIONS_START, fetchSections);
+}
+
 export default function* partSagas() {
   yield all([
     call(onFetchParts),
@@ -145,5 +162,6 @@ export default function* partSagas() {
     call(onCreatePart),
     call(onUpdatePart),
     call(onRemovePart),
+    call(onFetchSectionsStart),
   ]);
 }

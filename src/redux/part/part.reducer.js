@@ -58,17 +58,20 @@ const partReducer = (state = INITIAL_STATE, action) => {
         error: action.payload,
       };
     case PartActionTypes.FETCH_PARTS_START:
+    case PartActionTypes.FETCH_SECTIONS_START:
       return {
         ...state,
         isFetching: true,
       };
     case PartActionTypes.FETCH_PARTS_SUCCESS:
+    case PartActionTypes.FETCH_SECTIONS_SUCCESS:
       return {
         ...state,
         isFetching: false,
         parts: action.payload,
       };
     case PartActionTypes.FETCH_PARTS_FAILURE:
+    case PartActionTypes.FETCH_SECTIONS_FAILURE:
       return {
         ...state,
         isFetching: false,

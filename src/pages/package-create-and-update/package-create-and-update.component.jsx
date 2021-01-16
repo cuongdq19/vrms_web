@@ -12,7 +12,7 @@ import {
   createPackageStart,
   updatePackageStart,
 } from '../../redux/package/package.actions';
-import { fetchSectionsStart } from '../../redux/section/section.actions';
+import { fetchSectionsStart } from '../../redux/part/part.actions';
 
 const PackageCreateAndUpdate = ({
   history,
@@ -243,7 +243,7 @@ const PackageCreateAndUpdate = ({
 const mapStateToProps = (state) => ({
   services: state.services.services,
   milestones: state.packages.milestones,
-  sections: state.sections.sections,
+  sections: state.parts.sections,
   isLoadingForm: state.packages.isLoadingForm,
   isCreatingOrUpdating: state.packages.isCreatingOrUpdating,
 });

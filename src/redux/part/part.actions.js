@@ -76,3 +76,17 @@ export const removePartFailure = (error) => ({
   type: PartActionTypes.REMOVE_PART_FAILURE,
   payload: error,
 });
+
+export const fetchSectionsStart = () => ({
+  type: PartActionTypes.FETCH_SECTIONS_START,
+});
+
+export const fetchSectionsSuccess = (sectionsData) => ({
+  type: PartActionTypes.FETCH_SECTIONS_SUCCESS,
+  payload: sectionsData,
+});
+
+export const fetchSectionsFailure = (error) => ({
+  type: PartActionTypes.FETCH_SECTIONS_FAILURE,
+  payload: error,
+});

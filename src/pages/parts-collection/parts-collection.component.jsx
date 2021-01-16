@@ -1,4 +1,4 @@
-import { Button, Col, Input, message, Pagination, Row, Typography } from 'antd';
+import { Button, Col, Input, Pagination, Row, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -12,7 +12,6 @@ import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.compon
 import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
 import PartCreateAndUpdateModal from '../../components/part-create-and-update-modal/part-create-and-update-modal.component';
 
-import http from '../../http';
 import { nonAccentVietnamese } from '../../utils';
 import {
   fetchPartsStart,

@@ -9,7 +9,6 @@ import modelReducer from './model/model.reducer';
 import serviceReducer from './service/service.reducer';
 import partReducer from './part/part.reducer';
 import packageReducer from './package/package.reducer';
-import sectionReducer from './section/section.reducer';
 import categoryReducer from './category/category.reducer';
 import requestReducer from './request/request.reducer';
 import userReducer from './user/user.reducer';
@@ -33,7 +32,6 @@ const rootReducer = combineReducers({
   services: serviceReducer,
   parts: partReducer,
   packages: packageReducer,
-  sections: sectionReducer,
   categories: categoryReducer,
   requests: requestReducer,
   users: userReducer,
