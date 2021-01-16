@@ -13,7 +13,7 @@ const ProviderPartsSummaryTab = ({ data }) => {
             tab={moment(item.month, 'M').format('MMMM')}
           >
             <Table
-              rowKey="month"
+              rowKey={(record) => record.part.id}
               dataSource={item.partSummaries}
               columns={[
                 {

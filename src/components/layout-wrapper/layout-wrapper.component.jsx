@@ -16,6 +16,7 @@ import {
   faTools,
   faCalendar,
   faHome,
+  faComment,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -133,6 +134,15 @@ const LayoutWrapper = ({
       key: 'requests',
       title: 'Booking Requests',
       onClick: () => history.push('/requests'),
+    },
+    {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
+      icon: <FontAwesomeIcon icon={faComment} />,
+      key: 'feedbacks',
+      title: 'Feedbacks',
+      onClick: () => history.push('/feedbacks'),
     },
   ];
 
