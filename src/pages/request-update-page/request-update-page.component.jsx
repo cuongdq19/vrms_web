@@ -457,7 +457,6 @@ const RequestUpdatePage = ({ history, match, isUpdating, onUpdateRequest }) => {
             ...rest,
           })
         ),
-
         services: services.map(
           ({ id, serviceId, serviceName, servicePrice, parts, ...rest }) => ({
             ...rest,

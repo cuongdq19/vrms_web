@@ -178,6 +178,7 @@ export function* updateRequestAsync({ payload: { item, history } }) {
     yield http
       .post(`/requests/update/${item.id}`, body)
       .then(({ data }) => data);
+    yield put(updateRequestSuccess());
     message.success('Update successfully.');
     history.replace('/requests');
   } catch (error) {

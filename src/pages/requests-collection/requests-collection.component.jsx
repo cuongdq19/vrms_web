@@ -182,6 +182,7 @@ const RequestsCollection = ({
       title: 'Complete',
       render: (_, record) => (
         <Popconfirm
+          disabled={record.cannot('done')}
           okText="Confirm"
           placement="top"
           title="Are you sure to complete work for this request?"
