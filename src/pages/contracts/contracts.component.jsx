@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, message, Popconfirm, Table, Tag } from 'antd';
+import { Button, Col, message, Popconfirm, Row, Table, Tag } from 'antd';
 
 import { Content, Title } from './contracts.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
@@ -20,7 +20,7 @@ const ContractsPage = ({ history }) => {
     images.forEach((image) => {
       formData.append('images', image);
     });
-    http.post(`/contracts/confirm/${contractId}`, formData).then(({ data }) => {
+    http.post(`/contracts/confirm/${contractId}`, formData).then(({}) => {
       message.success('Confirm contract success.');
       loadContracts();
       setConfirming({ visible: false, item: null });
@@ -28,7 +28,7 @@ const ContractsPage = ({ history }) => {
   };
 
   const deniedHandler = (contractId) => {
-    http.get(`/contracts/deny/${contractId}`).then(({ data }) => {
+    http.get(`/contracts/deny/${contractId}`).then(() => {
       setDenying(false);
       message.info('Successfully.');
       loadContracts();
@@ -50,64 +50,43 @@ const ContractsPage = ({ history }) => {
       ),
     },
     {
-      title: 'Verify',
-      align: 'center',
-      render: (_, record) => {
-        return (
-          <Dropdown
-            disabled={[
-              contractStatus.Confirmed,
-              contractStatus.Denied,
-              contractStatus.Resolved,
-            ].includes(record.status)}
-            trigger="click"
-            arrow
-            overlay={
-              <Menu>
-                <Menu.Item
-                  onClick={() => {
-                    setConfirming({ visible: true, item: record });
-                  }}
-                >
-                  <Button type="link">Confirm</Button>
-                </Menu.Item>
-                <Menu.Item onClick={() => setDenying(true)}>
-                  <Popconfirm
-                    visible={denying}
-                    title="Are you sure to deny this contract?"
-                    onConfirm={() => deniedHandler(record.id)}
-                  >
-                    <Button type="link" danger>
-                      Deny
-                    </Button>
-                  </Popconfirm>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button>Verify</Button>
-          </Dropdown>
-        );
-      },
-    },
-    {
-      title: 'Resolve',
-      align: 'center',
-      render: (_, record) => {
-        return (
-          <Button
-            disabled={[
-              contractStatus.Pending,
-              contractStatus.Denied,
-              contractStatus.Resolved,
-            ].includes(record.status)}
-            type="primary"
-            onClick={() => history.push(`/contracts/${record.id}`)}
-          >
-            Resolve
-          </Button>
-        );
-      },
+      title: 'Actions',
+      render: (_, record) => (
+        <Row gutter={16}>
+          {record.status === contractStatus.Pending && (
+            <Col>
+              <Button
+                onClick={() => {
+                  setConfirming({ visible: true, item: record });
+                }}
+              >
+                Confirm
+              </Button>
+            </Col>
+          )}
+          {record.status === contractStatus.Pending && (
+            <Col>
+              <Popconfirm
+                visible={denying}
+                title="Are you sure to deny this contract?"
+                onConfirm={() => deniedHandler(record.id)}
+              >
+                <Button danger>Deny</Button>
+              </Popconfirm>
+            </Col>
+          )}
+          {record.status === contractStatus.Confirmed && (
+            <Col>
+              <Button
+                type="primary"
+                onClick={() => history.push(`/contracts/${record.id}`)}
+              >
+                Resolve
+              </Button>
+            </Col>
+          )}
+        </Row>
+      ),
     },
   ];
 

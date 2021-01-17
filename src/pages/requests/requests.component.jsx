@@ -38,6 +38,7 @@ const RequestsPage = ({
   requests,
   visible,
   isFetching,
+  isUpdating,
   onShowModal,
   onHideModal,
   onFetchRequests,
@@ -194,6 +195,7 @@ const RequestsPage = ({
             {record.cannot('done') || (
               <Col>
                 <Popconfirm
+                  okButtonProps={{ loading: isUpdating }}
                   disabled={record.cannot('done')}
                   okText="Confirm"
                   placement="top"
@@ -221,7 +223,7 @@ const RequestsPage = ({
               <Col>
                 <Popconfirm
                   okText="Cancel"
-                  okButtonProps={{ danger: true }}
+                  okButtonProps={{ danger: true, loading: isUpdating }}
                   placement="top"
                   title="Are you sure to cancel this request?"
                   onConfirm={() => {
@@ -386,6 +388,7 @@ const mapStateToProps = (state) => {
     isFetching: state.requests.isFetching,
     providerId: state.auth.userData?.providerId,
     visible: state.requests.visible,
+    isUpdating: state.requests.isUpdating,
   };
 };
 
