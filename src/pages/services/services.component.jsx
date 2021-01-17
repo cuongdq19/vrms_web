@@ -60,6 +60,12 @@ const ServicesPage = ({
       ...getColumnSearchProps('name', handleSearch, handleReset, search),
     },
     {
+      title: 'Service Type',
+      align: 'center',
+      render: (_, record) =>
+        `${record.typeDetail.typeName} ${record.typeDetail.sectionName}`,
+    },
+    {
       title: 'Wages',
       dataIndex: 'price',
       align: 'center',
