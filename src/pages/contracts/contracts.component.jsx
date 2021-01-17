@@ -20,7 +20,7 @@ const ContractsPage = ({ history }) => {
     images.forEach((image) => {
       formData.append('images', image);
     });
-    http.post(`/contracts/confirm/${contractId}`, formData).then(({}) => {
+    http.post(`/contracts/confirm/${contractId}`, formData).then(() => {
       message.success('Confirm contract success.');
       loadContracts();
       setConfirming({ visible: false, item: null });
