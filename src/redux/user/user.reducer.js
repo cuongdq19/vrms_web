@@ -34,12 +34,12 @@ const userReducer = (state = INITIAL_STATE, action) => {
         ...state,
         isFetching: false,
       };
-    case UserActionTypes.SHOW_MODAL:
+    case UserActionTypes.SHOW_USER_MODAL:
       return {
         ...state,
         visible: true,
       };
-    case UserActionTypes.HIDE_MODAL:
+    case UserActionTypes.HIDE_USER_MODAL:
       return {
         ...state,
         visible: false,

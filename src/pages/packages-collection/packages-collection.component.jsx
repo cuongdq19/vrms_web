@@ -132,16 +132,10 @@ const PackagesCollection = ({
               ),
             },
             {
-              title: 'Milestone',
-              dataIndex: 'milestone',
+              title: 'Milestone / Section',
               align: 'center',
-              render: (value) => value ?? 'N/A',
-            },
-            {
-              title: 'Section Name',
-              dataIndex: 'sectionName',
-              align: 'center',
-              render: (value) => value ?? 'N/A',
+              render: (_, record) =>
+                record.sectionName || record.milestone + ` KM`,
             },
             {
               title: 'Total Price',

@@ -14,6 +14,7 @@ const UserModal = ({
   user,
   visible,
   title,
+  error,
   onCancel,
   onCreateUser,
   onUpdateUser,
@@ -25,6 +26,9 @@ const UserModal = ({
       onCreateUser(values);
     } else {
       onUpdateUser(values);
+    }
+    if (!error) {
+      form.resetFields();
     }
   };
 
@@ -39,14 +43,17 @@ const UserModal = ({
         gender: user.gender,
       });
     }
-  }, [form, user]);
+  }, [form, user, visible]);
 
   return (
     <CustomModal
       title={title}
       visible={visible}
       onOk={() => form.submit()}
-      onCancel={onCancel}
+      onCancel={() => {
+        form.resetFields();
+        onCancel();
+      }}
     >
       <Form form={form} layout="vertical" onFinish={submitHandler}>
         <Form.Item name="id" hidden>
@@ -110,6 +117,7 @@ const UserModal = ({
 
 const mapStateToProps = (state) => ({
   providerId: state.auth.userData?.providerId,
+  error: state.users.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({

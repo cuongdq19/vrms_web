@@ -8,11 +8,12 @@ import UserModal from '../../components/user-create-and-update-modal/user-create
 import {
   fetchUsersStart,
   toggleUserActiveStart,
-  showModal,
-  hideModal,
+  showUserModal,
+  hideUserModal,
 } from '../../redux/user/user.actions';
 
 const UsersCollection = ({
+  match,
   visible,
   users,
   isFetching,
@@ -39,16 +40,18 @@ const UsersCollection = ({
     <LayoutWrapper>
       <>
         <Title>
-          <h1>USERS</h1>
+          <h1>{match.path.split('/')[1].toUpperCase()}</h1>
           <Button type="primary" onClick={onShowModal}>
-            Create User
+            Create Employee
           </Button>
         </Title>
         <Content>
           <Table
             loading={isFetching}
             rowKey="id"
-            dataSource={users}
+            dataSource={users.filter((user) =>
+              match.path.toUpperCase().includes(user.roleName.toUpperCase())
+            )}
             columns={[
               {
                 title: 'ID',
@@ -119,8 +122,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onFetchUsers: () => dispatch(fetchUsersStart()),
   onToggleUserActive: (id) => dispatch(toggleUserActiveStart(id)),
-  onShowModal: () => dispatch(showModal()),
-  onHideModal: () => dispatch(hideModal()),
+  onShowModal: () => dispatch(showUserModal()),
+  onHideModal: () => dispatch(hideUserModal()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UsersCollection);

@@ -56,10 +56,10 @@ export const toggleUserActiveFailure = (error) => ({
   payload: error,
 });
 
-export const showModal = () => ({
-  type: UserActionTypes.SHOW_MODAL,
+export const showUserModal = () => ({
+  type: UserActionTypes.SHOW_USER_MODAL,
 });
 
-export const hideModal = () => ({
-  type: UserActionTypes.HIDE_MODAL,
+export const hideUserModal = () => ({
+  type: UserActionTypes.HIDE_USER_MODAL,
 });
