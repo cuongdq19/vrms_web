@@ -34,6 +34,7 @@ const packageReducer = (state = INITIAL_STATE, action) => {
         error: action.payload,
       };
     case PackageActionTypes.FETCH_PACKAGES_START:
+    case PackageActionTypes.FETCH_PACKAGES_BY_MODEL_START:
     case PackageActionTypes.FETCH_MILESTONES_START:
       return {
         ...state,

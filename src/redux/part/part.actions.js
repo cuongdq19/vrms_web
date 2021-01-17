@@ -4,6 +4,11 @@ export const fetchPartsStart = () => ({
   type: PartActionTypes.FETCH_PARTS_START,
 });
 
+export const fetchPartsByModelStart = (modelId) => ({
+  type: PartActionTypes.FETCH_PARTS_BY_MODEL_START,
+  payload: modelId,
+});
+
 export const fetchPartsSuccess = (partsData) => ({
   type: PartActionTypes.FETCH_PARTS_SUCCESS,
   payload: partsData,

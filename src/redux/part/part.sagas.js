@@ -32,6 +32,18 @@ export function* fetchParts() {
   }
 }
 
+export function* fetchPartsByModelAsync(action) {
+  try {
+    const providerId = yield select((state) => state.auth.userData.providerId);
+    const data = yield http
+      .get(`/parts/provider/${providerId}/vehicle-model/${action.payload}`)
+      .then(({ data }) => data);
+    yield put(fetchPartsSuccess(data));
+  } catch (error) {
+    yield put(fetchPartsFailure(error));
+  }
+}
+
 export function* loadPartForm() {
   try {
     yield call(fetchSectionsWithCategories);
@@ -135,6 +147,13 @@ export function* onFetchParts() {
   yield takeLatest(PartActionTypes.REMOVE_PART_SUCCESS, fetchParts);
 }
 
+export function* onFetchPartsByModel() {
+  yield takeLatest(
+    PartActionTypes.FETCH_PARTS_BY_MODEL_START,
+    fetchPartsByModelAsync
+  );
+}
+
 export function* onLoadPartForm() {
   yield takeLatest(PartActionTypes.LOAD_PART_FORM_START, loadPartForm);
 }
@@ -158,6 +177,7 @@ export function* onFetchSectionsStart() {
 export default function* partSagas() {
   yield all([
     call(onFetchParts),
+    call(fetchPartsByModelAsync),
     call(onLoadPartForm),
     call(onCreatePart),
     call(onUpdatePart),

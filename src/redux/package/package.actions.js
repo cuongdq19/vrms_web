@@ -4,6 +4,11 @@ export const fetchPackagesStart = () => ({
   type: PackageActionTypes.FETCH_PACKAGES_START,
 });
 
+export const fetchPackagesByModelStart = (modelId) => ({
+  type: PackageActionTypes.FETCH_PACKAGES_START,
+  payload: modelId,
+});
+
 export const fetchPackagesSuccess = (packagesData) => ({
   type: PackageActionTypes.FETCH_PACKAGES_SUCCESS,
   payload: packagesData,

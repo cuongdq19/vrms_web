@@ -38,9 +38,15 @@ const requestReducer = (state = INITIAL_STATE, action) => {
     case RequestActionTypes.CONFIRM_REQUEST_START:
     case RequestActionTypes.COMPLETE_REQUEST_START:
     case RequestActionTypes.CHECKOUT_REQUEST_START:
+    case RequestActionTypes.UPDATE_REQUEST_START:
       return {
         ...state,
         isUpdating: true,
+      };
+    case RequestActionTypes.UPDATE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        isUpdating: false,
       };
     case RequestActionTypes.CHECK_IN_REQUEST_SUCCESS:
       return {
@@ -52,6 +58,7 @@ const requestReducer = (state = INITIAL_STATE, action) => {
     case RequestActionTypes.CONFIRM_REQUEST_FAILURE:
     case RequestActionTypes.COMPLETE_REQUEST_FAILURE:
     case RequestActionTypes.CHECKOUT_REQUEST_FAILURE:
+    case RequestActionTypes.UPDATE_REQUEST_FAILURE:
       return {
         ...state,
         isUpdating: false,
@@ -63,12 +70,12 @@ const requestReducer = (state = INITIAL_STATE, action) => {
         isFetching: false,
         technicians: action.payload,
       };
-    case RequestActionTypes.SHOW_MODAL:
+    case RequestActionTypes.SHOW_REQUEST_MODAL:
       return {
         ...state,
         visible: { ...state.visible, [action.payload]: true },
       };
-    case RequestActionTypes.HIDE_MODAL:
+    case RequestActionTypes.HIDE_REQUEST_MODAL:
       return {
         ...state,
         visible: { ...state.visible, [action.payload]: false },

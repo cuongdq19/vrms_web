@@ -79,6 +79,12 @@ export const ITEM_TYPES = {
   package: 2,
 };
 
+export const ServiceItemTypes = {
+  SERVICES: 'SERVICES',
+  EXPENSES: 'EXPENSES',
+  PACKAGES: 'PACKAGES',
+};
+
 export const notificationActions = {
   CREATE_REQUEST: 'CREATE_REQUEST',
 };

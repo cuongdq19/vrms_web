@@ -19,8 +19,8 @@ import { requestModals, requestStatus } from '../../utils/constants';
 import { getColumnSearchProps } from '../../utils/antd';
 import {
   fetchRequestsStart,
-  showModal,
-  hideModal,
+  showRequestModal,
+  hideRequestModal,
   completeRequestStart,
 } from '../../redux/request/request.actions';
 
@@ -278,8 +278,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   onFetchRequests: () => dispatch(fetchRequestsStart()),
   onCompleteRequest: (id) => dispatch(completeRequestStart(id)),
-  onShowModal: (modalType) => dispatch(showModal(modalType)),
-  onHideModal: (modalType) => dispatch(hideModal(modalType)),
+  onShowModal: (modalType) => dispatch(showRequestModal(modalType)),
+  onHideModal: (modalType) => dispatch(hideRequestModal(modalType)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestsCollection);

@@ -13,12 +13,12 @@ import SignIn from '../pages/sign-in/sign-in.component';
 import UsersCollection from '../pages/users-collection/users-collection.component';
 import _403 from '../pages/_403/_403.component';
 import _404 from '../pages/_404/_404.component';
-import RequestUpdate from '../pages/request-update/request-update.component';
-import RequestUpdateIncurred from '../pages/request-update-incurred/request-update-incurred.component';
 import SignUp from '../pages/sign-up/sign-up.component';
 import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
 import ProvidersCollection from '../pages/providers-collection/providers-collection.component';
 import PackageCreateAndUpdate from '../pages/package-create-and-update/package-create-and-update.component';
+import RequestUpdatePage from '../pages/request-update-page/request-update-page.component';
+import RequestUpdateWithIncurredPage from '../pages/request-update-with-incurred-page/request-update-with-incurred-page.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -132,13 +132,13 @@ const providerRoutes = [
     key: 'update-request',
     path: '/requests/:requestId',
     exact: true,
-    component: RequestUpdate,
+    component: RequestUpdatePage,
   },
   {
     key: 'update-request-incurred',
     path: '/requests/:requestId/incurred',
     exact: true,
-    component: RequestUpdateIncurred,
+    component: RequestUpdateWithIncurredPage,
   },
 ];
 

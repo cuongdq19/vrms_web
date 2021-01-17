@@ -36,6 +36,24 @@ export function* fetchPackagesAsync() {
   }
 }
 
+export function* fetchPackagesByModelAsync({ payload }) {
+  try {
+    const providerId = yield select((state) => state.auth.userData.providerId);
+
+    const data = yield http
+      .get(`/maintenance-packages/providers/${providerId}/models/${payload}`)
+      .then(({ data }) =>
+        data.map(({ packagedServices, ...rest }) => ({
+          services: packagedServices,
+          ...rest,
+        }))
+      );
+    yield put(fetchPackagesSuccess(data));
+  } catch (error) {
+    yield put(fetchPackagesFailure(error));
+  }
+}
+
 export function* loadPackageFormData() {
   try {
     const providerId = yield select((state) => state.auth.userData.providerId);
@@ -149,6 +167,13 @@ export function* onFetchPackages() {
   yield takeLatest(PackageActionTypes.FETCH_PACKAGES_START, fetchPackagesAsync);
 }
 
+export function* onFetchPackagesByModel() {
+  yield takeLatest(
+    PackageActionTypes.FETCH_PACKAGES_BY_MODEL_START,
+    fetchPackagesByModelAsync
+  );
+}
+
 export function* onCreatePackage() {
   yield takeLatest(PackageActionTypes.CREATE_PACKAGE_START, createPackage);
 }
@@ -169,5 +194,6 @@ export default function* packageSagas() {
     call(onCreatePackage),
     call(onUpdatePackage),
     call(onRemovePackage),
+    call(onFetchPackagesByModel),
   ]);
 }
