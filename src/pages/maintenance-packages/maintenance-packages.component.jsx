@@ -2,10 +2,10 @@ import { Button, Col, Form, Popconfirm, Row, Select, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { Content, Title } from './packages-collection.styles';
+import { Content, Title } from './maintenance-packages.styles';
 import CustomModal from '../../components/custom-modal/custom-modal.component';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
-import './packages-collection.styles.scss';
+import './maintenance-packages.styles.scss';
 import {
   calculatePackagePrice,
   formatMoney,
@@ -19,7 +19,7 @@ import {
 } from '../../redux/package/package.actions';
 import { fetchManufacturersAndModels } from '../../redux/model/model.actions';
 
-const PackagesCollection = ({
+const MaintenancePackagesPage = ({
   providerId,
   packages,
   isFetching,
@@ -344,4 +344,7 @@ const mapDispatchToProps = (dispatch) => ({
   onRemovePackage: (id) => dispatch(removePackageStart(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PackagesCollection);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MaintenancePackagesPage);

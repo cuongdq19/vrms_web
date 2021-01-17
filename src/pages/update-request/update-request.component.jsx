@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
 
 import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
-import { Content, Title } from './request-update-page.styles';
+import { Content, Title } from './update-request.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestUpdateAddServiceModal from '../../components/request-update-add-service-modal/request-update-add-service-modal.component';
 import http from '../../http';
@@ -267,7 +267,7 @@ const PackageTable = ({ title, data, onRemove, onQuantityChanged }) => (
   />
 );
 
-const RequestUpdatePage = ({ history, match, isUpdating, onUpdateRequest }) => {
+const UpdateRequestPage = ({ history, match, isUpdating, onUpdateRequest }) => {
   const [currentItem, setCurrentItem] = useState(null);
   const [visible, setVisible] = useState(false);
 
@@ -541,4 +541,4 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateRequestStart({ item, history })),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestUpdatePage);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateRequestPage);

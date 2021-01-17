@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Dropdown, Menu, message, Popconfirm, Table, Tag } from 'antd';
 
-import { Content, Title } from './contracts-collection.styles';
+import { Content, Title } from './contracts.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 
 import http from '../../http';
@@ -9,7 +9,7 @@ import { generateContractStatusColor } from '../../utils';
 import ContractUploadModal from '../../components/contract-upload-modal/contract-upload-modal.component';
 import { contractStatus } from '../../utils/constants';
 
-const ContractsCollection = ({ history }) => {
+const ContractsPage = ({ history }) => {
   const [contracts, setContracts] = useState([]);
   const [confirming, setConfirming] = useState({ visible: false, item: null });
   const [denying, setDenying] = useState(false);
@@ -138,4 +138,4 @@ const ContractsCollection = ({ history }) => {
   );
 };
 
-export default ContractsCollection;
+export default ContractsPage;

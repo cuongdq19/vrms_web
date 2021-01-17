@@ -27,7 +27,7 @@ import {
 } from '../../redux/service/service.actions';
 import { fetchPartsStart } from '../../redux/part/part.actions';
 
-const ServiceCreateAndUpdate = ({
+const CreateAndUpdateServicePage = ({
   providerId,
   manufacturers,
   models,
@@ -419,4 +419,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ServiceCreateAndUpdate);
+)(CreateAndUpdateServicePage);

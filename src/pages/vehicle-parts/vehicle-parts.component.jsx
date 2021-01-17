@@ -6,7 +6,7 @@ import {
   Title,
   Content,
   SearchAndCreateButtonContainer,
-} from './parts-collection.styles';
+} from './vehicle-parts.styles';
 import PartItem from '../../components/part-item/part-item.component';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
@@ -21,7 +21,7 @@ import {
 
 const PAGE_SIZE = 12;
 
-const PartsCollection = ({
+const VehiclePartsPage = ({
   isFetching,
   parts,
   onFetchParts,
@@ -122,4 +122,4 @@ const mapDispatchToProps = (dispatch) => ({
   onRemovePart: (id) => dispatch(removePartStart(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PartsCollection);
+export default connect(mapStateToProps, mapDispatchToProps)(VehiclePartsPage);

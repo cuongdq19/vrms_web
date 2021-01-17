@@ -1,13 +1,13 @@
 import { Button, message, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Content, Title } from './providers-collection.styles';
+import { Content, Title } from './providers.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import ProviderFormModal from '../../components/provider-update-modal/provider-update-modal.component';
 
 import http from '../../http';
 
-const ProvidersCollection = () => {
+const ProvidersPage = () => {
   const [providers, setProviders] = useState(false);
   const [modal, setModal] = useState({ visible: false, item: null });
 
@@ -100,4 +100,4 @@ const ProvidersCollection = () => {
   );
 };
 
-export default ProvidersCollection;
+export default ProvidersPage;

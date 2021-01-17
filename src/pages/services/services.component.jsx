@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Popconfirm, Table } from 'antd';
 import { connect } from 'react-redux';
 
-import { Content, Title } from './services-collection.styles';
-import './services-collection.styles.scss';
+import { Content, Title } from './services.styles';
+import './services.styles.scss';
 
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import { calculateServicePrice, formatMoney } from '../../utils';
@@ -13,7 +13,7 @@ import {
   removeServiceStart,
 } from '../../redux/service/service.actions';
 
-const ServicesCollection = ({
+const ServicesPage = ({
   providerId,
   isFetching,
   services,
@@ -197,4 +197,4 @@ const mapDispatchToProps = (dispatch) => ({
   onRemoveService: (id) => dispatch(removeServiceStart(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServicesCollection);
+export default connect(mapStateToProps, mapDispatchToProps)(ServicesPage);

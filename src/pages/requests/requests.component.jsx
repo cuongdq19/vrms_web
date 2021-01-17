@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 import http from '../../http';
-import { Title, Content } from './requests-collection.styles';
+import { Title, Content } from './requests.styles';
 import {
   calculateRequestPrice,
   formatMoney,
@@ -24,7 +24,7 @@ import {
   completeRequestStart,
 } from '../../redux/request/request.actions';
 
-const RequestsCollection = ({
+const RequestsPage = ({
   requests,
   visible,
   isFetching,
@@ -283,4 +283,4 @@ const mapDispatchToProps = (dispatch) => ({
   onHideModal: (modalType) => dispatch(hideRequestModal(modalType)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestsCollection);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestsPage);

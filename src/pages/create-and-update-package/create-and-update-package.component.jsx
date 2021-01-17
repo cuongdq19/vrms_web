@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Radio, Row, Select, Table } from 'antd';
 import { connect } from 'react-redux';
 
-import './package-create-and-update.styles.scss';
+import './create-and-update-package.styles.scss';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
 import { calculateServicePrice, formatMoney } from '../../utils';

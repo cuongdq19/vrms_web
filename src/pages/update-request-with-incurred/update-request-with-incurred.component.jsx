@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
 
 import LoadingSpinner from '../../components/loading-spinner/loading-spinner.component';
-import { Content, Title } from './request-update-with-incurred-page.styles';
+import { Content, Title } from './update-request-with-incurred.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestUpdateAddServiceModal from '../../components/request-update-add-service-modal/request-update-add-service-modal.component';
 import http from '../../http';
@@ -310,7 +310,7 @@ const PackageTable = ({
   />
 );
 
-const RequestUpdateWithIncurredPage = ({
+const UpdateRequestWithIncurredPage = ({
   history,
   match,
   isUpdating,
@@ -668,4 +668,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RequestUpdateWithIncurredPage);
+)(UpdateRequestWithIncurredPage);

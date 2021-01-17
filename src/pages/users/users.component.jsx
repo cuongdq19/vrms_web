@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Switch, Table } from 'antd';
 import { connect } from 'react-redux';
 
-import { Title, Content } from './users-collection.styles';
+import { Title, Content } from './users.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import UserModal from '../../components/user-create-and-update-modal/user-create-and-update-modal.component';
 import {
@@ -12,7 +12,7 @@ import {
   hideUserModal,
 } from '../../redux/user/user.actions';
 
-const UsersCollection = ({
+const UsersPage = ({
   match,
   visible,
   users,
@@ -126,4 +126,4 @@ const mapDispatchToProps = (dispatch) => ({
   onHideModal: () => dispatch(hideUserModal()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersCollection);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersPage);

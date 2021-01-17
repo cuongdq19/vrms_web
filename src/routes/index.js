@@ -2,23 +2,32 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import PrivateRoute from '../components/private-route/private-route.component';
-import ContractsCollection from '../pages/contracts-collection/contracts-collection.component';
-import Dashboard from '../pages/dashboard/dashboard.component';
-import PackagesCollection from '../pages/packages-collection/packages-collection.component';
-import PartsCollection from '../pages/parts-collection/parts-collection.component';
-import ServiceCreateAndUpdate from '../pages/service-create-and-update/service-create-and-update.component';
-import RequestsCollection from '../pages/requests-collection/requests-collection.component';
-import ServicesCollection from '../pages/services-collection/services-collection.component';
+
 import SignIn from '../pages/sign-in/sign-in.component';
-import UsersCollection from '../pages/users-collection/users-collection.component';
+import SignUp from '../pages/sign-up/sign-up.component';
+import Dashboard from '../pages/dashboard/dashboard.component';
+
+import ContractsPage from '../pages/contracts/contracts.component';
+import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
+
+import VehiclePartsPage from '../pages/vehicle-parts/vehicle-parts.component';
+
+import ServicesPage from '../pages/services/services.component';
+import CreateAndUpdateServicePage from '../pages/create-and-update-service/create-and-update-service.component';
+
+import MaintenancePackagesPage from '../pages/maintenance-packages/maintenance-packages.component';
+import CreateAndUpdatePackagePage from '../pages/create-and-update-package/create-and-update-package.component';
+
+import RequestsPage from '../pages/requests/requests.component';
+import UpdateRequestPage from '../pages/update-request/update-request.component';
+import UpdateRequestWithIncurredPage from '../pages/update-request-with-incurred/update-request-with-incurred.component';
+
+import UsersPage from '../pages/users/users.component';
+
+import ProvidersPage from '../pages/providers/providers.component';
+
 import _403 from '../pages/_403/_403.component';
 import _404 from '../pages/_404/_404.component';
-import SignUp from '../pages/sign-up/sign-up.component';
-import ContractResolve from '../pages/contract-resolve/contract-resolve.component';
-import ProvidersCollection from '../pages/providers-collection/providers-collection.component';
-import PackageCreateAndUpdate from '../pages/package-create-and-update/package-create-and-update.component';
-import RequestUpdatePage from '../pages/request-update-page/request-update-page.component';
-import RequestUpdateWithIncurredPage from '../pages/request-update-with-incurred-page/request-update-with-incurred-page.component';
 
 const publicRoutes = [
   { key: 'sign-in', path: '/sign-in', exact: true, component: SignIn },
@@ -30,7 +39,7 @@ const adminRoutes = [
     key: 'contracts',
     path: '/contracts',
     exact: true,
-    component: ContractsCollection,
+    component: ContractsPage,
   },
   {
     key: 'contracts',
@@ -42,7 +51,7 @@ const adminRoutes = [
     key: 'providers',
     path: '/providers',
     exact: true,
-    component: ProvidersCollection,
+    component: ProvidersPage,
   },
 ];
 
@@ -66,79 +75,79 @@ const providerRoutes = [
     key: 'services',
     path: '/services',
     exact: true,
-    component: ServicesCollection,
+    component: ServicesPage,
   },
   {
     key: 'add-service',
     path: '/services/add',
     exact: true,
-    component: ServiceCreateAndUpdate,
+    component: CreateAndUpdateServicePage,
   },
   {
     key: 'update-service',
     path: '/services/:serviceId',
     exact: true,
-    component: ServiceCreateAndUpdate,
+    component: CreateAndUpdateServicePage,
   },
   {
     key: 'packages',
     path: '/packages',
     exact: true,
-    component: PackagesCollection,
+    component: MaintenancePackagesPage,
   },
   {
     key: 'add-package',
     path: '/packages/add',
     exact: true,
-    component: PackageCreateAndUpdate,
+    component: CreateAndUpdatePackagePage,
   },
   {
     key: 'update-package',
     path: '/packages/:packageId',
     exact: true,
-    component: PackageCreateAndUpdate,
+    component: CreateAndUpdatePackagePage,
   },
   {
     key: 'staffs',
     path: '/staffs',
     exact: true,
-    component: UsersCollection,
+    component: UsersPage,
   },
   {
     key: 'technicians',
     path: '/technicians',
     exact: true,
-    component: UsersCollection,
+    component: UsersPage,
   },
   {
     key: 'customers',
     path: '/customers',
     exact: true,
-    component: UsersCollection,
+    component: UsersPage,
   },
   {
     key: 'parts',
     path: '/parts',
     exact: true,
-    component: PartsCollection,
+    component: VehiclePartsPage,
   },
   {
     key: 'requests',
     path: '/requests',
     exact: true,
-    component: RequestsCollection,
+    component: RequestsPage,
   },
   {
     key: 'update-request',
     path: '/requests/:requestId',
     exact: true,
-    component: RequestUpdatePage,
+    component: UpdateRequestPage,
   },
   {
     key: 'update-request-incurred',
     path: '/requests/:requestId/incurred',
     exact: true,
-    component: RequestUpdateWithIncurredPage,
+    component: UpdateRequestWithIncurredPage,
   },
 ];
 
