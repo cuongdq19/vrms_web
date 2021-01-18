@@ -12,3 +12,10 @@ export const toggleCollapsed = () => {
     type: CommonActionTypes.TOGGLE_COLLAPSED,
   };
 };
+
+export const setSelectedMenu = (menu) => {
+  return {
+    type: CommonActionTypes.SET_SELECTED_MENU,
+    payload: menu,
+  };
+};

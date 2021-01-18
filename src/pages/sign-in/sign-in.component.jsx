@@ -14,7 +14,7 @@ import {
   Title,
   RegisterLink,
 } from './sign-in.styles';
-import { signIn } from '../../redux/user/user.actions';
+import { signIn } from '../../redux/auth/auth.actions';
 import Background from '../../assets/images/sign-in-background.png';
 
 const SignIn = ({ loading, signIn, currentUser }) => {
