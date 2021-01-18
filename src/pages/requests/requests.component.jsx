@@ -147,7 +147,7 @@ const RequestsPage = ({
       title: 'Actions',
       render: (_, record) => {
         return (
-          <Row align="middle" gutter={16}>
+          <Row align="middle" gutter={[8, 8]}>
             <Col>
               <Button
                 disabled={
@@ -240,107 +240,6 @@ const RequestsPage = ({
         );
       },
     },
-    // {
-    //   align: 'center',
-    //   title: 'Update',
-    //   render: (_, record) => (
-    //     <Button
-    //       disabled={
-    //         record.is('FINISHED') ||
-    //         record.is('WORK COMPLETED') ||
-    //         record.is('CANCELED')
-    //       }
-    //       onClick={() => {
-    //         history.push(
-    //           `/requests/${record.id}${
-    //             record.is('CONFIRMED') ? `/incurred` : ''
-    //           }`
-    //         );
-    //       }}
-    //     >
-    //       Update
-    //     </Button>
-    //   ),
-    // },
-    // {
-    //   align: 'center',
-    //   title: 'Check in',
-    //   render: (_, record) => (
-    //     <Button
-    //       disabled={record.cannot('checkIn')}
-    //       onClick={() => {
-    //         setItem(record);
-    //         onShowModal(requestModals.checkIn);
-    //       }}
-    //     >
-    //       Check in
-    //     </Button>
-    //   ),
-    // },
-    // {
-    //   align: 'center',
-    //   title: 'Confirm',
-    //   render: (_, record) => (
-    //     <Button
-    //       disabled={record.cannot('confirm')}
-    //       onClick={() => {
-    //         setItem(record);
-    //         onShowModal(requestModals.confirm);
-    //       }}
-    //     >
-    //       Confirm
-    //     </Button>
-    //   ),
-    // },
-    // {
-    //   align: 'center',
-    //   title: 'Complete',
-    //   render: (_, record) => (
-    //     <Popconfirm
-    //       disabled={record.cannot('done')}
-    //       okText="Confirm"
-    //       placement="top"
-    //       title="Are you sure to complete work for this request?"
-    //       onConfirm={() => requestCompletedHandler(record.id)}
-    //     >
-    //       <Button disabled={record.cannot('done')}>Complete</Button>
-    //     </Popconfirm>
-    //   ),
-    // },
-    // {
-    //   align: 'center',
-    //   title: 'Checkout',
-    //   render: (_, record) => (
-    //     <Button
-    //       disabled={record.cannot('checkOut')}
-    //       onClick={() => {
-    //         setItem(record);
-    //         onShowModal(requestModals.checkout);
-    //       }}
-    //     >
-    //       Checkout
-    //     </Button>
-    //   ),
-    // },
-    // {
-    //   align: 'center',
-    //   title: 'Cancel',
-    //   render: (_, record) => (
-    //     <Popconfirm
-    //       okText="Cancel"
-    //       okButtonProps={{ danger: true }}
-    //       placement="top"
-    //       title="Are you sure to cancel this request?"
-    //       onConfirm={() => {
-    //         requestCanceledHandler(record);
-    //       }}
-    //     >
-    //       <Button danger disabled={record.cannot('cancel')}>
-    //         Cancel
-    //       </Button>
-    //     </Popconfirm>
-    //   ),
-    // },
   ];
 
   useEffect(() => {
