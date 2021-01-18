@@ -19,3 +19,18 @@ export const signOut = () => {
     type: AuthActionTypes.SIGN_OUT,
   };
 };
+
+export const updateProfileStart = (updated) => ({
+  type: AuthActionTypes.UPDATE_PROFILE_START,
+  payload: updated,
+});
+
+export const updateProfileSuccess = (userData) => ({
+  type: AuthActionTypes.UPDATE_PROFILE_SUCCESS,
+  payload: userData,
+});
+
+export const updateProfileFailure = (error) => ({
+  type: AuthActionTypes.UPDATE_PROFILE_FAILURE,
+  payload: error,
+});
