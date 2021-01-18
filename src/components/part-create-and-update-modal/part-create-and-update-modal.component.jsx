@@ -41,6 +41,7 @@ const PartCreateAndUpdateModal = ({
   const [filters, setFilters] = useState({
     manufacturerId: 0,
   });
+  const [isAccessory, setIsAccessory] = useState(true);
 
   const submitHandler = (values) => {
     if (item) {
@@ -113,6 +114,9 @@ const PartCreateAndUpdateModal = ({
         </Form.Item>
         <Form.Item label="Category" name="categoryId">
           <Cascader
+            onChange={(value, selectedOptions) => {
+              setIsAccessory(selectedOptions[1]?.isAccessory ?? false);
+            }}
             options={sectionsWithCategories.map(
               ({ categories, sectionId, sectionName, ...rest }) => ({
                 label: sectionName,
@@ -120,6 +124,7 @@ const PartCreateAndUpdateModal = ({
                 children: categories.map((cate) => ({
                   label: cate.name,
                   value: cate.id,
+                  isAccessory: cate.isAccessory,
                 })),
               })
             )}
@@ -132,13 +137,21 @@ const PartCreateAndUpdateModal = ({
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="Maintenance (months)" name="monthsPerMaintenance">
-              <InputNumber type="number" min={0} />
+            <Form.Item
+              label="Maintenance (months)"
+              name="monthsPerMaintenance"
+              initialValue={0}
+            >
+              <InputNumber type="number" min={0} disabled={!isAccessory} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="Warranty Duration" name="warrantyDuration">
-              <InputNumber type="number" min={0} />
+            <Form.Item
+              label="Warranty Duration"
+              name="warrantyDuration"
+              initialValue={0}
+            >
+              <InputNumber disabled={!isAccessory} type="number" min={0} />
             </Form.Item>
           </Col>
         </Row>
@@ -167,15 +180,21 @@ const PartCreateAndUpdateModal = ({
                     .post('/detections/parts/categories', formData)
                     .then(({ data }) => {
                       if (data.length > 0) {
-                        const sectionId = sectionsWithCategories.find(
+                        const section = sectionsWithCategories.find(
                           (sect) =>
                             sect.categories.findIndex(
                               (cate) => cate.id === data[0]
                             ) >= 0
-                        ).sectionId;
+                        );
+                        const category = section.categories.find(
+                          (cate) => cate.id === data[0]
+                        );
                         form.setFieldsValue({
-                          categoryId: [sectionId, data[0]],
+                          categoryId: [section.sectionId, data[0]],
                         });
+                        message.success(
+                          `Category is detected as ${section.sectionName} / ${category.name}`
+                        );
                       } else {
                         message.info(
                           'Cannot detect the category of this image.'
