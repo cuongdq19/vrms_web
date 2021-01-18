@@ -25,10 +25,12 @@ import http from '../../http';
 import CustomMap from '../../components/custom-map/custom-map.component';
 
 const SignUp = () => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [redirect, setRedirect] = useState(false);
 
   const submitHandler = (values) => {
+    setLoading(true);
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       switch (key) {
@@ -45,6 +47,7 @@ const SignUp = () => {
     http
       .post('/contracts', formData)
       .then(({ data }) => {
+        setLoading(false);
         message.success('Request success. We will contact you ASAP.');
         setRedirect(true);
       })
@@ -122,7 +125,7 @@ const SignUp = () => {
         <CustomForm.Item name="address" label="Address">
           <CustomMap onSearch={(address) => form.setFieldsValue({ address })} />
         </CustomForm.Item>
-        <CustomButton type="primary" htmlType="submit">
+        <CustomButton type="primary" loading={loading} htmlType="submit">
           Register
         </CustomButton>
         <SignInLink>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Button, Form, Image, Input, Radio } from 'antd';
+import { Button, Form, Image, Input, Radio } from 'antd';
 import { connect } from 'react-redux';
 
 import { Container, FormContainer } from './profile.styles';

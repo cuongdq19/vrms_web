@@ -106,13 +106,25 @@ const PartCreateAndUpdateModal = ({
             <Input />
           </Form.Item>
         ) : null}
-        <Form.Item label="Name" name="name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[{ required: true, message: "Name can't be blank" }]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item label="Description" name="description">
+        <Form.Item
+          label="Description"
+          name="description"
+          rules={[{ required: true, message: "Description can't be blank" }]}
+        >
           <Input.TextArea autoSize />
         </Form.Item>
-        <Form.Item label="Category" name="categoryId">
+        <Form.Item
+          label="Category"
+          name="categoryId"
+          rules={[{ required: true, message: "Category can't be blank" }]}
+        >
           <Cascader
             onChange={(value, selectedOptions) => {
               setIsAccessory(selectedOptions[1]?.isAccessory ?? false);
@@ -132,7 +144,11 @@ const PartCreateAndUpdateModal = ({
         </Form.Item>
         <Row gutter={[16, 16]}>
           <Col span={8}>
-            <Form.Item label="Price" name="price">
+            <Form.Item
+              label="Price"
+              name="price"
+              rules={[{ required: true, message: "Price can't be blank" }]}
+            >
               <InputNumber type="number" min={0} />
             </Form.Item>
           </Col>
@@ -141,6 +157,9 @@ const PartCreateAndUpdateModal = ({
               label="Maintenance (months)"
               name="monthsPerMaintenance"
               initialValue={0}
+              rules={[
+                { required: true, message: "Maintenance can't be blank" },
+              ]}
             >
               <InputNumber type="number" min={0} disabled={!isAccessory} />
             </Form.Item>
@@ -150,6 +169,9 @@ const PartCreateAndUpdateModal = ({
               label="Warranty Duration"
               name="warrantyDuration"
               initialValue={0}
+              rules={[
+                { required: true, message: "Warranty Duration can't be blank" },
+              ]}
             >
               <InputNumber disabled={!isAccessory} type="number" min={0} />
             </Form.Item>
