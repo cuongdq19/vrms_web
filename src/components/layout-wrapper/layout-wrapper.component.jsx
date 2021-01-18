@@ -73,34 +73,24 @@ const LayoutWrapper = ({
       onClick: () => history.push('/packages'),
     },
     {
+      hidden:
+        currentUser.roleName !== roles.Manager &&
+        currentUser.roleName !== roles.Staff,
       icon: <UserOutlined />,
       key: 'user-management',
       title: 'User Management',
       children: [
         {
-          hidden:
-            currentUser.roleName !== roles.Manager &&
-            currentUser.roleName !== roles.Staff,
           title: 'Staffs',
           icon: <UserOutlined />,
           key: 'staffs',
           onClick: () => history.push('/staffs'),
         },
         {
-          hidden:
-            currentUser.roleName !== roles.Manager &&
-            currentUser.roleName !== roles.Staff,
           title: 'Technicians',
           icon: <UserOutlined />,
           key: 'technicians',
           onClick: () => history.push('/technicians'),
-        },
-        {
-          hidden: currentUser.roleName !== roles.Admin,
-          title: 'Customers',
-          icon: <UserOutlined />,
-          key: 'customers',
-          onClick: () => history.push('/customers'),
         },
       ],
     },

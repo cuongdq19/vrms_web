@@ -7,6 +7,7 @@ import LoadingSpinner from '../../components/loading-spinner/loading-spinner.com
 import { Content, Title } from './update-request.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import RequestUpdateAddServiceModal from '../../components/request-update-add-service-modal/request-update-add-service-modal.component';
+import RequestTotalView from '../../components/request-total-view/request-total-view.component';
 import http from '../../http';
 import {
   calculatePackagePrice,
@@ -519,6 +520,11 @@ const UpdateRequestPage = ({ history, match, isUpdating, onUpdateRequest }) => {
               onRemove={serviceRemovedInPackageHandler}
               onQuantityChanged={servicePartQuantityInPackageChangedHandler}
             />
+            <Row justify="end">
+              <Col span={6}>
+                <RequestTotalView requestItem={currentItem} />
+              </Col>
+            </Row>
             <RequestUpdateAddServiceModal
               visible={visible}
               modelId={currentItem?.user.vehicle.model.id}

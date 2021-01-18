@@ -26,6 +26,7 @@ import {
   updateServiceWithoutPartsStart,
 } from '../../redux/service/service.actions';
 import { fetchPartsStart } from '../../redux/part/part.actions';
+import { getColumnSearchProps } from '../../utils/antd';
 
 const CreateAndUpdateServicePage = ({
   providerId,
@@ -52,6 +53,24 @@ const CreateAndUpdateServicePage = ({
     partModelIds: [],
   });
   const [selectedParts, setSelectedParts] = useState([]);
+
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
 
   const addPart = (part) => {
     const updatedSelected = [...selectedParts];
@@ -132,6 +151,8 @@ const CreateAndUpdateServicePage = ({
     }
   }, [isWithParts, onFetchParts, providerId]);
 
+  console.log(selectedParts);
+
   useEffect(() => {
     if (item) {
       const { typeDetail, name, price, models, id, parts: itemParts } = item;
@@ -140,8 +161,8 @@ const CreateAndUpdateServicePage = ({
         setSelectedParts(
           itemParts.map(({ id, ...rest }) => ({
             ...rest,
+            models,
             id,
-            models: parts.find((part) => part.id === id)?.models,
           }))
         );
       }
@@ -330,6 +351,12 @@ const CreateAndUpdateServicePage = ({
                         title: 'Name',
                         dataIndex: 'name',
                         align: 'center',
+                        ...getColumnSearchProps(
+                          'name',
+                          handleSearch,
+                          handleReset,
+                          search
+                        ),
                       },
                       {
                         title: 'Category',
