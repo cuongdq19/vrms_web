@@ -32,6 +32,7 @@ const PartCreateAndUpdateModal = ({
   item,
   onLoadForm,
   onCloseModal,
+  onClose,
   onCreatePart,
   onUpdatePart,
 }) => {
@@ -93,6 +94,7 @@ const PartCreateAndUpdateModal = ({
     <CustomModal
       visible={visible}
       onCancel={() => {
+        onClose();
         form.resetFields();
         setImages([]);
         onCloseModal();

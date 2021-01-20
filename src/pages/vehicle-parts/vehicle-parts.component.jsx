@@ -98,7 +98,7 @@ const VehiclePartsPage = ({
               />
             </Row>
           </Content>
-          <PartCreateAndUpdateModal item={item} />
+          <PartCreateAndUpdateModal item={item} onClose={() => setItem(null)} />
           {/* <PartModal
             {...modal}
             onClose={() => {

@@ -11,7 +11,7 @@ import {
   ButtonContainer,
 } from './part-item.styles';
 
-const PartItem = ({ item, onUpdate, onRemove }) => {
+const PartItem = ({ item, onClose, onUpdate, onRemove }) => {
   const { id, name, price, imageUrls } = item;
 
   return (
