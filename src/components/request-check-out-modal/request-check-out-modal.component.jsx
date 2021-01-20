@@ -1,23 +1,21 @@
-import { message } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
 import CustomModal from '../custom-modal/custom-modal.component';
 import RequestOverview from '../request-overview/request-overview.component';
-import http from '../../http';
+import { checkoutRequestStart } from '../../redux/request/request.actions';
 
-const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
+const RequestCheckoutModal = ({
+  visible,
+  item,
+  isUpdating,
+  onCancel,
+  onCheckoutRequest,
+}) => {
   const { id } = item ?? {};
-  const [submitting, setSubmitting] = useState(false);
 
-  const submitHandler = (item) => {
-    setSubmitting(true);
-    http.get(`/requests/checkout/${item.id}`).then(() => {
-      item.checkOut();
-      message.success('Checkout success.');
-      onSuccess();
-      onCancel();
-      setSubmitting(false);
-    });
+  const submitHandler = (id) => {
+    onCheckoutRequest(id);
   };
 
   return (
@@ -25,9 +23,9 @@ const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
       visible={visible}
       title={`Checkout Request #${id}`}
       onCancel={onCancel}
-      loading={submitting}
+      confirmLoading={isUpdating}
       onOk={() => {
-        submitHandler(item);
+        submitHandler(id);
       }}
     >
       <RequestOverview item={item} />
@@ -35,4 +33,15 @@ const RequestCheckoutModal = ({ visible, item, onSuccess, onCancel }) => {
   );
 };
 
-export default RequestCheckoutModal;
+const mapStateToProps = (state) => ({
+  isUpdating: state.requests.isUpdating,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onCheckoutRequest: (id) => dispatch(checkoutRequestStart(id)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RequestCheckoutModal);

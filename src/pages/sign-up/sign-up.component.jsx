@@ -25,10 +25,12 @@ import http from '../../http';
 import CustomMap from '../../components/custom-map/custom-map.component';
 
 const SignUp = () => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [redirect, setRedirect] = useState(false);
 
   const submitHandler = (values) => {
+    setLoading(true);
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       switch (key) {
@@ -45,6 +47,7 @@ const SignUp = () => {
     http
       .post('/contracts', formData)
       .then(({ data }) => {
+        setLoading(false);
         message.success('Request success. We will contact you ASAP.');
         setRedirect(true);
       })
@@ -69,7 +72,6 @@ const SignUp = () => {
           rules={[{ required: true, message: "Username can't be blank" }]}
         >
           <Input
-            size="large"
             placeholder="Full Name"
             prefix={<FontAwesomeIcon icon={faUser} />}
           />
@@ -80,7 +82,6 @@ const SignUp = () => {
           rules={[{ required: true, message: "Password can't be blank" }]}
         >
           <Input
-            size="large"
             placeholder="Email"
             prefix={<FontAwesomeIcon icon={faMailBulk} />}
           />
@@ -88,10 +89,10 @@ const SignUp = () => {
         <CustomForm.Item
           label="Phone Number"
           name="phoneNumber"
-          rules={[{ required: true, message: "Password can't be blank" }]}
+          rules={[{ required: true, message: "Phone can't be blank" }]}
         >
           <Input
-            size="large"
+            type="number"
             placeholder="Phone Number"
             prefix={<FontAwesomeIcon icon={faPhone} />}
           />
@@ -108,13 +109,15 @@ const SignUp = () => {
             return e && e.fileList;
           }}
         >
-          <Upload
-            multiple
-            name="logo"
-            beforeUpload={() => false}
-            listType="picture"
-          >
-            <Button icon={<FontAwesomeIcon icon={faFileUpload} />}>
+          <Upload name="logo" beforeUpload={() => false} listType="picture">
+            <Button
+              icon={
+                <FontAwesomeIcon
+                  icon={faFileUpload}
+                  style={{ marginRight: '8px' }}
+                />
+              }
+            >
               Upload
             </Button>
           </Upload>
@@ -122,7 +125,7 @@ const SignUp = () => {
         <CustomForm.Item name="address" label="Address">
           <CustomMap onSearch={(address) => form.setFieldsValue({ address })} />
         </CustomForm.Item>
-        <CustomButton size="large" type="primary" htmlType="submit">
+        <CustomButton type="primary" loading={loading} htmlType="submit">
           Register
         </CustomButton>
         <SignInLink>

@@ -1,12 +1,17 @@
 import React from 'react';
-import { Button, Form, Input, Radio } from 'antd';
+import { Button, Form, Image, Input, Radio } from 'antd';
 import { connect } from 'react-redux';
 
 import { Container, FormContainer } from './profile.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
+import { updateProfileStart } from '../../redux/auth/auth.actions';
 
-const ProfilePage = ({ userData }) => {
+const ProfilePage = ({ userData, onUpdateProfile }) => {
   const [form] = Form.useForm();
+
+  const submitHandler = (values) => {
+    onUpdateProfile(values);
+  };
 
   return (
     <LayoutWrapper>
@@ -17,17 +22,16 @@ const ProfilePage = ({ userData }) => {
             form={form}
             layout="vertical"
             initialValues={{
+              id: userData.id,
               fullName: userData.fullName,
               gender: userData.gender,
             }}
+            onFinish={submitHandler}
           >
-            {/* <Form.Item
-              label="Username"
-              name="username"
-              rules={[{ required: true, message: "Username can't be blank." }]}
-            >
-              <Input />
-            </Form.Item> */}
+            <Image src={userData.imgUrl} width="30%" height="30%" />
+            <Form.Item name="id" label="User ID">
+              <Input disabled />
+            </Form.Item>
             <Form.Item
               label="Full Name"
               name="fullName"
@@ -63,4 +67,8 @@ const mapStateToProps = (state) => ({
   userData: state.auth.userData,
 });
 
-export default connect(mapStateToProps)(ProfilePage);
+const mapDispatchToProps = (dispatch) => ({
+  onUpdateProfile: (userData) => dispatch(updateProfileStart(userData)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

@@ -11,7 +11,7 @@ import {
   ButtonContainer,
 } from './part-item.styles';
 
-const PartItem = ({ item, onInitUpdate, onRemove }) => {
+const PartItem = ({ item, onClose, onUpdate, onRemove }) => {
   const { id, name, price, imageUrls } = item;
 
   return (
@@ -22,7 +22,7 @@ const PartItem = ({ item, onInitUpdate, onRemove }) => {
         <PriceContainer>{formatMoney(price)}</PriceContainer>
       </Footer>
       <ButtonContainer className="buttons">
-        <Button type="primary" onClick={onInitUpdate}>
+        <Button type="primary" onClick={onUpdate}>
           Update
         </Button>
         <Popconfirm

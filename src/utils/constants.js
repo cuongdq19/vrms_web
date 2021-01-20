@@ -79,15 +79,18 @@ export const ITEM_TYPES = {
   package: 2,
 };
 
+export const ServiceItemTypes = {
+  SERVICES: 'SERVICES',
+  EXPENSES: 'EXPENSES',
+  PACKAGES: 'PACKAGES',
+};
+
 export const notificationActions = {
   CREATE_REQUEST: 'CREATE_REQUEST',
 };
 
-export const getRouteOnNotificationClicked = (action, data) => {
-  switch (action) {
-    case notificationActions.CREATE_REQUEST:
-      return '/requests';
-    default:
-      return '/';
-  }
+export const requestModals = {
+  checkIn: 'checkIn',
+  confirm: 'confirm',
+  checkout: 'checkout',
 };
