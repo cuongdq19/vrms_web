@@ -4,9 +4,11 @@ import {
   Cascader,
   Col,
   Form,
+  Image,
   Input,
   InputNumber,
   message,
+  Radio,
   Row,
   Select,
   Upload,
@@ -43,6 +45,11 @@ const PartCreateAndUpdateModal = ({
     manufacturerId: 0,
   });
   const [isAccessory, setIsAccessory] = useState(true);
+  const [selectCategory, setSelectCategory] = useState({
+    visible: false,
+    options: [],
+    selected: null,
+  });
 
   const submitHandler = (values) => {
     if (item) {
@@ -70,7 +77,9 @@ const PartCreateAndUpdateModal = ({
         warrantyDuration,
         monthsPerMaintenance,
         models,
+        // isAccessory,
       } = item;
+      // setIsAccessory(isAccessory);
       form.setFieldsValue({
         id,
         name,
@@ -156,18 +165,6 @@ const PartCreateAndUpdateModal = ({
           </Col>
           <Col span={8}>
             <Form.Item
-              label="Maintenance (months)"
-              name="monthsPerMaintenance"
-              initialValue={0}
-              rules={[
-                { required: true, message: "Maintenance can't be blank" },
-              ]}
-            >
-              <InputNumber type="number" min={0} disabled={!isAccessory} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
               label="Warranty Duration"
               name="warrantyDuration"
               initialValue={0}
@@ -176,6 +173,29 @@ const PartCreateAndUpdateModal = ({
               ]}
             >
               <InputNumber disabled={!isAccessory} type="number" min={0} />
+            </Form.Item>
+          </Col>
+
+          <Col span={8}>
+            <Form.Item
+              label="Times per maintenance"
+              name="monthsPerMaintenance"
+              initialValue={0}
+              rules={[
+                { required: true, message: "Time can't be blank" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('warrantyDuration') > value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      'Warranty duration should be longer than times per maintenance.'
+                    );
+                  },
+                }),
+              ]}
+            >
+              <InputNumber type="number" min={0} disabled={!isAccessory} />
             </Form.Item>
           </Col>
         </Row>
@@ -204,21 +224,26 @@ const PartCreateAndUpdateModal = ({
                     .post('/detections/parts/categories', formData)
                     .then(({ data }) => {
                       if (data.length > 0) {
-                        const section = sectionsWithCategories.find(
-                          (sect) =>
-                            sect.categories.findIndex(
-                              (cate) => cate.id === data[0].categoryId
-                            ) >= 0
-                        );
-                        const category = section.categories.find(
-                          (cate) => cate.id === data[0].categoryId
-                        );
-                        form.setFieldsValue({
-                          categoryId: [section.sectionId, data[0].categoryId],
+                        const categoryOptions = data.map((item) => {
+                          const section = sectionsWithCategories.find(
+                            (sect) =>
+                              sect.categories.findIndex(
+                                (cate) => cate.id === data[0].categoryId
+                              ) >= 0
+                          );
+                          const category = section.categories.find(
+                            (cate) => cate.id === data[0].categoryId
+                          );
+                          return {
+                            ...category,
+                            section,
+                          };
                         });
-                        message.success(
-                          `Category is detected as ${section.sectionName} / ${category.name}`
-                        );
+                        setSelectCategory((curr) => ({
+                          ...curr,
+                          visible: true,
+                          options: categoryOptions,
+                        }));
                       } else {
                         message.info(
                           'Cannot detect the category of this image.'
@@ -289,6 +314,45 @@ const PartCreateAndUpdateModal = ({
           </Col>
         </Row>
       </Form>
+      <CustomModal
+        width="60%"
+        title="Select Category"
+        visible={selectCategory.visible}
+        onCancel={() =>
+          setSelectCategory({ visible: false, options: [], selected: null })
+        }
+        onOk={() => {
+          form.setFieldsValue({
+            categoryId: [
+              selectCategory.selected.section.sectionId,
+              selectCategory.selected.id,
+            ],
+          });
+          setSelectCategory({ visible: false, options: [], selected: null });
+        }}
+      >
+        <Row justify="center" gutter={[16, 16]}>
+          <Col span={24}>
+            <Image src={`http://localhost:5000/abc.jpg?${Date.now()}`} />
+          </Col>
+          <Col span={24}>
+            <Radio.Group
+              onChange={(event) => {
+                setSelectCategory((curr) => ({
+                  ...curr,
+                  selected: event.target.option,
+                }));
+              }}
+            >
+              {selectCategory.options.map((option) => (
+                <Radio key={option.id} value={option.id} option={option}>
+                  {option.name}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </Col>
+        </Row>
+      </CustomModal>
     </CustomModal>
   );
 };
