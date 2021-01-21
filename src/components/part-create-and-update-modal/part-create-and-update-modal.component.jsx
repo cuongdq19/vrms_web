@@ -77,7 +77,9 @@ const PartCreateAndUpdateModal = ({
         warrantyDuration,
         monthsPerMaintenance,
         models,
+        // isAccessory,
       } = item;
+      // setIsAccessory(isAccessory);
       form.setFieldsValue({
         id,
         name,
@@ -163,18 +165,6 @@ const PartCreateAndUpdateModal = ({
           </Col>
           <Col span={8}>
             <Form.Item
-              label="Maintenance (months)"
-              name="monthsPerMaintenance"
-              initialValue={0}
-              rules={[
-                { required: true, message: "Maintenance can't be blank" },
-              ]}
-            >
-              <InputNumber type="number" min={0} disabled={!isAccessory} />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
               label="Warranty Duration"
               name="warrantyDuration"
               initialValue={0}
@@ -183,6 +173,29 @@ const PartCreateAndUpdateModal = ({
               ]}
             >
               <InputNumber disabled={!isAccessory} type="number" min={0} />
+            </Form.Item>
+          </Col>
+
+          <Col span={8}>
+            <Form.Item
+              label="Times per maintenance"
+              name="monthsPerMaintenance"
+              initialValue={0}
+              rules={[
+                { required: true, message: "Time can't be blank" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('warrantyDuration') > value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      'Warranty duration should be longer than times per maintenance.'
+                    );
+                  },
+                }),
+              ]}
+            >
+              <InputNumber type="number" min={0} disabled={!isAccessory} />
             </Form.Item>
           </Col>
         </Row>
