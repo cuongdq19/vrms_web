@@ -103,6 +103,12 @@ const RequestsPage = ({
       },
     },
     {
+      title: 'Note',
+      align: 'center',
+      dataIndex: 'note',
+      render: (value) => value.length || 'N/A',
+    },
+    {
       align: 'center',
       title: 'Booking Time',
       dataIndex: 'bookingTime',
