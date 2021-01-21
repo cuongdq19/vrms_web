@@ -135,13 +135,28 @@ const PackageCreateAndUpdate = ({
             </Form.Item>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <Form.Item label="Package Name" name="name">
+                <Form.Item
+                  label="Package Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Name can't be blank",
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 {isMilestone ? (
-                  <Form.Item label="Milestone" name="milestone">
+                  <Form.Item
+                    label="Milestone"
+                    name="milestone"
+                    rules={[
+                      { required: true, message: "Milestone can't be blank" },
+                    ]}
+                  >
                     <Select
                       options={milestones.map((m) => ({
                         label: m.milestone,
@@ -150,7 +165,13 @@ const PackageCreateAndUpdate = ({
                     />
                   </Form.Item>
                 ) : (
-                  <Form.Item label="Section" name="sectionId">
+                  <Form.Item
+                    label="Section"
+                    name="sectionId"
+                    rules={[
+                      { required: true, message: "Section can't be blank" },
+                    ]}
+                  >
                     <Select
                       options={sections.map((m) => ({
                         label: m.sectionName,
