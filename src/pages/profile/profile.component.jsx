@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button, Form, Image, Input, Radio } from 'antd';
+import { Avatar, Button, Form, Input, Radio } from 'antd';
 import { connect } from 'react-redux';
 
 import { Container, FormContainer } from './profile.styles';
 import LayoutWrapper from '../../components/layout-wrapper/layout-wrapper.component';
 import { updateProfileStart } from '../../redux/auth/auth.actions';
+import { UserOutlined } from '@ant-design/icons';
 
-const ProfilePage = ({ userData, onUpdateProfile }) => {
+const ProfilePage = ({ userData, loading, onUpdateProfile }) => {
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
@@ -28,7 +29,12 @@ const ProfilePage = ({ userData, onUpdateProfile }) => {
             }}
             onFinish={submitHandler}
           >
-            <Image src={userData.imgUrl} width="30%" height="30%" />
+            <Avatar
+              src={userData.imgUrl}
+              icon={<UserOutlined />}
+              shape="square"
+              size="large"
+            />
             <Form.Item name="id" label="User ID">
               <Input disabled />
             </Form.Item>
@@ -38,6 +44,32 @@ const ProfilePage = ({ userData, onUpdateProfile }) => {
               rules={[{ required: true, message: "Fullname can't be blank." }]}
             >
               <Input />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, message: "Password can't be blank." }]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              label="Confirm Password"
+              name="confirmPassword"
+              rules={[
+                { required: true, message: "Password can't be blank." },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      'The two passwords that you entered do not match!'
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
             </Form.Item>
             <Form.Item
               label="Gender"
@@ -51,7 +83,11 @@ const ProfilePage = ({ userData, onUpdateProfile }) => {
             </Form.Item>
             <Form.Item>
               <Container>
-                <Button type="primary" onClick={() => form.submit()}>
+                <Button
+                  loading={loading}
+                  type="primary"
+                  onClick={() => form.submit()}
+                >
                   Submit
                 </Button>
               </Container>
@@ -64,6 +100,7 @@ const ProfilePage = ({ userData, onUpdateProfile }) => {
 };
 
 const mapStateToProps = (state) => ({
+  loading: state.auth.loading,
   userData: state.auth.userData,
 });
 

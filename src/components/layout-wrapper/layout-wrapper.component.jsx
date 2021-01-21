@@ -210,7 +210,11 @@ const LayoutWrapper = ({
               <div style={{ marginRight: '0.5rem' }}>
                 {currentUser.fullName}
               </div>
-              <Avatar src={currentUser.imgUrl} shape="square" />
+              <Avatar
+                src={currentUser.imgUrl}
+                icon={<UserOutlined />}
+                shape="square"
+              />
               <DownOutlined
                 style={{ marginLeft: '0.5rem', fontSize: '0.6rem' }}
               />
