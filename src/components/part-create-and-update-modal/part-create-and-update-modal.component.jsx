@@ -207,14 +207,14 @@ const PartCreateAndUpdateModal = ({
                         const section = sectionsWithCategories.find(
                           (sect) =>
                             sect.categories.findIndex(
-                              (cate) => cate.id === data[0]
+                              (cate) => cate.id === data[0].categoryId
                             ) >= 0
                         );
                         const category = section.categories.find(
-                          (cate) => cate.id === data[0]
+                          (cate) => cate.id === data[0].categoryId
                         );
                         form.setFieldsValue({
-                          categoryId: [section.sectionId, data[0]],
+                          categoryId: [section.sectionId, data[0].categoryId],
                         });
                         message.success(
                           `Category is detected as ${section.sectionName} / ${category.name}`
