@@ -55,6 +55,8 @@ const VehiclePartsPage = ({
     )
     .splice((current - 1) * PAGE_SIZE, PAGE_SIZE);
 
+  console.log(item);
+
   return (
     <LayoutWrapper>
       {isFetching ? (
@@ -98,7 +100,7 @@ const VehiclePartsPage = ({
               />
             </Row>
           </Content>
-          <PartCreateAndUpdateModal item={item} onClose={() => setItem(null)} />
+          <PartCreateAndUpdateModal item={item} onReset={() => setItem(null)} />
           {/* <PartModal
             {...modal}
             onClose={() => {
