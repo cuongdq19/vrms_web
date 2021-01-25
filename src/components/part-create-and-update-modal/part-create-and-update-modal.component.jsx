@@ -142,6 +142,16 @@ const PartCreateAndUpdateModal = ({
           rules={[{ required: true, message: "Category can't be blank" }]}
         >
           <Cascader
+            showSearch={{
+              filter: (inputValue, path) => {
+                return path.some(
+                  (option) =>
+                    option.label
+                      .toLowerCase()
+                      .indexOf(inputValue.toLowerCase()) > -1
+                );
+              },
+            }}
             onChange={(value, selectedOptions) => {
               setIsAccessory(selectedOptions[1]?.isAccessory ?? false);
             }}
