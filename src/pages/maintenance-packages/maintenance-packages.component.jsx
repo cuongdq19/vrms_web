@@ -138,6 +138,25 @@ const MaintenancePackagesPage = ({
                 record.sectionName || record.milestone + ` KM`,
             },
             {
+              title: 'Models',
+              align: 'center',
+              render: (_, record) => {
+                const defaultOption = record.suitableModels[0];
+
+                return (
+                  <Select
+                    defaultValue={defaultOption.id}
+                    options={record.suitableModels.map((model) => {
+                      return {
+                        label: modelToString(model),
+                        value: model.id,
+                      };
+                    })}
+                  />
+                );
+              },
+            },
+            {
               title: 'Total Price',
               align: 'center',
               render: (_, record) => formatMoney(calculatePackagePrice(record)),
