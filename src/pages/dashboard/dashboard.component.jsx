@@ -9,7 +9,7 @@ import { roles } from '../../utils/constants';
 const DashboardPage = ({ roleName }) => {
   return (
     <LayoutWrapper>
-      {roleName === roles.Manager ? <ProviderDashboard /> : <AdminDashboard />}
+      {roleName === roles.Admin ? <AdminDashboard /> : <ProviderDashboard />}
     </LayoutWrapper>
   );
 };

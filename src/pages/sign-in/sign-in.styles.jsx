@@ -2,6 +2,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Form, Layout, Typography } from 'antd';
 import styled from 'styled-components';
 
+export const ErrorText = styled.h3`
+  color: red;
+  text-align: center;
+`;
+
 export const CustomForm = styled(Form)`
   width: 25%;
   padding: 24px 16px;

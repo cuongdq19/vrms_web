@@ -24,18 +24,26 @@ const ProfilePage = ({ userData, loading, onUpdateProfile }) => {
             layout="vertical"
             initialValues={{
               id: userData.id,
+              username: userData.username,
               fullName: userData.fullName,
               gender: userData.gender,
             }}
             onFinish={submitHandler}
           >
             <Avatar
-              src={userData.imgUrl}
+              src={userData.imgUrl[0]}
               icon={<UserOutlined />}
               shape="square"
               size="large"
             />
-            <Form.Item name="id" label="User ID">
+            <Form.Item hidden name="id" label="User ID">
+              <Input disabled />
+            </Form.Item>
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[{ required: true, message: "Username can't be blank." }]}
+            >
               <Input disabled />
             </Form.Item>
             <Form.Item
@@ -69,7 +77,7 @@ const ProfilePage = ({ userData, loading, onUpdateProfile }) => {
                 }),
               ]}
             >
-              <Input.Password />
+              <Input.Password placeholder="Enter password" />
             </Form.Item>
             <Form.Item
               label="Gender"

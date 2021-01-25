@@ -5,6 +5,7 @@ import { requestFirebaseNotificationPermission } from '../../firebase/firebase.u
 import http from '../../http';
 import {
   signInSuccess,
+  signInFailure,
   updateProfileFailure,
   updateProfileSuccess,
 } from './auth.actions';
@@ -18,16 +19,22 @@ function* signIn(action) {
       .post('/users/provider', { ...action.payload, deviceToken: token })
       .then((res) => res.data);
 
-    yield put(signInSuccess(userData));
+    yield put(
+      signInSuccess({ username: action.payload.username, ...userData })
+    );
   } catch (error) {
-    console.log(error);
+    yield put(signInFailure(error));
   }
 }
 
 export function* updateProfileAsync({ payload }) {
   try {
+    const formData = new FormData();
+    Object.keys(payload).forEach((key) => {
+      formData.append(key, payload[key]);
+    });
     const data = yield http
-      .post(`/users/${payload.id}`, payload)
+      .post(`/users/${payload.id}/provider`, formData)
       .then(({ data }) => data);
     yield put(updateProfileSuccess(data));
     message.success('Update profile success.');

@@ -155,36 +155,36 @@ const LayoutWrapper = ({
           selectedKeys={[selected]}
         >
           {SIDER_MENU.map((submenu) =>
-            Array.isArray(submenu.children) ? (
-              <Menu.SubMenu
-                icon={submenu.icon}
-                key={submenu.key}
-                title={submenu.title}
-              >
-                {submenu.children.map(
-                  (menu) =>
-                    !menu.hidden && (
-                      <Menu.Item
-                        icon={menu.icon}
-                        key={menu.key}
-                        onClick={menu.onClick}
-                      >
-                        {menu.title}
-                      </Menu.Item>
-                    )
-                )}
-              </Menu.SubMenu>
-            ) : (
-              !submenu.hidden && (
-                <Menu.Item
-                  icon={submenu.icon}
-                  key={submenu.key}
-                  onClick={submenu.onClick}
-                >
-                  {submenu.title}
-                </Menu.Item>
-              )
-            )
+            Array.isArray(submenu.children)
+              ? submenu.children.some(({ hidden }) => !hidden) && (
+                  <Menu.SubMenu
+                    icon={submenu.icon}
+                    key={submenu.key}
+                    title={submenu.title}
+                  >
+                    {submenu.children.map(
+                      (menu) =>
+                        !menu.hidden && (
+                          <Menu.Item
+                            icon={menu.icon}
+                            key={menu.key}
+                            onClick={menu.onClick}
+                          >
+                            {menu.title}
+                          </Menu.Item>
+                        )
+                    )}
+                  </Menu.SubMenu>
+                )
+              : !submenu.hidden && (
+                  <Menu.Item
+                    icon={submenu.icon}
+                    key={submenu.key}
+                    onClick={submenu.onClick}
+                  >
+                    {submenu.title}
+                  </Menu.Item>
+                )
           )}
         </Menu>
       </Sider>
@@ -211,7 +211,7 @@ const LayoutWrapper = ({
                 {currentUser.fullName}
               </div>
               <Avatar
-                src={currentUser.imgUrl}
+                src={currentUser.imgUrl[0]}
                 icon={<UserOutlined />}
                 shape="square"
               />

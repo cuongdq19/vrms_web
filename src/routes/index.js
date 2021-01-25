@@ -57,7 +57,7 @@ const adminRoutes = [
   },
 ];
 
-const adminManagerRoutes = [
+const adminManagerStaffRoutes = [
   {
     key: 'home',
     path: '/',
@@ -78,7 +78,7 @@ const adminManagerRoutes = [
   },
 ];
 
-const providerRoutes = [
+const managerStaffRoutes = [
   {
     key: 'services',
     path: '/services',
@@ -115,6 +115,13 @@ const providerRoutes = [
     exact: true,
     component: CreateAndUpdatePackagePage,
   },
+
+  {
+    key: 'parts',
+    path: '/parts',
+    exact: true,
+    component: VehiclePartsPage,
+  },
   {
     key: 'staffs',
     path: '/staffs',
@@ -126,18 +133,6 @@ const providerRoutes = [
     path: '/technicians',
     exact: true,
     component: UsersPage,
-  },
-  {
-    key: 'customers',
-    path: '/customers',
-    exact: true,
-    component: UsersPage,
-  },
-  {
-    key: 'parts',
-    path: '/parts',
-    exact: true,
-    component: VehiclePartsPage,
   },
   {
     key: 'requests',
@@ -169,9 +164,9 @@ const routes = [
   ...publicRoutes.map(({ key, path, exact, component }) => (
     <Route key={key} path={path} exact={exact} component={component} />
   )),
-  ...adminManagerRoutes.map(({ key, path, exact, component }) => (
+  ...adminManagerStaffRoutes.map(({ key, path, exact, component }) => (
     <PrivateRoute
-      roles={['ADMIN', 'MANAGER']}
+      roles={['ADMIN', 'MANAGER', 'STAFF']}
       key={key}
       exact={exact}
       path={path}
@@ -187,15 +182,16 @@ const routes = [
       component={component}
     />
   )),
-  ...providerRoutes.map(({ key, path, exact, component }) => (
+  ...managerStaffRoutes.map(({ key, path, exact, component }) => (
     <PrivateRoute
-      roles={['MANAGER']}
+      roles={['MANAGER', 'STAFF']}
       key={key}
       exact={exact}
       path={path}
       component={component}
     />
   )),
+
   <Route key="_403" component={_403} path="/forbidden" />,
   <Route key="_404" component={_404} />,
 ];
