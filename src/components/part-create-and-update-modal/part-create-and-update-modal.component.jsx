@@ -33,8 +33,8 @@ const PartCreateAndUpdateModal = ({
   manufacturers,
   item,
   onLoadForm,
+  onReset,
   onCloseModal,
-  onClose,
   onCreatePart,
   onUpdatePart,
 }) => {
@@ -59,11 +59,20 @@ const PartCreateAndUpdateModal = ({
     }
   };
 
+  const closedHandler = () => {
+    setFilters((curr) => ({ ...curr, manufacturerId: 0 }));
+    form.resetFields();
+    onReset();
+    onCloseModal();
+  };
+
   useEffect(() => {
     if (visible) {
       onLoadForm();
+    } else {
+      form.resetFields();
     }
-  }, [onLoadForm, visible]);
+  }, [form, onLoadForm, visible]);
 
   useEffect(() => {
     if (item) {
@@ -102,14 +111,10 @@ const PartCreateAndUpdateModal = ({
   return (
     <CustomModal
       visible={visible}
-      onCancel={() => {
-        onClose();
-        form.resetFields();
-        setImages([]);
-        onCloseModal();
-      }}
+      onCancel={closedHandler}
       title="Create Part"
       onOk={() => form.submit()}
+      forceRender
     >
       <Form form={form} layout="vertical" onFinish={submitHandler}>
         {item ? (
@@ -212,6 +217,9 @@ const PartCreateAndUpdateModal = ({
               setImages(e.fileList);
               return e && e.fileList;
             }}
+            onReset={() => {
+              setImages([]);
+            }}
             help="You can upload images first to detect the category of this item."
           >
             <Upload
@@ -261,7 +269,7 @@ const PartCreateAndUpdateModal = ({
         ) : null}
         <Row gutter={[16, 16]}>
           <Col span={6}>
-            <Form.Item label="Manufacturers">
+            <Form.Item label="Manufacturers" name="manufacturerId">
               <Select
                 allowClear
                 onClear={() => {

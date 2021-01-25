@@ -5,8 +5,9 @@ import _ from 'lodash';
 
 import http from '../../http';
 import { Container } from './admin-dashboard.styles';
-import AdminProvidersSummaryChart from '../admin-providers-summary-chart/admin-providers-summary-chart.component';
 import { roundNumberToHalf } from '../../utils';
+import AdminProvidersSummaryChart from '../admin-providers-summary-chart/admin-providers-summary-chart.component';
+import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 const AdminDashboard = () => {
   const currentYear = moment().format('YYYY');
@@ -15,6 +16,7 @@ const AdminDashboard = () => {
   //   const currentYear = 2020;
   //   const currentMonth = 12;
 
+  const [loading, setLoading] = useState(false);
   const [providers, setProviders] = useState([]);
   const [requestRatio, setRequestRatio] = useState(null);
   const [totalCustomers, setTotalCustomers] = useState(0);
@@ -22,6 +24,7 @@ const AdminDashboard = () => {
   const [totalRequests, setTotalRequests] = useState(0);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       http.get(`/providers/ratings/${currentYear}`),
       http.get('/providers/customers'),
@@ -36,6 +39,7 @@ const AdminDashboard = () => {
         totalRequestsRes,
         requestSummaryRes,
       ]) => {
+        setLoading(false);
         setProviders(providersRes.data);
         setRequestRatio(
           requestSummaryRes.data.find(
@@ -48,6 +52,10 @@ const AdminDashboard = () => {
       }
     );
   }, [currentMonth, currentYear]);
+
+  if (loading) {
+    return <LoadingSpinner title="Loading ..." />;
+  }
 
   return (
     <Row gutter={[16, 16]}>

@@ -11,11 +11,19 @@ const INITIAL_STATE = {
 const signIn = (state, action) => {
   return updateObject(state, {
     loading: true,
+    error: null,
   });
 };
 
 const signInSuccess = (state, action) => {
   return updateObject(state, { loading: false, userData: action.userData });
+};
+
+const signInFailure = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    error: action.payload,
+  });
 };
 
 const signOut = (state, action) => {
@@ -55,6 +63,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return signIn(state, action);
     case AuthActionTypes.SIGN_IN_SUCCESS:
       return signInSuccess(state, action);
+    case AuthActionTypes.SIGN_IN_FAILURE:
+      return signInFailure(state, action);
     case AuthActionTypes.SIGN_OUT:
       return signOut(state, action);
     case AuthActionTypes.UPDATE_PROFILE_START:

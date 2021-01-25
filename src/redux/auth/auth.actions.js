@@ -14,6 +14,13 @@ export const signInSuccess = (userData) => {
   };
 };
 
+export const signInFailure = (error) => {
+  return {
+    type: AuthActionTypes.SIGN_IN_FAILURE,
+    payload: error,
+  };
+};
+
 export const signOut = () => {
   return {
     type: AuthActionTypes.SIGN_OUT,

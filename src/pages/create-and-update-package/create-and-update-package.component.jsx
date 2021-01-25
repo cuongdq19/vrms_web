@@ -13,6 +13,7 @@ import {
   updatePackageStart,
 } from '../../redux/package/package.actions';
 import { fetchSectionsStart } from '../../redux/part/part.actions';
+import { getColumnSearchProps } from '../../utils/antd';
 
 const PackageCreateAndUpdate = ({
   history,
@@ -33,6 +34,24 @@ const PackageCreateAndUpdate = ({
   const [isMilestone, setIsMilestone] = useState(true);
   const [selectedServices, setSelectedServices] = useState([]);
 
+  const [search, setSearch] = useState({
+    searchText: '',
+    searchedColumn: '',
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearch({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearch({ searchText: '' });
+  };
+
   const submitHandler = (values) => {
     if (item) {
       onUpdatePackage({ ...values, serviceIds: selectedServices, history });
@@ -51,7 +70,7 @@ const PackageCreateAndUpdate = ({
       title: 'Service Name',
       dataIndex: 'name',
       align: 'center',
-      //   ...getColumnSearchProps('name', handleSearch, handleReset, search),
+      ...getColumnSearchProps('name', handleSearch, handleReset, search),
     },
     {
       title: 'Wages',
@@ -159,7 +178,7 @@ const PackageCreateAndUpdate = ({
                   >
                     <Select
                       options={milestones.map((m) => ({
-                        label: m.milestone,
+                        label: m.milestone + ' KM',
                         value: m.milestone,
                       }))}
                     />

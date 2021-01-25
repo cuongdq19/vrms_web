@@ -21,7 +21,7 @@ import userReducer from './user/user.reducer';
 const authPersistConfig = {
   key: 'auth',
   storage,
-  blacklist: ['loading'],
+  whitelist: ['userData'],
 };
 
 const rootReducer = combineReducers({

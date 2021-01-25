@@ -13,11 +13,12 @@ import {
   Icon,
   Title,
   RegisterLink,
+  ErrorText,
 } from './sign-in.styles';
 import { signIn } from '../../redux/auth/auth.actions';
 import Background from '../../assets/images/sign-in-background.png';
 
-const SignIn = ({ loading, signIn, currentUser }) => {
+const SignIn = ({ error, loading, signIn, currentUser }) => {
   const submitHandler = (values) => {
     const { username, password } = values;
     signIn(username, password);
@@ -52,6 +53,8 @@ const SignIn = ({ loading, signIn, currentUser }) => {
             prefix={<FontAwesomeIcon icon={faLock} />}
           />
         </CustomForm.Item>
+        {error && <ErrorText>Invalid username or password</ErrorText>}
+
         <CustomButton
           size="large"
           loading={loading}
@@ -73,6 +76,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
     currentUser: state.auth.userData,
+    error: state.auth.error,
   };
 };
 

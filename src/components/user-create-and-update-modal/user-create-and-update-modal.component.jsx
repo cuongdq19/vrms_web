@@ -3,14 +3,16 @@ import { Button, Form, Input, Radio, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
-import { gender, providerRoles } from '../../utils/constants';
+import { gender, providerRoles, roles } from '../../utils/constants';
 import CustomModal from '../custom-modal/custom-modal.component';
 import {
   createUserStart,
   updateUserStart,
 } from '../../redux/user/user.actions';
+import { withRouter } from 'react-router-dom';
 
 const UserModal = ({
+  match,
   user,
   visible,
   title,
@@ -19,6 +21,10 @@ const UserModal = ({
   onCreateUser,
   onUpdateUser,
 }) => {
+  const pathname = match.path;
+  const roleName = pathname.toUpperCase().includes(roles.Staff)
+    ? roles.Staff
+    : roles.Technician;
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
@@ -59,6 +65,45 @@ const UserModal = ({
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
+        {roleName === roles.Staff && (
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[{ message: "Username can't be blank!", required: true }]}
+          >
+            <Input placeholder="Enter username" />
+          </Form.Item>
+        )}
+        {roleName === roles.Staff && (
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ message: "Password can't be blank!", required: true }]}
+          >
+            <Input.Password placeholder="Enter password" />
+          </Form.Item>
+        )}
+        {roleName === roles.Staff && (
+          <Form.Item
+            name="confirmPassword"
+            label="Confirm Password"
+            rules={[
+              { required: true, message: "Password can't be blank." },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    'The two passwords that you entered do not match!'
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Enter password" />
+          </Form.Item>
+        )}
         <Form.Item
           name="fullName"
           label="Full Name"
@@ -69,6 +114,8 @@ const UserModal = ({
         <Form.Item
           name="roleName"
           label="Role"
+          hidden
+          initialValue={roleName}
           rules={[{ message: "Role can't be blank!", required: true }]}
         >
           <Radio.Group>
@@ -92,24 +139,26 @@ const UserModal = ({
             ))}
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          name="image"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={(e) => {
-            console.log('Upload event:', e);
+        {!user && (
+          <Form.Item
+            name="image"
+            label="Image"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              console.log('Upload event:', e);
 
-            if (Array.isArray(e)) {
-              return e;
-            }
+              if (Array.isArray(e)) {
+                return e;
+              }
 
-            return e && e.fileList;
-          }}
-        >
-          <Upload name="logo" beforeUpload={() => false} listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-        </Form.Item>
+              return e && e.fileList;
+            }}
+          >
+            <Upload name="logo" beforeUpload={() => false} listType="picture">
+              <Button icon={<UploadOutlined />}>Click to upload</Button>
+            </Upload>
+          </Form.Item>
+        )}
       </Form>
     </CustomModal>
   );
@@ -125,4 +174,6 @@ const mapDispatchToProps = (dispatch) => ({
   onUpdateUser: (updatedUser) => dispatch(updateUserStart(updatedUser)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserModal);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(UserModal)
+);
