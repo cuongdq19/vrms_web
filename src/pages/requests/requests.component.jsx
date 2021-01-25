@@ -224,7 +224,6 @@ const RequestsPage = ({
             {record.cannot('cancel') || (
               <Col>
                 <Popconfirm
-                  okText="Cancel"
                   okButtonProps={{ danger: true, loading: isUpdating }}
                   placement="top"
                   title="Are you sure to cancel this request?"

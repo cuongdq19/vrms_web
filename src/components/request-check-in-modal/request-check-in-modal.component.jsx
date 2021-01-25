@@ -48,7 +48,7 @@ const RequestCheckInModal = ({
             const { fullName, imageUrl, id } = technician;
             return (
               <UserItemContainer key={id}>
-                <UserItem fullName={fullName} imageUrl={imageUrl} />
+                <UserItem fullName={fullName} imageUrl={imageUrl[0]} />
                 <Button onClick={() => submitHandler(id)}> Select </Button>
               </UserItemContainer>
             );
