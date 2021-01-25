@@ -92,24 +92,26 @@ const UserModal = ({
             ))}
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          name="image"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={(e) => {
-            console.log('Upload event:', e);
+        {!user && (
+          <Form.Item
+            name="image"
+            label="Image"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              console.log('Upload event:', e);
 
-            if (Array.isArray(e)) {
-              return e;
-            }
+              if (Array.isArray(e)) {
+                return e;
+              }
 
-            return e && e.fileList;
-          }}
-        >
-          <Upload name="logo" beforeUpload={() => false} listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-        </Form.Item>
+              return e && e.fileList;
+            }}
+          >
+            <Upload name="logo" beforeUpload={() => false} listType="picture">
+              <Button icon={<UploadOutlined />}>Click to upload</Button>
+            </Upload>
+          </Form.Item>
+        )}
       </Form>
     </CustomModal>
   );

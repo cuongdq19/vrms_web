@@ -133,11 +133,7 @@ const RequestsPage = ({
       dataIndex: 'status',
       align: 'center',
       defaultFilteredValue: Object.keys(requestStatus)
-        .filter(
-          (key) =>
-            requestStatus[key] !== requestStatus.Canceled &&
-            requestStatus[key] !== requestStatus.Finished
-        )
+        .filter((key) => requestStatus[key] !== requestStatus.Canceled)
         .map((key) => requestStatus[key]),
       filters: Object.keys(requestStatus).map((key) => ({
         text: requestStatus[key],
