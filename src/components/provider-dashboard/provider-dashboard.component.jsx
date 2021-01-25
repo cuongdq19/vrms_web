@@ -11,11 +11,13 @@ import ProviderRevenueChart from '../provider-revenue-chart/provider-revenue-cha
 import ProviderRequestChart from '../provider-request-chart/provider-request-chart.component';
 import ProviderPartsSummaryTab from '../provider-parts-summary-tab/provider-parts-summary-tab.component';
 import ProviderRatingSummaryChart from '../provider-rating-summary-chart/provider-rating-summary-chart.component';
+import LoadingSpinner from '../loading-spinner/loading-spinner.component';
 
 const ProviderDashboard = ({ providerId }) => {
   const currentYear = moment().format('YYYY');
   const currentMonth = moment().format('M');
 
+  const [loading, setLoading] = useState(false);
   const [revenue, setRevenue] = useState([]);
   const [requests, setRequests] = useState([]);
   const [parts, setParts] = useState([]);
@@ -23,27 +25,37 @@ const ProviderDashboard = ({ providerId }) => {
   const [rating, setRating] = useState(-1);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       http.get(`/providers/${providerId}/charts/revenue/${currentYear}`),
       http.get(`/providers/${providerId}/charts/request/${currentYear}`),
       http.get(`/providers/${providerId}`),
       http.get(`/providers/${providerId}/charts/parts/${currentYear}`),
       http.get(`/providers/${providerId}/rating-summary`),
-    ]).then(
-      ([revenueRes, requestRes, ratingRes, partsRes, ratingSummaryRes]) => {
-        setRevenue(revenueRes.data);
-        setRequests(requestRes.data);
-        setRating(ratingRes.data);
-        setParts(partsRes.data);
-        setRatingSummary(
-          Object.keys(ratingSummaryRes.data).map((key) => ({
-            name: +key,
-            value: ratingSummaryRes.data[key],
-          }))
-        );
-      }
-    );
+    ])
+      .then(
+        ([revenueRes, requestRes, ratingRes, partsRes, ratingSummaryRes]) => {
+          setLoading(false);
+          setRevenue(revenueRes.data);
+          setRequests(requestRes.data);
+          setRating(ratingRes.data);
+          setParts(partsRes.data);
+          setRatingSummary(
+            Object.keys(ratingSummaryRes.data).map((key) => ({
+              name: +key,
+              value: ratingSummaryRes.data[key],
+            }))
+          );
+        }
+      )
+      .catch((err) => {
+        setLoading(false);
+      });
   }, [providerId, currentYear]);
+
+  if (loading) {
+    return <LoadingSpinner title="Loading ..." />;
+  }
 
   return (
     <>
