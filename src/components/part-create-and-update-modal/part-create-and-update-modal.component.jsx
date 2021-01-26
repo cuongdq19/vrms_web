@@ -4,7 +4,6 @@ import {
   Cascader,
   Col,
   Form,
-  Image,
   Input,
   InputNumber,
   message,
@@ -351,7 +350,16 @@ const PartCreateAndUpdateModal = ({
       >
         <Row justify="center" gutter={[16, 16]}>
           <Col span={24}>
-            <Image src={`http://localhost:5000/abc.jpg?${Date.now()}`} />
+            <div
+              style={{
+                height: 400,
+
+                backgroundImage: `url(http://localhost:5000/abc.jpg?${Date.now()})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
           </Col>
           <Col span={24}>
             <Radio.Group
