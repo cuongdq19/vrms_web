@@ -133,30 +133,28 @@ const AdminDashboard = () => {
                   const aRatio =
                     aItem.totalRevenue === 0
                       ? 0
-                      : _.round(aItem.incurredRevenue / aItem.totalRevenue, 1) *
-                        100;
+                      : _.round(aItem.incurredRevenue / aItem.totalRevenue, 2);
                   const bItem = b.revenues.find(
                     (item) => item.month.toString() === currentMonth.toString()
                   );
                   const bRatio =
                     bItem.totalRevenue === 0
                       ? 0
-                      : _.round(bItem.incurredRevenue / bItem.totalRevenue, 1) *
-                        100;
+                      : _.round(bItem.incurredRevenue / bItem.totalRevenue, 2);
                   return bRatio - aRatio;
                 },
                 render: (__, record) => {
                   const revenueMonth = record.revenues.find(
                     (item) => item.month.toString() === currentMonth.toString()
                   );
+                  if (revenueMonth.incurredRevenue === 0) {
+                    return '0%';
+                  }
                   return (
-                    (revenueMonth.totalRevenue === 0
-                      ? 0
-                      : _.round(
-                          revenueMonth.incurredRevenue /
-                            revenueMonth.totalRevenue,
-                          1
-                        ) * 100) + '%'
+                    _.round(
+                      revenueMonth.incurredRevenue / revenueMonth.totalRevenue,
+                      2
+                    ) + '%'
                   );
                 },
               },
