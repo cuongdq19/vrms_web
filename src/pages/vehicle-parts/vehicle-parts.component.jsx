@@ -79,7 +79,7 @@ const VehiclePartsPage = ({
           <Content>
             <Row gutter={[16, 16]}>
               {filteredParts.map((item) => (
-                <Col span={6} key={item.id}>
+                <Col xl={6} lg={8} md={12} sm={24} key={item.id}>
                   <PartItem
                     item={item}
                     onRemove={removedHandler}

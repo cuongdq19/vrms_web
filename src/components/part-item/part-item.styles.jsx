@@ -24,8 +24,9 @@ export const Container = styled.div`
 export const BackgroundImage = styled.img`
   width: 100%;
   height: 95%;
-  background-size: cover;
-  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
   margin-bottom: 5px;
   border-radius: 5px;
   background-image: ${({ imageUrl }) => `url(${imageUrl})`};
@@ -39,15 +40,16 @@ export const Footer = styled.div`
 `;
 
 export const NameContainer = styled.span`
-  flex: 1;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 16px;
+  height: 18%;
   text-align: center;
 `;
 
 export const PriceContainer = styled.span`
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 600;
 `;
 
 export const ButtonContainer = styled.div`
