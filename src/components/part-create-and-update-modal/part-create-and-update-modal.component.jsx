@@ -246,11 +246,11 @@ const PartCreateAndUpdateModal = ({
                           const section = sectionsWithCategories.find(
                             (sect) =>
                               sect.categories.findIndex(
-                                (cate) => cate.id === data[0].categoryId
+                                (cate) => cate.id === item.categoryId
                               ) >= 0
                           );
                           const category = section.categories.find(
-                            (cate) => cate.id === data[0].categoryId
+                            (cate) => cate.id === item.categoryId
                           );
                           return {
                             ...category,
