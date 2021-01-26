@@ -1,6 +1,6 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Image, Input, Row, Upload } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import CustomModal from '../custom-modal/custom-modal.component';
 import { Text } from './contract-upload-modal.styles';
@@ -12,12 +12,19 @@ const ContractUploadModal = ({ visible, onCancel, onSubmit, item }) => {
     onSubmit({ ...rest, images: images.map((image) => image.originFileObj) });
   };
 
+  useEffect(() => {
+    if (!visible) {
+      form.resetFields();
+    }
+  }, [form, visible]);
+
   return (
     <CustomModal
       title="Upload Contract"
       visible={visible}
       onCancel={onCancel}
       onOk={() => form.submit()}
+      forceRender
     >
       <Form
         form={form}
