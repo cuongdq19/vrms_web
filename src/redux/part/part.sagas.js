@@ -177,7 +177,7 @@ export function* onFetchSectionsStart() {
 export default function* partSagas() {
   yield all([
     call(onFetchParts),
-    call(fetchPartsByModelAsync),
+    call(onFetchPartsByModel),
     call(onLoadPartForm),
     call(onCreatePart),
     call(onUpdatePart),

@@ -432,7 +432,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onLoadForm: () => dispatch(loadFormStart()),
-  onFetchParts: (providerId) => dispatch(fetchPartsStart(providerId)),
+  onFetchParts: () => dispatch(fetchPartsStart()),
   onCreateServiceWithParts: (newService) =>
     dispatch(createServiceWithPartsStart(newService)),
   onCreateServiceWithoutParts: (newService) =>
