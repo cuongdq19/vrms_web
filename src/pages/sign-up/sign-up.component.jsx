@@ -20,9 +20,8 @@ import {
   SignInLink,
 } from './sign-up.styles';
 import Background from '../../assets/images/sign-up-background.png';
-import http from '../../http';
-
 import CustomMap from '../../components/custom-map/custom-map.component';
+import http from '../../http';
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
@@ -53,6 +52,7 @@ const SignUp = () => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   };
 
@@ -98,6 +98,12 @@ const SignUp = () => {
           />
         </CustomForm.Item>
         <CustomForm.Item
+          rules={[
+            {
+              required: true,
+              message: "Images can't be blank",
+            },
+          ]}
           label="Facility Images"
           name="images"
           valuePropName="fileList"

@@ -13,6 +13,7 @@ const ProviderPartsSummaryTab = ({ data }) => {
             tab={moment(item.month, 'M').format('MMMM')}
           >
             <Table
+              pagination={{ pageSize: 5 }}
               rowKey={(record) => record.part.id}
               dataSource={item.partSummaries}
               columns={[
