@@ -18,7 +18,6 @@ const RequestTotalRowItem = ({ title, value }) => {
 };
 
 const RequestTotalView = ({ requestItem }) => {
-  console.log(requestItem);
   const servicesPrice = requestItem?.services.reduce(
     (accumulated, service) =>
       accumulated +

@@ -151,8 +151,6 @@ const CreateAndUpdateServicePage = ({
     }
   }, [isWithParts, onFetchParts, providerId]);
 
-  console.log(selectedParts);
-
   useEffect(() => {
     if (item) {
       const { typeDetail, name, price, models, id, parts: itemParts } = item;

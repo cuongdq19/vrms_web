@@ -28,7 +28,6 @@ const RequestCheckInModal = ({
 
   useEffect(() => {
     if (visible && item) {
-      console.log('hello');
       onFetchAvailableTechnicians(bookingTime);
     }
   }, [bookingTime, item, onFetchAvailableTechnicians, visible]);

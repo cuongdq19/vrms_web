@@ -55,8 +55,6 @@ const VehiclePartsPage = ({
     )
     .splice((current - 1) * PAGE_SIZE, PAGE_SIZE);
 
-  console.log(item);
-
   return (
     <LayoutWrapper>
       {isFetching ? (
