@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const instance = axios.create({
-  baseURL: `http://${process.env.REACT_APP_SERVER_IP}:8080`,
+  baseURL: `${process.env.REACT_APP_SERVER_IP}`,
 });
 
 export default instance;

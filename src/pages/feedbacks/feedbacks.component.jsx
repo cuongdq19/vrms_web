@@ -9,14 +9,22 @@ import CustomModal from '../../components/custom-modal/custom-modal.component';
 import RequestOverview from '../../components/request-overview/request-overview.component';
 
 const FeedbacksPage = ({ providerId }) => {
+  const [loading, setLoading] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
   const [visible, setVisible] = useState(false);
   const [detail, setDetail] = useState(null);
 
   useEffect(() => {
-    http.get(`/providers/${providerId}/feedbacks`).then(({ data }) => {
-      setFeedbacks(data);
-    });
+    setLoading(true);
+    http
+      .get(`/providers/${providerId}/feedbacks`)
+      .then(({ data }) => {
+        setLoading(false);
+        setFeedbacks(data);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
   }, [providerId]);
   return (
     <LayoutWrapper>
@@ -25,6 +33,7 @@ const FeedbacksPage = ({ providerId }) => {
       </Title>
       <Content>
         <Table
+          loading={loading}
           dataSource={feedbacks}
           rowKey="id"
           columns={[

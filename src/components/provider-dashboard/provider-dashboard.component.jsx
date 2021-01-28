@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Col, Row, Statistic } from 'antd';
 import moment from 'moment';
 import { StarFilled } from '@ant-design/icons';
-import _ from 'lodash';
 
 import http from '../../http';
 import { Container } from './provider-dashboard.styles';
