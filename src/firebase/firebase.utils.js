@@ -1,5 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/messaging';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,

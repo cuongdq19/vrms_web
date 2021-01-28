@@ -1,7 +1,10 @@
 import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const instance = axios.create({
-  baseURL: `http://localhost:8080`,
+  baseURL: `http://${process.env.REACT_APP_SERVER_IP}:8080`,
 });
 
 export default instance;
