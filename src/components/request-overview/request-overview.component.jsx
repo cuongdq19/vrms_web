@@ -70,15 +70,17 @@ const RequestOverview = ({ item }) => {
       <Col span={24}>
         <ServicesCollectionTable
           size="small"
-          dataSource={services.map(
-            ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
-              id: serviceId,
-              price: servicePrice,
-              name: serviceName,
-              parts,
-              ...rest,
-            })
-          )}
+          dataSource={services
+            .filter((service) => service.isActive)
+            .map(
+              ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
+                id: serviceId,
+                price: servicePrice,
+                name: serviceName,
+                parts,
+                ...rest,
+              })
+            )}
           rowKey="id"
         />
       </Col>
@@ -89,15 +91,23 @@ const RequestOverview = ({ item }) => {
             ({ packageId, packageName, services, ...rest }) => ({
               id: packageId,
               name: packageName,
-              services: services.map(
-                ({ serviceId, serviceName, servicePrice, parts, ...rest }) => ({
-                  id: serviceId,
-                  name: serviceName,
-                  price: servicePrice,
-                  parts,
-                  ...rest,
-                })
-              ),
+              services: services
+                .filter((service) => service.isActive)
+                .map(
+                  ({
+                    serviceId,
+                    serviceName,
+                    servicePrice,
+                    parts,
+                    ...rest
+                  }) => ({
+                    id: serviceId,
+                    name: serviceName,
+                    price: servicePrice,
+                    parts,
+                    ...rest,
+                  })
+                ),
               ...rest,
             })
           )}

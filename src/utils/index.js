@@ -22,19 +22,9 @@ export const generateUserRoleColor = (roleName) => {
 export const calculateRequestPrice = (request) => {
   const { services = [], packages = [] } = request;
 
-  const servicesPrice = services.reduce((curr, service) => {
-    const { servicePrice, parts } = service;
-    const partsPrice = parts.reduce((curr, part) => {
-      return curr + part.price * part.quantity;
-    }, 0);
-
-    return curr + servicePrice + partsPrice;
-  }, 0);
-
-  const packagesPrice = packages.reduce((curr, item) => {
-    const { services = [] } = item;
-
-    const packagePrice = services.reduce((curr, service) => {
+  const servicesPrice = services
+    .filter((service) => service.isActive)
+    .reduce((curr, service) => {
       const { servicePrice, parts } = service;
       const partsPrice = parts.reduce((curr, part) => {
         return curr + part.price * part.quantity;
@@ -42,6 +32,20 @@ export const calculateRequestPrice = (request) => {
 
       return curr + servicePrice + partsPrice;
     }, 0);
+
+  const packagesPrice = packages.reduce((curr, item) => {
+    const { services = [] } = item;
+
+    const packagePrice = services
+      .filter((service) => service.isActive)
+      .reduce((curr, service) => {
+        const { servicePrice, parts } = service;
+        const partsPrice = parts.reduce((curr, part) => {
+          return curr + part.price * part.quantity;
+        }, 0);
+
+        return curr + servicePrice + partsPrice;
+      }, 0);
 
     return curr + packagePrice;
   }, 0);
