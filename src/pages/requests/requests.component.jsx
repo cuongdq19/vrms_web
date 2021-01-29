@@ -33,6 +33,7 @@ import {
   hideRequestModal,
   completeRequestStart,
 } from '../../redux/request/request.actions';
+import { ReloadOutlined } from '@ant-design/icons';
 
 const RequestsPage = ({
   requests,
@@ -106,7 +107,7 @@ const RequestsPage = ({
       title: 'Note',
       align: 'center',
       dataIndex: 'note',
-      render: (value) => value.length || 'N/A',
+      render: (value) => (value.length > 0 ? value : 'N/A'),
     },
     {
       align: 'center',
@@ -251,6 +252,7 @@ const RequestsPage = ({
     <LayoutWrapper>
       <Title>
         <Typography.Title level={4}>Requests</Typography.Title>
+        <Button icon={<ReloadOutlined />} onClick={onFetchRequests}></Button>
       </Title>
       <Content>
         <Table
