@@ -34,6 +34,8 @@ import {
   completeRequestStart,
 } from '../../redux/request/request.actions';
 import { ReloadOutlined } from '@ant-design/icons';
+import CustomModal from '../../components/custom-modal/custom-modal.component';
+import RequestOverview from '../../components/request-overview/request-overview.component';
 
 const RequestsPage = ({
   requests,
@@ -47,6 +49,7 @@ const RequestsPage = ({
   history,
 }) => {
   const [item, setItem] = useState(null);
+  const [details, setDetails] = useState({ visible: false, item: null });
   const [search, setSearch] = useState({
     searchText: '',
     searchedColumn: '',
@@ -83,7 +86,12 @@ const RequestsPage = ({
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', align: 'center' },
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      align: 'center',
+      sorter: (a, b) => a.id - b.id,
+    },
     {
       title: 'User Full Name',
       dataIndex: 'fullName',
@@ -113,6 +121,8 @@ const RequestsPage = ({
       align: 'center',
       title: 'Booking Time',
       dataIndex: 'bookingTime',
+      sorter: (a, b) => a.bookingTime - b.bookingTime,
+      defaultSortOrder: 'desc',
       render: (value) => moment.unix(value).format('DD/MM/YYYY HH:mm'),
     },
     {
@@ -147,6 +157,19 @@ const RequestsPage = ({
       },
     },
     {
+      title: 'Details',
+      align: 'center',
+      render: (_, record) => (
+        <Button
+          onClick={() => {
+            setDetails({ item: record, visible: true });
+          }}
+        >
+          Details
+        </Button>
+      ),
+    },
+    {
       title: 'Actions',
       render: (_, record) => {
         return (
@@ -154,6 +177,7 @@ const RequestsPage = ({
             <Col>
               <Button
                 disabled={
+                  record.can('checkIn') ||
                   record.is('FINISHED') ||
                   record.is('WORK COMPLETED') ||
                   record.is('CANCELED')
@@ -280,6 +304,23 @@ const RequestsPage = ({
         item={item}
         onCancel={() => closedHandler(requestModals.checkout)}
       />
+      <CustomModal
+        visible={details.visible}
+        onCancel={() => {
+          setDetails({
+            visible: false,
+            item: null,
+          });
+        }}
+        onOk={() => {
+          setDetails({
+            visible: false,
+            item: null,
+          });
+        }}
+      >
+        <RequestOverview item={details.item ?? {}} />
+      </CustomModal>
     </LayoutWrapper>
   );
 };

@@ -15,6 +15,7 @@ const RequestOverview = ({ item }) => {
     fullName,
     phoneNumber,
     bookingTime,
+    note,
   } = item;
 
   let total = null;
@@ -53,6 +54,12 @@ const RequestOverview = ({ item }) => {
           </Col>
           <Col span={16}>
             <h4>{moment.unix(bookingTime).format('HH:mm')}</h4>
+          </Col>
+          <Col span={8}>
+            <span>Note: </span>
+          </Col>
+          <Col span={16}>
+            <h4>{note}</h4>
           </Col>
         </Row>
       </Col>
