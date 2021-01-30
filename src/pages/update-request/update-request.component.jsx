@@ -80,9 +80,10 @@ const ServiceTable = ({ title, data, onRemove, onQuantityChanged }) => (
                 dataIndex: 'quantity',
                 align: 'center',
                 render: (value, record) => (
-                  <Row align="middle" justify="space-between" gutter={[16, 16]}>
+                  <Row align="middle" justify="space-between" gutter={[8, 8]}>
                     <Col>
                       <Button
+                        size="small"
                         onClick={() =>
                           onQuantityChanged(
                             serviceId,
@@ -99,6 +100,7 @@ const ServiceTable = ({ title, data, onRemove, onQuantityChanged }) => (
                     </Col>
                     <Col>
                       <Button
+                        size="small"
                         onClick={() =>
                           onQuantityChanged(serviceId, record.id, value + 1)
                         }
@@ -493,7 +495,7 @@ const UpdateRequestPage = ({ history, match, isUpdating, onUpdateRequest }) => {
           <Content>
             <Button onClick={() => setVisible(true)}>Add Service</Button>
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={24}>
                 <ServiceTable
                   title={() => <h1>Services</h1>}
                   data={currentItem?.services.filter(
@@ -503,7 +505,7 @@ const UpdateRequestPage = ({ history, match, isUpdating, onUpdateRequest }) => {
                   onQuantityChanged={servicePartQuantityChangedHandler}
                 />
               </Col>
-              <Col span={12}>
+              <Col span={24}>
                 <ServiceTable
                   title={() => <h1>Custom Expenses</h1>}
                   data={currentItem?.services.filter(

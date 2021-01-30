@@ -31,6 +31,7 @@ const PartCreateAndUpdateModal = ({
   models,
   manufacturers,
   item,
+  loading,
   onLoadForm,
   onReset,
   onCloseModal,
@@ -113,6 +114,7 @@ const PartCreateAndUpdateModal = ({
       onCancel={closedHandler}
       title="Create Part"
       onOk={() => form.submit()}
+      okButtonProps={{ loading: loading }}
       forceRender
     >
       <Form form={form} layout="vertical" onFinish={submitHandler}>
@@ -388,6 +390,7 @@ const mapStateToProps = (state) => ({
   models: state.models.models,
   manufacturers: state.manufacturers.manufacturers,
   visible: state.parts.isModalVisible,
+  loading: state.parts.isCreatingOrUpdating,
 });
 
 const mapDispatchToProps = (dispatch) => ({
